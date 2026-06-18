@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Campaign App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: #f0f4f9; padding: 1rem; }
+        .app { max-width: 600px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .header h1 { font-size: 1.2rem; color: #0b2b4a; display: flex; align-items: center; gap: 0.5rem; }
+        .header h1 i { color: #2a7de1; }
+        
+        .btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-primary { background: #0b2b4a; color: white; }
+        .btn-primary:hover { background: #1a3f62; }
+        .btn-success { background: #4caf50; color: white; }
+        .btn-success:hover { background: #388e3c; }
+        .btn-danger { background: #f44336; color: white; }
+        .btn-danger:hover { background: #c62828; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn-warning:hover { background: #e68900; }
+        .btn-outline { background: transparent; border: 1px solid #dce2ec; color: #4e6b8a; }
+        .btn-outline:hover { background: #f0f4f9; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid #eef2f6;
+            margin-bottom: 1rem;
+        }
+        .card h3 { font-size: 0.9rem; color: #1c3b5e; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .form-group { margin-bottom: 0.5rem; }
+        .form-group label { font-size: 0.7rem; font-weight: 500; color: #3a5575; display: block; margin-bottom: 0.1rem; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.4rem 0.7rem;
+            border: 1px solid #dce2ec;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: #fafcff;
+        }
+        .row-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        
+        .upload-zone {
+            border: 2px dashed #dce2ec;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .upload-zone:hover { border-color: #2a7de1; background: #f8faff; }
+        .upload-zone i { font-size: 2rem; color: #2a7de1; }
+        .upload-zone input { display: none; }
+        
+        .table-wrap { max-height: 300px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th { text-align: left; padding: 0.3rem 0.4rem; color: #4e6b8a; border-bottom: 1px solid #e9eef5; position: sticky; top: 0; background: white; }
+        td { padding: 0.3rem 0.4rem; border-bottom: 1px solid #f0f4fa; }
+        .status-badge {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        .status-supporter { background: #daf1e4; color: #0c5e3a; }
+        .status-not_home { background: #fff1d6; color: #a85d1a; }
+        .status-refused { background: #ffe8e8; color: #b13e3e; }
+        .status-not_contacted { background: #eef2f6; color: #6b7a8f; }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0b2b4a;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #eef2f6;
+            text-align: center;
+        }
+        .stat-card .label { font-size: 0.5rem; text-transform: uppercase; color: #6b7a8f; }
+        .stat-card .value { font-size: 1.4rem; font-weight: 700; color: #0a1e33; }
+        
+        .status-message {
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+        }
+        .status-success { background: #daf1e4; color: #0c5e3a; }
+        .status-error { background: #ffe8e8; color: #b13e3e; }
+        .status-info { background: #e3f2fd; color: #0d47a1; }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+        }
+        .action-grid button {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .action-grid button:active { transform: scale(0.95); }
+        .act-home { background: #e3f2fd; color: #0d47a1; }
+        .act-not_home { background: #fff3e0; color: #e65100; }
+        .act-supporter { background: #daf1e4; color: #0c5e3a; }
+        .act-refused { background: #ffebee; color: #b13e3e; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="header">
+        <h1><i class="fas fa-vote-yea"></i> Campaign Test</h1>
+        <div>
+            <span id="statusDot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff9800;margin-right:0.3rem;"></span>
+            <span id="statusText" style="font-size:0.7rem;color:#6b7a8f;">Checking...</span>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="label">Voters</div><div class="value" id="statTotal">0</div></div>
+        <div class="stat-card"><div class="label">Knocked</div><div class="value" id="statKnocked">0</div></div>
+        <div class="stat-card"><div class="label">Supporters</div><div class="value" id="statSupporters">0</div></div>
+        <div class="stat-card"><div class="label">Not Home</div><div class="value" id="statNotHome">0</div></div>
+    </div>
+
+    <!-- Upload -->
+    <div class="card">
+        <h3><i class="fas fa-upload"></i> Step 1: Upload CSV</h3>
+        <div class="upload-zone" id="uploadZone">
+            <i class="fas fa-file-csv"></i>
+            <p style="font-size:0.8rem;color:#6b7a8f;margin-top:0.3rem;">Click to upload CSV</p>
+            <p style="font-size:0.6rem;color:#8a9bb0;">Headers: Name, National ID, Address, Phone, Party</p>
+            <input type="file" id="csvUpload" accept=".csv" />
+        </div>
+        <div id="uploadStatus" style="margin-top:0.5rem;font-size:0.7rem;color:#6b7a8f;"></div>
+    </div>
+
+    <!-- Voter List -->
+    <div class="card">
+        <h3><i class="fas fa-users"></i> Voters (<span id="voterCount">0</span>)</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>#</th><th>Name</th><th>Address</th><th>Party</th><th>Status</th></tr></thead>
+                <tbody id="voterTable">
+                    <tr><td colspan="5" style="text-align:center;color:#8a9bb0;padding:1rem 0;">No voters loaded</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Door-to-Door -->
+    <div class="card">
+        <h3><i class="fas fa-door-open"></i> Step 2: Door-to-Door</h3>
+        <div id="doorStep">
+            <p style="font-size:0.7rem;color:#6b7a8f;margin-bottom:0.5rem;">Click a voter above to log a door knock</p>
+            <div id="selectedVoter" style="background:#f8fafd;padding:0.5rem;border-radius:10px;margin-bottom:0.5rem;text-align:center;font-size:0.8rem;color:#6b7a8f;">
+                No voter selected
+            </div>
+            <div class="action-grid">
+                <button class="act-home" data-outcome="home">Home</button>
+                <button class="act-not_home" data-outcome="not_home">Not Home</button>
+                <button class="act-supporter" data-outcome="supporter">Supporter</button>
+                <button class="act-refused" data-outcome="refused">Refused</button>
+            </div>
+            <div id="actionStatus" style="margin-top:0.5rem;font-size:0.7rem;color:#6b7a8f;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+    // ===== STATE =====
+    var voters = [];
+    var selectedVoterId = null;
+    var apiUrl = 'api.php';
+
+    // ===== DOM REFS =====
+    var csvInput = document.getElementById('csvUpload');
+    var uploadZone = document.getElementById('uploadZone');
+    var uploadStatus = document.getElementById('uploadStatus');
+    var voterTable = document.getElementById('voterTable');
+    var voterCount = document.getElementById('voterCount');
+    var selectedVoterDiv = document.getElementById('selectedVoter');
+    var actionStatus = document.getElementById('actionStatus');
+    var statTotal = document.getElementById('statTotal');
+    var statKnocked = document.getElementById('statKnocked');
+    var statSupporters = document.getElementById('statSupporters');
+    var statNotHome = document.getElementById('statNotHome');
+    var statusDot = document.getElementById('statusDot');
+    var statusText = document.getElementById('statusText');
+    var toast = document.getElementById('toast');
+
+    // ===== TOAST =====
+    function showToast(msg, type) {
+        toast.textContent = msg;
+        toast.className = 'toast';
+        if (type === 'success') toast.classList.add('success');
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function() {
+            toast.classList.remove('show');
+        }, 2500);
+    }
+
+    // ===== CHECK API =====
+    function checkAPI() {
+        fetch(apiUrl + '?action=stats')
+            .then(function(response) {
+                if (!response.ok) throw new Error('API not responding');
+                return response.json();
+            })
+            .then(function(data) {
+                statusDot.style.background = '#4caf50';
+                statusText.textContent = 'API Connected';
+                if (data.success) {
+                    loadVoters();
+                }
+            })
+            .catch(function(error) {
+                statusDot.style.background = '#f44336';
+                statusText.textContent = 'API Offline (check XAMPP)';
+                console.error('API Error:', error);
+            });
+    }
+
+    // ===== LOAD VOTERS =====
+    function loadVoters() {
+        fetch(apiUrl + '?action=get_voters')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    voters = data.voters;
+                    renderVoters();
+                    updateStats();
+                }
+            })
+            .catch(function(error) {
+                console.error('Error loading voters:', error);
+            });
+    }
+
+    // ===== RENDER VOTERS =====
+    function renderVoters() {
+        if (voters.length === 0) {
+            voterTable.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a9bb0;padding:1rem 0;">No voters loaded. Upload CSV.</td></tr>';
+            voterCount.textContent = '0';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < voters.length; i++) {
+            var v = voters[i];
+            var status = v.status || 'not_contacted';
+            var statusLabel = status.replace('_', ' ');
+            var statusClass = 'status-' + status;
+            html += '<tr style="cursor:pointer;" data-id="' + v.id + '">' +
+                '<td>' + (i + 1) + '</td>' +
+                '<td><strong>' + v.name + '</strong></td>' +
+                '<td>' + (v.address || '—') + '</td>' +
+                '<td>' + (v.party || '—') + '</td>' +
+                '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>' +
+                '</tr>';
+        }
+        voterTable.innerHTML = html;
+        voterCount.textContent = voters.length;
+
+        // Click handler for voters
+        var rows = voterTable.querySelectorAll('tr[data-id]');
+        for (var i = 0; i < rows.length; i++) {
+            rows[i].addEventListener('click', function() {
+                var id = parseInt(this.getAttribute('data-id'));
+                selectVoter(id);
+            });
+        }
+    }
+
+    // ===== SELECT VOTER =====
+    function selectVoter(id) {
+        selectedVoterId = id;
+        var voter = null;
+        for (var i = 0; i < voters.length; i++) {
+            if (voters[i].id === id) {
+                voter = voters[i];
+                break;
+            }
+        }
+        
+        if (voter) {
+            selectedVoterDiv.innerHTML = '<strong>' + voter.name + '</strong> | ' + (voter.address || 'No address') + ' | Party: ' + (voter.party || '—');
+            selectedVoterDiv.style.color = '#0b2b4a';
+            actionStatus.textContent = 'Ready to log door for ' + voter.name;
+            showToast('Selected: ' + voter.name);
+        }
+    }
+
+    // ===== DOOR ACTION =====
+    function doorAction(outcome) {
+        if (!selectedVoterId) {
+            showToast('Please select a voter first', 'warning');
+            return;
+        }
+
+        var logData = {
+            voter_id: selectedVoterId,
+            canvasser: 'Me',
+            outcome: outcome,
+            notes: '',
+            support_level: outcome === 'supporter' ? 4 : 0,
+            revisit_priority: outcome === 'not_home' ? 4 : 0
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(logData)
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                showToast('✅ Logged: ' + outcome, 'success');
+                loadVoters();
+                updateStats();
+                selectedVoterDiv.innerHTML = 'No voter selected';
+                selectedVoterDiv.style.color = '#6b7a8f';
+                selectedVoterId = null;
+                actionStatus.textContent = '';
+            } else {
+                showToast('❌ Error: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(function(error) {
+            showToast('❌ Connection error: ' + error.message);
+        });
+    }
+
+    // ===== UPDATE STATS =====
+    function updateStats() {
+        fetch(apiUrl + '?action=stats')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    statTotal.textContent = data.stats.total_voters || 0;
+                    statKnocked.textContent = data.stats.knocked || 0;
+                    statSupporters.textContent = data.stats.supporters || 0;
+                    statNotHome.textContent = data.stats.not_home || 0;
+                }
+            })
+            .catch(function(error) {
+                console.error('Error fetching stats:', error);
+            });
+    }
+
+    // ===== CSV UPLOAD =====
+    function parseCSV(text) {
+        var lines = text.split(/\r?\n/).filter(function(line) { return line.trim() !== ''; });
+        if (lines.length < 2) { showToast('CSV needs header + data'); return []; }
+
+        var headers = lines[0].split(',').map(function(h) { return h.trim().toLowerCase(); });
+        
+        var nameIdx = -1, idIdx = -1, addrIdx = -1, phoneIdx = -1, partyIdx = -1;
+        for (var i = 0; i < headers.length; i++) {
+            var h = headers[i];
+            if (h.indexOf('name') > -1) nameIdx = i;
+            else if (h.indexOf('national') > -1 || h.indexOf('id') > -1) idIdx = i;
+            else if (h.indexOf('address') > -1 || h.indexOf('house') > -1) addrIdx = i;
+            else if (h.indexOf('phone') > -1) phoneIdx = i;
+            else if (h.indexOf('party') > -1) partyIdx = i;
+        }
+
+        if (nameIdx < 0) { showToast('Name column not found'); return []; }
+
+        var result = [];
+        for (var i = 1; i < lines.length; i++) {
+            var cols = lines[i].split(',').map(function(c) { return c.trim(); });
+            if (cols.length === 0 || cols.every(function(c) { return c === ''; })) continue;
+
+            var name = (nameIdx >= 0 && nameIdx < cols.length) ? cols[nameIdx] : '';
+            var national_id = (idIdx >= 0 && idIdx < cols.length) ? cols[idIdx] : '';
+            var address = (addrIdx >= 0 && addrIdx < cols.length) ? cols[addrIdx] : '';
+            var phone = (phoneIdx >= 0 && phoneIdx < cols.length) ? cols[phoneIdx] : '';
+            var party = (partyIdx >= 0 && partyIdx < cols.length) ? cols[partyIdx] : '';
+
+            if (name) {
+                result.push({
+                    name: name,
+                    national_id: national_id || '',
+                    address: address || '',
+                    phone: phone || '',
+                    party: party || '',
+                    status: 'not_contacted'
+                });
+            }
+        }
+        return result;
+    }
+
+    csvInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            var parsed = parseCSV(ev.target.result);
+            if (parsed.length === 0) {
+                uploadStatus.innerHTML = '<span style="color:#f44336;">No voters found</span>';
+                return;
+            }
+
+            // Send to PHP
+            uploadStatus.innerHTML = '<span style="color:#ff9800;">Uploading ' + parsed.length + ' voters...</span>';
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ voters: parsed })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    uploadStatus.innerHTML = '<span style="color:#4caf50;">✅ ' + data.inserted + ' voters imported successfully!</span>';
+                    showToast('✅ ' + data.inserted + ' voters imported!', 'success');
+                    loadVoters();
+                    updateStats();
+                } else {
+                    uploadStatus.innerHTML = '<span style="color:#f44336;">❌ Error: ' + JSON.stringify(data.errors) + '</span>';
+                }
+            })
+            .catch(function(error) {
+                uploadStatus.innerHTML = '<span style="color:#f44336;">❌ Connection error: ' + error.message + '</span>';
+                showToast('❌ Connection error. Is XAMPP running?');
+            });
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    });
+
+    uploadZone.addEventListener('click', function() {
+        csvInput.click();
+    });
+
+    // ===== ACTION BUTTONS =====
+    document.querySelectorAll('.action-grid button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var outcome = this.getAttribute('data-outcome');
+            doorAction(outcome);
+        });
+    });
+
+    // ===== DRAG & DROP =====
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#2a7de1';
+        this.style.background = '#f8faff';
+    });
+    uploadZone.addEventListener('dragleave', function(e) {
+        this.style.borderColor = '#dce2ec';
+        this.style.background = 'transparent';
+    });
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#dce2ec';
+        this.style.background = 'transparent';
+        var file = e.dataTransfer.files[0];
+        if (file && file.name.indexOf('.csv') > -1) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var parsed = parseCSV(ev.target.result);
+                if (parsed.length === 0) {
+                    uploadStatus.innerHTML = '<span style="color:#f44336;">No voters found</span>';
+                    return;
+                }
+                uploadStatus.innerHTML = '<span style="color:#ff9800;">Uploading ' + parsed.length + ' voters...</span>';
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ voters: parsed })
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        uploadStatus.innerHTML = '<span style="color:#4caf50;">✅ ' + data.inserted + ' voters imported!</span>';
+                        showToast('✅ ' + data.inserted + ' voters imported!', 'success');
+                        loadVoters();
+                        updateStats();
+                    }
+                })
+                .catch(function(error) {
+                    uploadStatus.innerHTML = '<span style="color:#f44336;">❌ Connection error</span>';
+                });
+            };
+            reader.readAsText(file);
+        } else {
+            showToast('Please drop a CSV file');
+        }
+    });
+
+    // ===== INIT =====
+    checkAPI();
+    setInterval(updateStats, 10000);
+    console.log('Campaign Test App loaded');
+    console.log('API URL: ' + apiUrl);
+})();
+</script>
+</body>
+</html>
