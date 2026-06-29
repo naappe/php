@@ -9,7 +9,8 @@ const state = {
     sortField: 'Date',
     sortDir: 'desc',
     totalAmount: 0,
-    loading: false
+    loading: false,
+    loaded: false
 };
 
 // ============================================
@@ -30,12 +31,13 @@ const DOM = {
 // HELPERS
 // ============================================
 function formatMVR(amount) {
+    const num = parseFloat(amount) || 0;
     return new Intl.NumberFormat('dv-MV', {
         style: 'currency',
         currency: 'MVR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-    }).format(parseFloat(amount) || 0);
+    }).format(num);
 }
 
 function getHeaders() {
@@ -63,34 +65,75 @@ function showLoading(show) {
 }
 
 // ============================================
-// FETCH BILLS (FAST)
+// FETCH BILLS (FIXED)
 // ============================================
 async function fetchBills() {
     showLoading(true);
     try {
         const url = `${BASEROW_CONFIG.BASE_URL}/api/database/rows/table/${BASEROW_CONFIG.TABLE_ID}/?user_field_names=true&size=200`;
-        const res = await fetch(url, { headers: getHeaders() });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        console.log('📡 Fetching:', url);
+        
+        const response = await fetch(url, { headers: getHeaders() });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Response error:', response.status, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText || 'Unknown error'}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Data received:', data);
         
         state.bills = data.results || [];
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        state.loaded = true;
         
         applyFilters();
         render();
-        showMsg(`✅ ${state.bills.length} bills loaded`, 'success');
-    } catch (e) {
-        showMsg(`❌ Error: ${e.message}`, 'error');
-        DOM.content.innerHTML = `<div class="empty"><div class="empty-icon">🔌</div><h3>Error</h3><p>${e.message}</p><button class="btn btn-primary" onclick="fetchBills()">Retry</button></div>`;
+        showMsg(`✅ ${state.bills.length} bills loaded | Total: ${formatMVR(state.totalAmount)}`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Fetch error:', error);
+        showMsg(`❌ Error: ${error.message}`, 'error');
+        DOM.content.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🔌</div>
+                <h3>Connection Error</h3>
+                <p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;">${error.message}</p>
+                <button class="btn btn-primary" onclick="fetchBills()">🔄 Retry</button>
+                <button class="btn btn-secondary" onclick="loadSampleData()" style="margin-top:8px;">📋 Load Sample Data</button>
+            </div>
+        `;
     } finally {
         showLoading(false);
     }
 }
 
 // ============================================
+// SAMPLE DATA (for testing)
+// ============================================
+function loadSampleData() {
+    state.bills = [
+        { id: 1, Vendor: 'Sample Vendor A', Amount: '1250.50', Date: new Date().toISOString(), 'Bill No': 'INV-001', Location: 'Male', TIN: '123456789' },
+        { id: 2, Vendor: 'Sample Vendor B', Amount: '850.00', Date: new Date(Date.now() - 86400000).toISOString(), 'Bill No': 'INV-002', Location: 'Hulhumale', TIN: '987654321' },
+        { id: 3, Vendor: 'Sample Vendor C', Amount: '2300.75', Date: new Date(Date.now() - 172800000).toISOString(), 'Bill No': 'INV-003', Location: 'Addu', TIN: '456789123' }
+    ];
+    state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+    state.loaded = true;
+    applyFilters();
+    render();
+    showMsg(`📋 Loaded ${state.bills.length} sample bills (API offline)`, 'info', 4000);
+}
+
+// ============================================
 // FILTERS
 // ============================================
 function applyFilters() {
+    if (!state.bills.length) {
+        state.filtered = [];
+        return;
+    }
+    
     let filtered = [...state.bills];
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -133,9 +176,12 @@ function applyFilters() {
 
 function setFilter(type) {
     state.filter = type;
-    state.search = '';
-    const input = document.getElementById('searchInput');
-    if (input) input.value = '';
+    applyFilters();
+    render();
+}
+
+function handleSearch(value) {
+    state.search = value;
     applyFilters();
     render();
 }
@@ -144,11 +190,11 @@ function setFilter(type) {
 // RENDER
 // ============================================
 function render() {
-    const bills = state.filtered;
+    const bills = state.filtered || [];
     const total = bills.length;
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
-    const grandTotal = state.totalAmount;
+    const grandTotal = state.totalAmount || 0;
     
     // Stats
     DOM.stats.innerHTML = `
@@ -171,11 +217,22 @@ function render() {
             <div class="filter-info">${total} bills</div>
         </div>
         <div style="margin-top:8px;">
-            <input id="searchInput" class="search-input" placeholder="🔍 Search..." oninput="handleSearch(this.value)">
+            <input id="searchInput" class="search-input" placeholder="🔍 Search..." oninput="handleSearch(this.value)" value="${state.search}">
         </div>
     `;
     
     // Content
+    if (!state.loaded) {
+        DOM.content.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">⏳</div>
+                <h3>Loading...</h3>
+                <p>Fetching your bills</p>
+            </div>
+        `;
+        return;
+    }
+    
     if (bills.length === 0) {
         DOM.content.innerHTML = `
             <div class="empty">
@@ -183,6 +240,7 @@ function render() {
                 <h3>No Bills</h3>
                 <p>${state.bills.length > 0 ? 'Try different filters' : 'Add your first bill'}</p>
                 ${state.bills.length > 0 ? `<button class="btn btn-secondary" onclick="setFilter('all')">Show All</button>` : ''}
+                ${state.bills.length === 0 ? `<button class="btn btn-primary" onclick="openCreate()">➕ Add Bill</button>` : ''}
             </div>
         `;
         return;
@@ -196,6 +254,7 @@ function render() {
                 <div class="table-actions">
                     <button class="btn btn-primary" onclick="openCreate()">➕ Add</button>
                     <button class="btn btn-secondary" onclick="exportCSV()">📥 CSV</button>
+                    <button class="btn btn-secondary" onclick="fetchBills()">🔄</button>
                 </div>
             </div>
     `;
@@ -287,12 +346,6 @@ function sort(field) {
         state.sortField = field;
         state.sortDir = 'desc';
     }
-    applyFilters();
-    render();
-}
-
-function handleSearch(value) {
-    state.search = value;
     applyFilters();
     render();
 }
@@ -404,7 +457,7 @@ async function handleCreate(e) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const bill = await res.json();
         state.bills.unshift(bill);
-        state.totalAmount += parseFloat(bill.Amount || 0);
+        state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
         applyFilters();
         render();
         closeModal();
@@ -490,7 +543,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ============================================
-// RESIZE HANDLER
+// RESIZE
 // ============================================
 let resizeTimer;
 window.addEventListener('resize', () => {
@@ -502,4 +555,9 @@ window.addEventListener('resize', () => {
 // START
 // ============================================
 console.log('🚀 Bill Manager Started');
-document.addEventListener('DOMContentLoaded', fetchBills);
+console.log('📋 Config:', BASEROW_CONFIG);
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM ready, fetching bills...');
+    fetchBills();
+});
