@@ -1,5 +1,5 @@
 // ============================================
-// APP - LATEST BILLS FIRST (NO EXPORT)
+// APP - WITH MODERN DATE RANGE FILTER
 // ============================================
 
 // ============================================
@@ -12,6 +12,11 @@ const state = {
     loaded: false,
     search: '',
     filter: 'all',
+    dateRange: {
+        type: 'all', // 'all' | 'today' | 'yesterday' | 'week' | 'month' | 'custom'
+        from: null,
+        to: null
+    },
     loading: false,
     totalCount: 0,
     loadedCount: 0,
@@ -31,7 +36,11 @@ const DOM = {
     loadingText: $('loadingText'),
     filter: $('filterContainer'),
     message: $('message'),
-    searchInput: $('searchInput')
+    searchInput: $('searchInput'),
+    dateRangePanel: $('dateRangePanel'),
+    dateRangeLabel: $('dateRangeLabel'),
+    dateFrom: $('dateFrom'),
+    dateTo: $('dateTo')
 };
 
 // ============================================
@@ -74,6 +83,177 @@ function getHeaders() {
 }
 
 // ============================================
+// DATE HELPERS
+// ============================================
+function normalizeToUTCKey(dateInput) {
+    if (!dateInput) return null;
+    const d = new Date(dateInput);
+    if (isNaN(d.getTime())) return null;
+    const year = d.getUTCFullYear();
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getTodayUTC() {
+    return normalizeToUTCKey(new Date());
+}
+
+function getDateRangeKeys(type) {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let from = null;
+    let to = null;
+    let label = '';
+
+    switch (type) {
+        case 'all':
+            label = 'All Time';
+            break;
+        case 'today':
+            from = today;
+            to = today;
+            label = 'Today';
+            break;
+        case 'yesterday':
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            from = yesterday;
+            to = yesterday;
+            label = 'Yesterday';
+            break;
+        case 'week':
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            from = weekStart;
+            to = today;
+            label = 'This Week';
+            break;
+        case 'month':
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            from = monthStart;
+            to = today;
+            label = 'This Month';
+            break;
+        case 'custom':
+            if (state.dateRange.from) from = new Date(state.dateRange.from);
+            if (state.dateRange.to) to = new Date(state.dateRange.to);
+            label = 'Custom';
+            break;
+        default:
+            break;
+    }
+
+    return {
+        fromKey: from ? normalizeToUTCKey(from) : null,
+        toKey: to ? normalizeToUTCKey(to) : null,
+        label: label
+    };
+}
+
+// ============================================
+// DATE RANGE FILTER
+// ============================================
+function filterByDateRange(bills) {
+    if (state.dateRange.type === 'all' || !bills || !bills.length) return bills;
+
+    const range = getDateRangeKeys(state.dateRange.type);
+    const { fromKey, toKey } = range;
+
+    if (!fromKey && !toKey) return bills;
+
+    return bills.filter(b => {
+        const dateKey = b._dateKey;
+        if (!dateKey) return false;
+        
+        if (fromKey && toKey) {
+            return dateKey >= fromKey && dateKey <= toKey;
+        } else if (fromKey) {
+            return dateKey >= fromKey;
+        } else if (toKey) {
+            return dateKey <= toKey;
+        }
+        return true;
+    });
+}
+
+// ============================================
+// DATE RANGE UI FUNCTIONS
+// ============================================
+function toggleDateRange() {
+    const panel = DOM.dateRangePanel;
+    const toggle = document.querySelector('.date-range-toggle');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        toggle.classList.add('active');
+    } else {
+        panel.style.display = 'none';
+        toggle.classList.remove('active');
+    }
+}
+
+function setDateRange(type) {
+    // Update state
+    state.dateRange.type = type;
+    
+    // If custom, show custom inputs
+    if (type === 'custom') {
+        document.getElementById('customDateRange').style.display = 'flex';
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        return;
+    }
+    
+    // Hide custom inputs
+    document.getElementById('customDateRange').style.display = 'none';
+    
+    // Update active preset button
+    document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${type}'`));
+    });
+    
+    // Update label
+    const range = getDateRangeKeys(type);
+    DOM.dateRangeLabel.textContent = range.label;
+    
+    // Close panel on mobile
+    if (window.innerWidth < 480) {
+        toggleDateRange();
+    }
+    
+    // Apply filter
+    applyFilters();
+    render();
+}
+
+function applyCustomDateRange() {
+    const from = DOM.dateFrom.value;
+    const to = DOM.dateTo.value;
+    
+    if (!from && !to) {
+        showMsg('Please select at least one date', 'warning');
+        return;
+    }
+    
+    state.dateRange.type = 'custom';
+    state.dateRange.from = from;
+    state.dateRange.to = to;
+    
+    const range = getDateRangeKeys('custom');
+    DOM.dateRangeLabel.textContent = range.label || 'Custom';
+    
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    
+    // Close panel on mobile
+    if (window.innerWidth < 480) {
+        toggleDateRange();
+    }
+    
+    applyFilters();
+    render();
+    showMsg('📅 Date range applied', 'success');
+}
+
+// ============================================
 // CACHE HELPERS
 // ============================================
 function saveToCache(key, data) {
@@ -108,23 +288,6 @@ function loadFromCache(key) {
 }
 
 // ============================================
-// UTC NORMALIZER
-// ============================================
-function normalizeToUTCKey(dateInput) {
-    if (!dateInput) return null;
-    const d = new Date(dateInput);
-    if (isNaN(d.getTime())) return null;
-    const year = d.getUTCFullYear();
-    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(d.getUTCDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-function getTodayUTC() {
-    return normalizeToUTCKey(new Date());
-}
-
-// ============================================
 // FETCH ALL BILLS
 // ============================================
 async function fetchAllBills(forceRefresh = false) {
@@ -139,7 +302,6 @@ async function fetchAllBills(forceRefresh = false) {
             state.loaded = true;
             state.usingCache = true;
             
-            // Sort by ID descending (latest first)
             state.bills.sort((a, b) => b.id - a.id);
             
             state.filtered = [...state.bills];
@@ -224,7 +386,6 @@ async function fetchAllBills(forceRefresh = false) {
             showLoading(true, 'Loading bills... ' + progress + '% (' + allBills.length + ' loaded)');
         }
 
-        // Sort by ID descending (latest first)
         allBills.sort((a, b) => b.id - a.id);
         
         state.bills = allBills;
@@ -260,36 +421,6 @@ async function fetchAllBills(forceRefresh = false) {
 }
 
 // ============================================
-// DATE FILTER
-// ============================================
-function filterByDate(bills, type) {
-    if (type === 'all' || !bills || !bills.length) return bills;
-
-    const today = getTodayUTC();
-
-    if (type === 'today') {
-        return bills.filter(b => b._dateKey === today);
-    }
-
-    if (type === 'week') {
-        const now = new Date();
-        const start = new Date(now);
-        start.setUTCDate(now.getUTCDate() - now.getUTCDay());
-        const startKey = normalizeToUTCKey(start);
-        return bills.filter(b => b._dateKey >= startKey);
-    }
-
-    if (type === 'month') {
-        const now = new Date();
-        const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-        const startKey = normalizeToUTCKey(start);
-        return bills.filter(b => b._dateKey >= startKey);
-    }
-
-    return bills;
-}
-
-// ============================================
 // APPLY FILTERS
 // ============================================
 function applyFilters() {
@@ -299,8 +430,11 @@ function applyFilters() {
     }
 
     let filtered = [...state.bills];
-    filtered = filterByDate(filtered, state.filter);
+    
+    // Apply date range filter
+    filtered = filterByDateRange(filtered);
 
+    // Apply search filter
     if (state.search && state.search.trim()) {
         const s = state.search.toLowerCase().trim();
         filtered = filtered.filter(b =>
@@ -363,7 +497,7 @@ function render() {
         </div>
     `;
 
-    // Filters
+    // Quick filters (legacy)
     DOM.filter.innerHTML = `
         <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">📋 All</button>
         <button class="filter-btn ${state.filter === 'today' ? 'active' : ''}" onclick="setFilter('today')">📅 Today</button>
@@ -407,7 +541,6 @@ function render() {
             </div>
     `;
 
-    // Desktop Table
     if (!isMobile) {
         html += `
             <table class="data-table">
@@ -455,7 +588,6 @@ function render() {
         `;
     }
 
-    // Mobile Cards
     if (isMobile) {
         html += `<div class="card-list">`;
         bills.slice(0, 100).forEach(b => {
@@ -504,6 +636,10 @@ function render() {
 // ============================================
 function setFilter(type) {
     state.filter = type;
+    // Also update date range
+    state.dateRange.type = type;
+    const range = getDateRangeKeys(type);
+    if (DOM.dateRangeLabel) DOM.dateRangeLabel.textContent = range.label;
     applyFilters();
     render();
 }
@@ -516,8 +652,18 @@ function handleSearch(value) {
 
 function resetFilters() {
     state.filter = 'all';
+    state.dateRange.type = 'all';
+    state.dateRange.from = null;
+    state.dateRange.to = null;
     state.search = '';
     if (DOM.searchInput) DOM.searchInput.value = '';
+    if (DOM.dateRangeLabel) DOM.dateRangeLabel.textContent = 'All Time';
+    if (DOM.dateFrom) DOM.dateFrom.value = '';
+    if (DOM.dateTo) DOM.dateTo.value = '';
+    document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('onclick')?.includes("'all'"));
+    });
+    document.getElementById('customDateRange').style.display = 'none';
     applyFilters();
     render();
 }
@@ -718,8 +864,10 @@ async function handleCreate(e) {
         state.bills.unshift(bill);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
         state.filter = 'all';
+        state.dateRange.type = 'all';
         state.search = '';
         if (DOM.searchInput) DOM.searchInput.value = '';
+        if (DOM.dateRangeLabel) DOM.dateRangeLabel.textContent = 'All Time';
         applyFilters();
         render();
         closeModal();
@@ -777,7 +925,11 @@ DOM.modal.addEventListener('click', function(e) {
 // KEYBOARD SHORTCUTS
 // ============================================
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+        closeModal();
+        DOM.dateRangePanel.style.display = 'none';
+        document.querySelector('.date-range-toggle')?.classList.remove('active');
+    }
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         DOM.searchInput?.focus();
@@ -809,3 +961,6 @@ window.deleteBill = deleteBill;
 window.openEdit = openEdit;
 window.sort = sort;
 window.render = render;
+window.toggleDateRange = toggleDateRange;
+window.setDateRange = setDateRange;
+window.applyCustomDateRange = applyCustomDateRange;
