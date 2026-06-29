@@ -6,5 +6,3 @@ window.CONFIG = {
     TABLE_ID: '778899',
     BASE_URL: 'https://api.baserow.io'
 };
-
-console.log('✅ Config loaded');

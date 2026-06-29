@@ -2,55 +2,37 @@
    CSS VARIABLES - CLEAN LIGHT THEME
    ============================================ */
 :root {
-    /* Backgrounds */
     --bg-primary: #f1f5f9;
     --bg-secondary: #ffffff;
     --bg-card: #ffffff;
     --bg-card-hover: #f8fafc;
     --bg-input: #f1f5f9;
     --bg-hover: #f1f5f9;
-    
-    /* Borders */
     --border: #e2e8f0;
     --border-light: #cbd5e1;
-    
-    /* Text */
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #94a3b8;
-    
-    /* Accent Colors */
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-light: #dbeafe;
-    --accent-glow: rgba(37, 99, 235, 0.1);
-    
-    /* Status Colors */
+    --accent: #c8a47e;
+    --accent-hover: #b8946e;
+    --accent-light: #f0e6d8;
+    --accent-glow: rgba(200, 164, 126, 0.1);
     --success: #16a34a;
     --success-bg: #dcfce7;
     --danger: #dc2626;
     --danger-bg: #fee2e2;
     --warning: #f59e0b;
     --warning-bg: #fef3c7;
-    
-    /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
-    --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.1);
-    
-    /* Radius */
+    --shadow-glow: 0 0 30px rgba(200, 164, 126, 0.15);
     --radius: 12px;
     --radius-sm: 8px;
     --radius-lg: 16px;
-    
-    /* Transitions */
     --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ============================================
-   RESET & BASE
-   ============================================ */
 * {
     margin: 0;
     padding: 0;
@@ -74,9 +56,6 @@ body {
     padding-bottom: 100px;
 }
 
-/* ============================================
-   SCROLLBAR
-   ============================================ */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -92,9 +71,6 @@ body {
     background: var(--border-light);
 }
 
-/* ============================================
-   APP CONTAINER
-   ============================================ */
 .app-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -142,16 +118,12 @@ body {
     color: var(--text-primary);
 }
 
-.badge-pro {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: var(--accent);
-    color: #fff;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-left: 4px;
+.restaurant-name {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
+    margin-top: -2px;
 }
 
 .header-right {
@@ -164,12 +136,12 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--accent-light);
-    color: var(--accent);
+    background: var(--accent);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     border: 2px solid var(--border);
 }
@@ -235,7 +207,6 @@ body {
 }
 
 .stat-icon.blue { background: var(--accent-light); }
-.stat-icon.green { background: var(--success-bg); }
 .stat-icon.yellow { background: var(--warning-bg); }
 .stat-icon.purple { background: #ede9fe; }
 
@@ -262,9 +233,8 @@ body {
     letter-spacing: 0.3px;
 }
 
-.stat-value.accent { color: var(--accent); }
 .stat-value.success { color: var(--success); }
-.stat-value.warning { color: var(--warning); }
+.stat-value.accent { color: var(--accent); }
 
 .stat-badge {
     font-size: 10px;
@@ -338,7 +308,7 @@ body {
 }
 
 /* ============================================
-   DATE RANGE FILTER - MODERN
+   DATE RANGE FILTER
    ============================================ */
 .date-range-container {
     position: relative;
@@ -486,53 +456,6 @@ body {
     flex-shrink: 0;
 }
 
-.filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-}
-
-.filter-btn {
-    padding: 5px 14px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: inherit;
-}
-
-.filter-btn:hover {
-    border-color: var(--border-light);
-    color: var(--text-primary);
-    background: var(--bg-hover);
-}
-
-.filter-btn:active {
-    transform: scale(0.95);
-}
-
-.filter-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-}
-
-.filter-btn.active:hover {
-    background: var(--accent-hover);
-}
-
-.filter-count {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-left: auto;
-    white-space: nowrap;
-}
-
 /* ============================================
    MESSAGES
    ============================================ */
@@ -594,7 +517,6 @@ body {
     overflow: hidden;
 }
 
-/* Loading State */
 .loading-state {
     display: flex;
     flex-direction: column;
@@ -623,7 +545,7 @@ body {
 }
 
 /* ============================================
-   TABLE (Desktop)
+   TABLE
    ============================================ */
 .table-wrapper {
     overflow-x: auto;
@@ -910,7 +832,7 @@ body {
 }
 
 /* ============================================
-   FAB (Floating Action Button)
+   FAB
    ============================================ */
 .fab {
     position: fixed;
@@ -1153,38 +1075,30 @@ body {
 /* ============================================
    RESPONSIVE
    ============================================ */
-
-/* Tablets & Small Desktops */
 @media (min-width: 640px) {
     body { padding: 16px; padding-bottom: 80px; }
     .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .stat-value { font-size: 22px; }
 }
 
-/* Desktop */
 @media (min-width: 1024px) {
     body { padding: 24px; }
-    .stats-grid { grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .stat-card { padding: 16px 20px; }
     .stat-value { font-size: 24px; }
     .app-header { padding: 16px 24px; }
     .search-filter-bar { padding: 16px 20px; }
     .fab { display: none; }
-    
     .data-table { display: table; }
     .card-list { display: none !important; }
 }
 
-/* Mobile */
 @media (max-width: 1023px) {
     .data-table { display: none; }
     .card-list { display: flex; }
-    
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .stat-value { font-size: 17px; }
-    
     .search-kbd { display: none; }
-    
     .modal {
         margin: 0;
         border-radius: var(--radius) var(--radius) 0 0;
@@ -1197,13 +1111,10 @@ body {
     .modal-header {
         border-radius: var(--radius) var(--radius) 0 0;
     }
-    
     .detail-grid {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
     }
-    
-    /* Date range mobile */
     .date-range-panel {
         position: fixed;
         top: auto;
@@ -1216,39 +1127,21 @@ body {
         padding: 20px;
         animation: slideUp 0.3s ease-out;
     }
-    
     @keyframes slideUp {
         from { transform: translateY(100%); }
         to { transform: translateY(0); }
     }
-    
-    .date-range-presets {
-        gap: 8px;
-    }
-    
-    .preset-btn {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-    
+    .date-range-presets { gap: 8px; }
+    .preset-btn { padding: 8px 16px; font-size: 13px; }
     .custom-date-range {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
     }
-    
-    .date-input-group {
-        min-width: 100%;
-    }
-    
-    .custom-date-range .btn-sm {
-        width: 100%;
-        justify-content: center;
-        padding: 10px;
-    }
+    .date-input-group { min-width: 100%; }
+    .custom-date-range .btn-sm { width: 100%; justify-content: center; padding: 10px; }
 }
 
-/* Small phones */
 @media (max-width: 480px) {
     body { padding: 8px; padding-bottom: 80px; }
     .stats-grid { gap: 6px; }
@@ -1256,26 +1149,19 @@ body {
     .stat-icon { width: 32px; height: 32px; font-size: 14px; }
     .stat-value { font-size: 15px; }
     .stat-label { font-size: 9px; }
-    
     .app-header { padding: 10px 14px; }
     .header-left h1 { font-size: 15px; }
     .logo-icon { width: 32px; height: 32px; font-size: 16px; }
     .user-avatar { width: 28px; height: 28px; font-size: 10px; }
-    
     .search-filter-bar { padding: 10px 12px; }
     .search-input { font-size: 13px; padding: 8px 12px 8px 34px; }
-    
-    .filter-btn { font-size: 11px; padding: 4px 10px; }
-    
     .bill-card { padding: 12px; }
     .card-amount { font-size: 16px; }
     .card-vendor { font-size: 14px; }
-    
     .modal-body { padding: 16px; }
     .detail-grid { grid-template-columns: 1fr; }
     .detail-item { padding: 10px 12px; }
     .detail-item .value { font-size: 14px; }
-    
     .fab {
         width: 48px;
         height: 48px;
@@ -1283,14 +1169,6 @@ body {
         right: 16px;
     }
     .fab svg { width: 20px; height: 20px; }
-    
-    /* Date range mobile small */
-    .date-range-panel {
-        padding: 16px;
-    }
-    
-    .preset-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
+    .date-range-panel { padding: 16px; }
+    .preset-btn { padding: 6px 12px; font-size: 12px; }
 }

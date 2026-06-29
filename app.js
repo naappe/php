@@ -1,5 +1,5 @@
 // ============================================
-// APP - WITH MODERN DATE RANGE FILTER
+// APP - PRODUCTION READY
 // ============================================
 
 // ============================================
@@ -11,9 +11,8 @@ const state = {
     totalAmount: 0,
     loaded: false,
     search: '',
-    filter: 'all',
     dateRange: {
-        type: 'all', // 'all' | 'today' | 'yesterday' | 'week' | 'month' | 'custom'
+        type: 'all',
         from: null,
         to: null
     },
@@ -34,7 +33,6 @@ const DOM = {
     modalContent: $('modalContent'),
     loading: $('loadingOverlay'),
     loadingText: $('loadingText'),
-    filter: $('filterContainer'),
     message: $('message'),
     searchInput: $('searchInput'),
     dateRangePanel: $('dateRangePanel'),
@@ -193,34 +191,27 @@ function toggleDateRange() {
 }
 
 function setDateRange(type) {
-    // Update state
     state.dateRange.type = type;
     
-    // If custom, show custom inputs
     if (type === 'custom') {
         document.getElementById('customDateRange').style.display = 'flex';
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         return;
     }
     
-    // Hide custom inputs
     document.getElementById('customDateRange').style.display = 'none';
     
-    // Update active preset button
     document.querySelectorAll('.preset-btn').forEach(b => {
         b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${type}'`));
     });
     
-    // Update label
     const range = getDateRangeKeys(type);
     DOM.dateRangeLabel.textContent = range.label;
     
-    // Close panel on mobile
     if (window.innerWidth < 480) {
         toggleDateRange();
     }
     
-    // Apply filter
     applyFilters();
     render();
 }
@@ -243,7 +234,6 @@ function applyCustomDateRange() {
     
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
     
-    // Close panel on mobile
     if (window.innerWidth < 480) {
         toggleDateRange();
     }
@@ -277,10 +267,8 @@ function loadFromCache(key) {
         const data = JSON.parse(raw);
         const age = Date.now() - data.timestamp;
         if (age > 5 * 60 * 1000) {
-            console.log('📦 Cache expired');
             return null;
         }
-        console.log('📦 Cache hit! Age:', Math.round(age / 1000), 'seconds');
         return data;
     } catch (e) {
         return null;
@@ -303,16 +291,13 @@ async function fetchAllBills(forceRefresh = false) {
             state.usingCache = true;
             
             state.bills.sort((a, b) => b.id - a.id);
-            
             state.filtered = [...state.bills];
-            state.filter = 'all';
             state.search = '';
             
             render();
             showMsg('📦 Loaded ' + state.bills.length + ' bills from cache', 'info', 2000);
             
             setTimeout(() => {
-                console.log('🔄 Refreshing in background...');
                 fetchAllBills(true);
             }, 3000);
             
@@ -337,8 +322,6 @@ async function fetchAllBills(forceRefresh = false) {
         if (!countRes.ok) throw new Error('HTTP ' + countRes.status);
         const countData = await countRes.json();
         state.totalCount = countData.count || 0;
-        
-        console.log('📊 Total bills:', state.totalCount);
 
         if (state.totalCount === 0) {
             state.loaded = true;
@@ -392,9 +375,6 @@ async function fetchAllBills(forceRefresh = false) {
         state.totalAmount = totalAmount;
         state.loaded = true;
 
-        console.log('✅ Loaded:', state.bills.length, 'bills');
-        console.log('💰 Total:', formatMVR(totalAmount));
-
         saveToCache('all_bills', {
             bills: state.bills,
             totalAmount: state.totalAmount,
@@ -402,7 +382,6 @@ async function fetchAllBills(forceRefresh = false) {
         });
 
         state.filtered = [...state.bills];
-        state.filter = 'all';
         state.search = '';
 
         if (DOM.searchInput) DOM.searchInput.value = '';
@@ -412,7 +391,6 @@ async function fetchAllBills(forceRefresh = false) {
         showMsg('✅ Loaded ' + state.bills.length + ' bills | Total: ' + formatMVR(state.totalAmount), 'success', 4000);
 
     } catch (error) {
-        console.error('❌ Error:', error);
         showMsg('❌ Error: ' + error.message, 'error');
         state.loaded = false;
         render();
@@ -430,11 +408,8 @@ function applyFilters() {
     }
 
     let filtered = [...state.bills];
-    
-    // Apply date range filter
     filtered = filterByDateRange(filtered);
 
-    // Apply search filter
     if (state.search && state.search.trim()) {
         const s = state.search.toLowerCase().trim();
         filtered = filtered.filter(b =>
@@ -457,7 +432,15 @@ function render() {
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
 
-    // Stats
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthBills = state.bills.filter(b => {
+        if (!b.Date) return false;
+        const billDate = new Date(b.Date);
+        return billDate >= monthStart;
+    });
+    const monthTotal = monthBills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+
     DOM.stats.innerHTML = `
         <div class="stat-card">
             <div class="stat-icon blue">📄</div>
@@ -468,13 +451,6 @@ function render() {
             ${state.usingCache ? '<span class="stat-badge">💾 Cached</span>' : ''}
         </div>
         <div class="stat-card">
-            <div class="stat-icon green">💰</div>
-            <div class="stat-info">
-                <div class="stat-value accent">${formatMVR(amount)}</div>
-                <div class="stat-label">Filtered Amount</div>
-            </div>
-        </div>
-        <div class="stat-card">
             <div class="stat-icon yellow">📊</div>
             <div class="stat-info">
                 <div class="stat-value">${formatMVR(avg)}</div>
@@ -482,31 +458,14 @@ function render() {
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon purple">🏦</div>
+            <div class="stat-icon purple">📅</div>
             <div class="stat-info">
-                <div class="stat-value success">${formatMVR(state.totalAmount)}</div>
-                <div class="stat-label">Grand Total</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon blue">📦</div>
-            <div class="stat-info">
-                <div class="stat-value">${state.bills.length}</div>
-                <div class="stat-label">Total Bills</div>
+                <div class="stat-value success">${formatMVR(monthTotal)}</div>
+                <div class="stat-label">This Month</div>
             </div>
         </div>
     `;
 
-    // Quick filters (legacy)
-    DOM.filter.innerHTML = `
-        <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">📋 All</button>
-        <button class="filter-btn ${state.filter === 'today' ? 'active' : ''}" onclick="setFilter('today')">📅 Today</button>
-        <button class="filter-btn ${state.filter === 'week' ? 'active' : ''}" onclick="setFilter('week')">📆 Week</button>
-        <button class="filter-btn ${state.filter === 'month' ? 'active' : ''}" onclick="setFilter('month')">🗓️ Month</button>
-        <span class="filter-count">${total} bills</span>
-    `;
-
-    // Content
     if (!state.loaded) {
         DOM.content.innerHTML = `
             <div class="loading-state">
@@ -634,24 +593,17 @@ function render() {
 // ============================================
 // ACTIONS
 // ============================================
-function setFilter(type) {
-    state.filter = type;
-    // Also update date range
-    state.dateRange.type = type;
-    const range = getDateRangeKeys(type);
-    if (DOM.dateRangeLabel) DOM.dateRangeLabel.textContent = range.label;
-    applyFilters();
-    render();
-}
-
+let searchTimeout;
 function handleSearch(value) {
-    state.search = value;
-    applyFilters();
-    render();
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        state.search = value;
+        applyFilters();
+        render();
+    }, 300);
 }
 
 function resetFilters() {
-    state.filter = 'all';
     state.dateRange.type = 'all';
     state.dateRange.from = null;
     state.dateRange.to = null;
@@ -666,6 +618,7 @@ function resetFilters() {
     document.getElementById('customDateRange').style.display = 'none';
     applyFilters();
     render();
+    showMsg('🔄 Filters reset', 'info');
 }
 
 let sortField = 'Date';
@@ -863,7 +816,6 @@ async function handleCreate(e) {
         bill._dateKey = normalizeToUTCKey(bill.Date);
         state.bills.unshift(bill);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
-        state.filter = 'all';
         state.dateRange.type = 'all';
         state.search = '';
         if (DOM.searchInput) DOM.searchInput.value = '';
@@ -922,6 +874,18 @@ DOM.modal.addEventListener('click', function(e) {
 });
 
 // ============================================
+// LOGOUT
+// ============================================
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('whitesaffron_admin');
+        localStorage.removeItem('whitesaffron_user');
+        localStorage.removeItem('whitesaffron_login_time');
+        window.location.href = 'login.html';
+    }
+}
+
+// ============================================
 // KEYBOARD SHORTCUTS
 // ============================================
 document.addEventListener('keydown', function(e) {
@@ -950,11 +914,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// EXPOSE FUNCTIONS GLOBALLY
+// EXPOSE FUNCTIONS
 // ============================================
 window.fetchAllBills = fetchAllBills;
 window.openCreate = openCreate;
-window.setFilter = setFilter;
 window.resetFilters = resetFilters;
 window.viewBill = viewBill;
 window.deleteBill = deleteBill;
@@ -964,3 +927,4 @@ window.render = render;
 window.toggleDateRange = toggleDateRange;
 window.setDateRange = setDateRange;
 window.applyCustomDateRange = applyCustomDateRange;
+window.logout = logout;
