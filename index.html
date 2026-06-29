@@ -2,59 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💰 Bills Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>💰 Bill Manager Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <h1>💰 Bills <span>MVR</span></h1>
-        <div>
-            <button onclick="fetchAllBills()">🔄</button>
-            <button onclick="exportCSV()">📥</button>
+    <!-- App Container -->
+    <div class="app-container">
+
+        <!-- ============================================ -->
+        <!-- HEADER -->
+        <!-- ============================================ -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">💰</div>
+                <div>
+                    <h1>Bill Manager</h1>
+                    <span class="badge badge-pro">PRO</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-ghost" onclick="fetchAllBills(true)" title="Refresh">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </button>
+                <button class="btn btn-ghost" onclick="exportCSV()" title="Export CSV">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+                <div class="user-avatar">JD</div>
+            </div>
+        </header>
+
+        <!-- ============================================ -->
+        <!-- STATS -->
+        <!-- ============================================ -->
+        <div id="stats" class="stats-grid"></div>
+
+        <!-- ============================================ -->
+        <!-- SEARCH & FILTERS -->
+        <!-- ============================================ -->
+        <div class="search-filter-bar">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input id="searchInput" class="search-input" placeholder="Search vendors, bills, locations..." autocomplete="off">
+                <kbd class="search-kbd">⌘K</kbd>
+            </div>
+            <div id="filterContainer" class="filter-container"></div>
         </div>
-    </header>
 
-    <!-- Stats -->
-    <div id="stats" class="stats"></div>
+        <!-- ============================================ -->
+        <!-- MESSAGES -->
+        <!-- ============================================ -->
+        <div id="message" class="message-container"></div>
 
-    <!-- Search -->
-    <div class="search-container">
-        <input id="searchInput" class="search-input" placeholder="🔍 Search bills...">
-    </div>
-
-    <!-- Filters -->
-    <div id="filterContainer" class="filter-container"></div>
-
-    <!-- Messages -->
-    <div id="message"></div>
-
-    <!-- Content -->
-    <div id="content">
-        <div class="empty">
-            <div class="icon">📄</div>
-            <h3>Loading...</h3>
-            <p>Please wait</p>
+        <!-- ============================================ -->
+        <!-- CONTENT -->
+        <!-- ============================================ -->
+        <div id="content" class="content-area">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading your bills...</p>
+            </div>
         </div>
-    </div>
 
-    <!-- FAB -->
-    <button class="fab" onclick="openCreate()">+</button>
+        <!-- ============================================ -->
+        <!-- FAB -->
+        <!-- ============================================ -->
+        <button class="fab" onclick="openCreate()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
 
-    <!-- Modal -->
-    <div id="modal" class="modal-overlay">
-        <div class="modal">
-            <div id="modalContent"></div>
+        <!-- ============================================ -->
+        <!-- MODAL -->
+        <!-- ============================================ -->
+        <div id="modal" class="modal-overlay">
+            <div class="modal">
+                <div id="modalContent"></div>
+            </div>
         </div>
+
+        <!-- ============================================ -->
+        <!-- LOADING OVERLAY -->
+        <!-- ============================================ -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p id="loadingText">Loading...</p>
+        </div>
+
     </div>
 
-    <!-- Loading -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Scripts -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>

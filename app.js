@@ -1,5 +1,5 @@
 // ============================================
-// APP - FAST LOADING WITH CACHE
+// APP - PROFESSIONAL VERSION
 // ============================================
 
 // ============================================
@@ -28,6 +28,7 @@ const DOM = {
     modal: $('modal'),
     modalContent: $('modalContent'),
     loading: $('loadingOverlay'),
+    loadingText: $('loadingText'),
     filter: $('filterContainer'),
     message: $('message'),
     searchInput: $('searchInput')
@@ -41,31 +42,38 @@ function formatMVR(amount) {
     return 'MVR ' + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-function showMsg(text, type = 'info', duration = 3000) {
+function showMsg(text, type = 'info', duration = 3500) {
+    const types = {
+        success: 'success',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+    };
+    
     const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    
     DOM.message.innerHTML = `
-        <div class="notif notif-${type}">
-            <span>${icons[type] || 'ℹ️'}</span>
-            <span>${text}</span>
-            <button onclick="this.parentElement.remove()">×</button>
+        <div class="notification ${types[type] || 'info'}">
+            <span class="notification-icon">${icons[type] || 'ℹ️'}</span>
+            <span class="notification-text">${text}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()">×</button>
         </div>
     `;
-    if (duration) setTimeout(() => { DOM.message.innerHTML = ''; }, duration);
+    
+    if (duration) {
+        setTimeout(() => {
+            if (DOM.message.firstChild) {
+                DOM.message.innerHTML = '';
+            }
+        }, duration);
+    }
 }
 
 function showLoading(show, text = 'Loading...') {
     const overlay = DOM.loading;
     overlay.style.display = show ? 'flex' : 'none';
-    if (show) {
-        const spinner = overlay.querySelector('.spinner');
-        if (spinner) {
-            const label = spinner.nextElementSibling || document.createElement('p');
-            if (!label.tagName) {
-                label.style.cssText = 'color: #6b7280; font-size: 14px; margin-top: 12px;';
-                spinner.parentNode.appendChild(label);
-            }
-            label.textContent = text;
-        }
+    if (DOM.loadingText) {
+        DOM.loadingText.textContent = text;
     }
 }
 
@@ -102,7 +110,7 @@ function loadFromCache(key) {
         const age = Date.now() - data.timestamp;
         // Cache valid for 5 minutes
         if (age > 5 * 60 * 1000) {
-            console.log('📦 Cache expired, reloading...');
+            console.log('📦 Cache expired');
             return null;
         }
         console.log('📦 Cache hit! Age:', Math.round(age / 1000), 'seconds');
@@ -130,12 +138,11 @@ function getTodayUTC() {
 }
 
 // ============================================
-// FETCH ALL BILLS - OPTIMIZED
+// FETCH ALL BILLS
 // ============================================
 async function fetchAllBills(forceRefresh = false) {
     if (state.loading) return;
     
-    // Check cache first (unless forced refresh)
     if (!forceRefresh) {
         const cached = loadFromCache('all_bills');
         if (cached) {
@@ -150,11 +157,10 @@ async function fetchAllBills(forceRefresh = false) {
             state.search = '';
             
             render();
-            showMsg('📦 Loaded ' + state.bills.length + ' bills from cache', 'success', 2000);
+            showMsg('📦 Loaded ' + state.bills.length + ' bills from cache', 'info', 2000);
             
-            // Refresh in background
             setTimeout(() => {
-                console.log('🔄 Refreshing data in background...');
+                console.log('🔄 Refreshing in background...');
                 fetchAllBills(true);
             }, 3000);
             
@@ -162,7 +168,6 @@ async function fetchAllBills(forceRefresh = false) {
         }
     }
     
-    // Load fresh
     state.usingCache = false;
     showLoading(true, 'Loading bills...');
     state.loaded = false;
@@ -171,11 +176,11 @@ async function fetchAllBills(forceRefresh = false) {
     state.loadedCount = 0;
     
     try {
-        const pageSize = 200; // Increased to 200 for faster loading
+        const pageSize = 200;
         let allBills = [];
         let totalAmount = 0;
 
-        // First, get total count
+        // Get total count
         const countUrl = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/?user_field_names=true&size=1';
         const countRes = await fetch(countUrl, { headers: getHeaders() });
         if (!countRes.ok) throw new Error('HTTP ' + countRes.status);
@@ -193,8 +198,6 @@ async function fetchAllBills(forceRefresh = false) {
         }
 
         const totalPages = Math.ceil(state.totalCount / pageSize);
-        
-        // Load pages in parallel batches (3 at a time)
         const batchSize = 3;
         let loadedPages = 0;
         
@@ -207,10 +210,7 @@ async function fetchAllBills(forceRefresh = false) {
                 promises.push(
                     fetch(url, { headers: getHeaders() })
                         .then(res => res.json())
-                        .then(data => ({
-                            page: page,
-                            bills: data.results || []
-                        }))
+                        .then(data => ({ page: page, bills: data.results || [] }))
                         .catch(err => ({ page: page, bills: [], error: err }))
                 );
             }
@@ -231,8 +231,6 @@ async function fetchAllBills(forceRefresh = false) {
             });
             
             state.loadedCount = allBills.length;
-            
-            // Update progress
             const progress = Math.round((loadedPages / totalPages) * 100);
             showLoading(true, 'Loading bills... ' + progress + '% (' + allBills.length + ' loaded)');
         }
@@ -244,7 +242,6 @@ async function fetchAllBills(forceRefresh = false) {
         console.log('✅ Loaded:', state.bills.length, 'bills');
         console.log('💰 Total:', formatMVR(totalAmount));
 
-        // Save to cache
         saveToCache('all_bills', {
             bills: state.bills,
             totalAmount: state.totalAmount,
@@ -274,9 +271,7 @@ async function fetchAllBills(forceRefresh = false) {
 // DATE FILTER
 // ============================================
 function filterByDate(bills, type) {
-    if (type === 'all' || !bills || !bills.length) {
-        return bills;
-    }
+    if (type === 'all' || !bills || !bills.length) return bills;
 
     const today = getTodayUTC();
 
@@ -328,7 +323,7 @@ function applyFilters() {
 }
 
 // ============================================
-// RENDER - OPTIMIZED
+// RENDER - PROFESSIONAL
 // ============================================
 function render() {
     const bills = state.filtered || [];
@@ -336,37 +331,67 @@ function render() {
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
 
-    // Stats
+    // ============================================
+    // STATS
+    // ============================================
     DOM.stats.innerHTML = `
-        <div class="stat"><span class="icon">📄</span><div><div class="value">${total}</div><div class="label">Showing</div></div></div>
-        <div class="stat highlight"><span class="icon">💰</span><div><div class="value">${formatMVR(amount)}</div><div class="label">Amount</div></div></div>
-        <div class="stat"><span class="icon">📊</span><div><div class="value">${formatMVR(avg)}</div><div class="label">Average</div></div></div>
-        <div class="stat info"><span class="icon">🏦</span><div><div class="value">${formatMVR(state.totalAmount)}</div><div class="label">Grand Total</div></div></div>
-        <div class="stat info"><span class="icon">📦</span><div><div class="value">${state.bills.length}</div><div class="label">Total Bills</div></div></div>
-        ${state.usingCache ? `<div class="stat" style="background:#fef3c7;"><span class="icon">💾</span><div><div class="value" style="font-size:12px;">Cached</div><div class="label">Data from cache</div></div></div>` : ''}
-    `;
-
-    // Filters
-    DOM.filter.innerHTML = `
-        <div class="filter-bar">
-            <div class="filter-group">
-                ${['all','today','week','month'].map(f => `
-                    <button class="fb ${state.filter === f ? 'active' : ''}" onclick="setFilter('${f}')">
-                        ${f === 'all' ? '📋 All' : f === 'today' ? '📅 Today' : f === 'week' ? '📆 Week' : '🗓️ Month'}
-                    </button>
-                `).join('')}
+        <div class="stat-card">
+            <div class="stat-icon blue">📄</div>
+            <div class="stat-info">
+                <div class="stat-value">${total}</div>
+                <div class="stat-label">Bills</div>
             </div>
-            <div class="filter-info">${total} bills</div>
+            ${state.usingCache ? '<span class="stat-badge">💾 Cached</span>' : ''}
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">💰</div>
+            <div class="stat-info">
+                <div class="stat-value accent">${formatMVR(amount)}</div>
+                <div class="stat-label">Filtered Amount</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow">📊</div>
+            <div class="stat-info">
+                <div class="stat-value">${formatMVR(avg)}</div>
+                <div class="stat-label">Average Bill</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">🏦</div>
+            <div class="stat-info">
+                <div class="stat-value success">${formatMVR(state.totalAmount)}</div>
+                <div class="stat-label">Grand Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue">📦</div>
+            <div class="stat-info">
+                <div class="stat-value">${state.bills.length}</div>
+                <div class="stat-label">Total Bills</div>
+            </div>
         </div>
     `;
 
-    // Content
+    // ============================================
+    // FILTERS
+    // ============================================
+    DOM.filter.innerHTML = `
+        <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">📋 All</button>
+        <button class="filter-btn ${state.filter === 'today' ? 'active' : ''}" onclick="setFilter('today')">📅 Today</button>
+        <button class="filter-btn ${state.filter === 'week' ? 'active' : ''}" onclick="setFilter('week')">📆 Week</button>
+        <button class="filter-btn ${state.filter === 'month' ? 'active' : ''}" onclick="setFilter('month')">🗓️ Month</button>
+        <span class="filter-count">${total} bills</span>
+    `;
+
+    // ============================================
+    // CONTENT
+    // ============================================
     if (!state.loaded) {
         DOM.content.innerHTML = `
-            <div class="empty">
-                <div class="icon">⏳</div>
-                <h3>Loading...</h3>
-                <p>${state.totalCount > 0 ? 'Loading ' + state.loadedCount + ' of ' + state.totalCount + ' bills...' : 'Fetching your bills'}</p>
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>${state.totalCount > 0 ? 'Loading ' + state.loadedCount + ' of ' + state.totalCount + ' bills...' : 'Fetching your bills...'}</p>
             </div>
         `;
         return;
@@ -374,99 +399,123 @@ function render() {
 
     if (bills.length === 0) {
         DOM.content.innerHTML = `
-            <div class="empty">
+            <div class="empty-state">
                 <div class="icon">📭</div>
                 <h3>No Bills Found</h3>
                 <p>${state.bills.length > 0 ? 'No bills match your filters' : 'No bills in your table'}</p>
-                ${state.bills.length > 0 ? `<button class="btn btn-secondary" onclick="resetFilters()">Show All Bills</button>` : ''}
-                ${state.bills.length === 0 ? `<button class="btn btn-primary" onclick="openCreate()">➕ Add Bill</button>` : ''}
+                ${state.bills.length > 0 ? `<button class="btn btn-primary" onclick="resetFilters()">Show All Bills</button>` : ''}
+                ${state.bills.length === 0 ? `<button class="btn btn-primary" onclick="openCreate()">➕ Add Your First Bill</button>` : ''}
             </div>
         `;
         return;
     }
 
-    const isMobile = window.innerWidth < 768;
+    const isMobile = window.innerWidth < 1024;
 
+    // ============================================
+    // TABLE HEADER
+    // ============================================
     let html = `
-        <div class="table-container">
-            <div class="table-header">
-                <button class="btn btn-primary" onclick="openCreate()">➕ Add</button>
-                <button class="btn btn-secondary" onclick="exportCSV()">📥 CSV</button>
+        <div class="table-wrapper">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                <button class="btn btn-primary" onclick="openCreate()">➕ Add Bill</button>
+                <button class="btn btn-secondary" onclick="exportCSV()">📥 Export CSV</button>
                 <button class="btn btn-secondary" onclick="fetchAllBills(true)">🔄 Refresh</button>
-                <span style="font-size:12px; color:#6b7280; margin-left:auto;">
-                    ${bills.length} of ${state.bills.length} bills
-                </span>
+                <span style="margin-left:auto;font-size:12px;color:var(--text-muted);">${bills.length} of ${state.bills.length} bills</span>
             </div>
     `;
 
-    if (isMobile) {
-        html += '<div class="card-list">';
-        bills.forEach(b => {
-            const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
-            const isToday = b._dateKey === getTodayUTC();
-            html += `
-                <div class="card ${isToday ? 'today' : ''}" onclick="viewBill(${b.id})">
-                    <div class="card-header">
-                        <span class="card-id">#${b.id}</span>
-                        <span class="card-amount">${formatMVR(b.Amount)}</span>
-                    </div>
-                    <div class="card-vendor">${b.Vendor || 'N/A'}</div>
-                    <div class="card-details">
-                        <div><span class="cdl">Date</span><span>${date}</span></div>
-                        <div><span class="cdl">Bill No</span><span>${b['Bill No'] || 'N/A'}</span></div>
-                        <div><span class="cdl">Location</span><span>${b.Location || 'N/A'}</span></div>
-                        <div><span class="cdl">TIN</span><span>${b.TIN || 'N/A'}</span></div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-secondary" onclick="event.stopPropagation(); viewBill(${b.id})">👁️</button>
-                        <button class="btn btn-secondary" onclick="event.stopPropagation(); openEdit(${b.id})">✏️</button>
-                        <button class="btn btn-danger" onclick="event.stopPropagation(); deleteBill(${b.id})">🗑️</button>
-                    </div>
-                </div>
-            `;
-        });
-        html += '</div>';
-    } else {
+    // ============================================
+    // TABLE (Desktop)
+    // ============================================
+    if (!isMobile) {
         html += `
-            <div class="table-wrap">
-                <table class="table">
-                    <thead><tr>
+            <table class="data-table">
+                <thead>
+                    <tr>
                         <th onclick="sort('id')">ID</th>
                         <th onclick="sort('Vendor')">Vendor</th>
                         <th onclick="sort('Amount')">Amount</th>
                         <th onclick="sort('Date')">Date</th>
                         <th>Bill No</th>
                         <th>Location</th>
-                        <th>TIN</th>
-                        <th>Actions</th>
-                    </tr></thead>
-                    <tbody>
+                        <th style="text-align:center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
-        bills.forEach(b => {
+        
+        bills.slice(0, 500).forEach(b => {
             const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
+            const isToday = b._dateKey === getTodayUTC();
             html += `
-                <tr onclick="viewBill(${b.id})">
-                    <td><span class="bid">#${b.id}</span></td>
-                    <td><strong>${b.Vendor || 'N/A'}</strong></td>
-                    <td class="amt">${formatMVR(b.Amount)}</td>
+                <tr class="${isToday ? 'row-today' : ''}" onclick="viewBill(${b.id})">
+                    <td><span class="bill-id">#${b.id}</span></td>
+                    <td><span class="bill-vendor">${b.Vendor || 'N/A'}</span></td>
+                    <td><span class="bill-amount">${formatMVR(b.Amount)}</span></td>
                     <td>${date}</td>
                     <td>${b['Bill No'] || 'N/A'}</td>
                     <td>${b.Location || 'N/A'}</td>
-                    <td>${b.TIN || 'N/A'}</td>
-                    <td>
-                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewBill(${b.id})">👁️</button>
-                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openEdit(${b.id})">✏️</button>
-                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteBill(${b.id})">🗑️</button>
+                    <td style="text-align:center;">
+                        <button class="btn-ghost-sm" onclick="event.stopPropagation(); viewBill(${b.id})" title="View">👁️</button>
+                        <button class="btn-ghost-sm" onclick="event.stopPropagation(); openEdit(${b.id})" title="Edit">✏️</button>
+                        <button class="btn-ghost-sm danger" onclick="event.stopPropagation(); deleteBill(${b.id})" title="Delete">🗑️</button>
                     </td>
                 </tr>
             `;
         });
-        html += '</tbody></table></div>';
+        
+        if (bills.length > 500) {
+            html += `<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;">Showing first 500 of ${bills.length} bills</td></tr>`;
+        }
+        
+        html += `
+                </tbody>
+            </table>
+        `;
     }
 
+    // ============================================
+    // CARDS (Mobile)
+    // ============================================
+    if (isMobile) {
+        html += `<div class="card-list">`;
+        bills.slice(0, 100).forEach(b => {
+            const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
+            const isToday = b._dateKey === getTodayUTC();
+            html += `
+                <div class="bill-card ${isToday ? 'today' : ''}" onclick="viewBill(${b.id})">
+                    <div class="card-header">
+                        <span class="card-id">#${b.id}</span>
+                        <span class="card-amount">${formatMVR(b.Amount)}</span>
+                    </div>
+                    <div class="card-vendor">${b.Vendor || 'N/A'}</div>
+                    <div class="card-details">
+                        <div><span class="card-label">Date</span><span class="card-value">${date}</span></div>
+                        <div><span class="card-label">Bill No</span><span class="card-value">${b['Bill No'] || 'N/A'}</span></div>
+                        <div><span class="card-label">Location</span><span class="card-value">${b.Location || 'N/A'}</span></div>
+                        <div><span class="card-label">TIN</span><span class="card-value">${b.TIN || 'N/A'}</span></div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewBill(${b.id})">👁️ View</button>
+                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openEdit(${b.id})">✏️ Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteBill(${b.id})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+        if (bills.length > 100) {
+            html += `<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:13px;">Showing first 100 of ${bills.length} bills</div>`;
+        }
+        html += `</div>`;
+    }
+
+    // ============================================
+    // TABLE FOOTER
+    // ============================================
     html += `
             <div class="table-footer">
-                <span>${bills.length} of ${state.bills.length} bills</span>
+                <span>Showing ${Math.min(bills.length, isMobile ? 100 : 500)} of ${bills.length} bills</span>
                 <span>Total: ${formatMVR(state.totalAmount)}</span>
             </div>
         </div>
@@ -529,23 +578,42 @@ function viewBill(id) {
     const bill = state.bills.find(b => b.id === id);
     if (!bill) return;
     const date = bill.Date ? new Date(bill.Date).toLocaleString() : 'N/A';
+    
     DOM.content.innerHTML = `
-        <div class="detail">
+        <div class="detail-view">
             <div class="detail-header">
                 <h2>📄 Bill #${bill.id}</h2>
                 <div class="detail-actions">
-                    <button class="btn btn-secondary" onclick="openEdit(${bill.id})">✏️</button>
-                    <button class="btn btn-danger" onclick="deleteBill(${bill.id})">🗑️</button>
-                    <button class="btn btn-secondary" onclick="render()">← Back</button>
+                    <button class="btn btn-secondary btn-sm" onclick="openEdit(${bill.id})">✏️ Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteBill(${bill.id})">🗑️ Delete</button>
+                    <button class="btn btn-secondary btn-sm" onclick="render()">← Back</button>
                 </div>
             </div>
             <div class="detail-grid">
-                <div class="detail-item"><label>Vendor</label><div>${bill.Vendor || 'N/A'}</div></div>
-                <div class="detail-item"><label>Amount</label><div class="amt">${formatMVR(bill.Amount)}</div></div>
-                <div class="detail-item"><label>Date</label><div>${date}</div></div>
-                <div class="detail-item"><label>Bill No</label><div>${bill['Bill No'] || 'N/A'}</div></div>
-                <div class="detail-item"><label>Location</label><div>${bill.Location || 'N/A'}</div></div>
-                <div class="detail-item"><label>TIN</label><div>${bill.TIN || 'N/A'}</div></div>
+                <div class="detail-item">
+                    <label>Vendor</label>
+                    <div class="value">${bill.Vendor || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Amount</label>
+                    <div class="value amount">${formatMVR(bill.Amount)}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Date</label>
+                    <div class="value">${date}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Bill Number</label>
+                    <div class="value">${bill['Bill No'] || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Location</label>
+                    <div class="value">${bill.Location || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>TIN</label>
+                    <div class="value">${bill.TIN || 'N/A'}</div>
+                </div>
             </div>
         </div>
     `;
@@ -581,15 +649,33 @@ function openCreate() {
         </div>
         <div class="modal-body">
             <form id="billForm" onsubmit="handleCreate(event)">
-                <div class="form-group"><label>Vendor *</label><input type="text" name="Vendor" required></div>
-                <div class="form-group"><label>Amount (MVR) *</label><input type="number" name="Amount" step="0.01" required></div>
-                <div class="form-group"><label>Date</label><input type="datetime-local" name="Date" id="dateInput"></div>
-                <div class="form-group"><label>Bill No</label><input type="text" name="Bill No"></div>
-                <div class="form-group"><label>Location</label><input type="text" name="Location"></div>
-                <div class="form-group"><label>TIN</label><input type="text" name="TIN"></div>
+                <div class="form-group">
+                    <label>Vendor *</label>
+                    <input type="text" name="Vendor" required placeholder="Enter vendor name">
+                </div>
+                <div class="form-group">
+                    <label>Amount (MVR) *</label>
+                    <input type="number" name="Amount" step="0.01" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="datetime-local" name="Date" id="dateInput">
+                </div>
+                <div class="form-group">
+                    <label>Bill Number</label>
+                    <input type="text" name="Bill No" placeholder="e.g., INV-2024-001">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="Location" placeholder="Enter location">
+                </div>
+                <div class="form-group">
+                    <label>TIN</label>
+                    <input type="text" name="TIN" placeholder="Enter TIN">
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">✅ Create</button>
+                    <button type="submit" class="btn btn-primary">✅ Create Bill</button>
                 </div>
             </form>
         </div>
@@ -602,22 +688,41 @@ function openEdit(id) {
     const bill = state.bills.find(b => b.id === id);
     if (!bill) return;
     const date = bill.Date ? new Date(bill.Date).toISOString().slice(0, 16) : '';
+    
     openModal(`
         <div class="modal-header">
-            <h2>✏️ Edit #${id}</h2>
+            <h2>✏️ Edit Bill #${id}</h2>
             <button class="modal-close" onclick="closeModal()">×</button>
         </div>
         <div class="modal-body">
             <form id="billForm" onsubmit="handleUpdate(event, ${id})">
-                <div class="form-group"><label>Vendor</label><input type="text" name="Vendor" value="${bill.Vendor || ''}"></div>
-                <div class="form-group"><label>Amount (MVR)</label><input type="number" name="Amount" step="0.01" value="${bill.Amount || ''}"></div>
-                <div class="form-group"><label>Date</label><input type="datetime-local" name="Date" value="${date}"></div>
-                <div class="form-group"><label>Bill No</label><input type="text" name="Bill No" value="${bill['Bill No'] || ''}"></div>
-                <div class="form-group"><label>Location</label><input type="text" name="Location" value="${bill.Location || ''}"></div>
-                <div class="form-group"><label>TIN</label><input type="text" name="TIN" value="${bill.TIN || ''}"></div>
+                <div class="form-group">
+                    <label>Vendor</label>
+                    <input type="text" name="Vendor" value="${bill.Vendor || ''}" placeholder="Enter vendor name">
+                </div>
+                <div class="form-group">
+                    <label>Amount (MVR)</label>
+                    <input type="number" name="Amount" step="0.01" value="${bill.Amount || ''}" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="datetime-local" name="Date" value="${date}">
+                </div>
+                <div class="form-group">
+                    <label>Bill Number</label>
+                    <input type="text" name="Bill No" value="${bill['Bill No'] || ''}" placeholder="e.g., INV-2024-001">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="Location" value="${bill.Location || ''}" placeholder="Enter location">
+                </div>
+                <div class="form-group">
+                    <label>TIN</label>
+                    <input type="text" name="TIN" value="${bill.TIN || ''}" placeholder="Enter TIN">
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">💾 Update</button>
+                    <button type="submit" class="btn btn-primary">💾 Update Bill</button>
                 </div>
             </form>
         </div>
@@ -727,13 +832,15 @@ function exportCSV() {
 // ============================================
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeModal();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        DOM.searchInput?.focus();
+    }
 });
 
 // ============================================
-// START
+// SEARCH INPUT HANDLER
 // ============================================
-console.log('🚀 App Started - Optimized with Cache');
-
 document.addEventListener('DOMContentLoaded', function() {
     DOM.searchInput = document.getElementById('searchInput');
     if (DOM.searchInput) {
@@ -743,3 +850,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     fetchAllBills();
 });
+
+// ============================================
+// EXPOSE FUNCTIONS GLOBALLY
+// ============================================
+window.fetchAllBills = fetchAllBills;
+window.exportCSV = exportCSV;
+window.openCreate = openCreate;
+window.setFilter = setFilter;
+window.resetFilters = resetFilters;
+window.viewBill = viewBill;
+window.deleteBill = deleteBill;
+window.openEdit = openEdit;
+window.sort = sort;
+window.render = render;
