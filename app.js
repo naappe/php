@@ -1,5 +1,5 @@
 // ============================================
-// APP - PROFESSIONAL VERSION
+// APP - LATEST BILLS FIRST (NO EXPORT)
 // ============================================
 
 // ============================================
@@ -43,13 +43,7 @@ function formatMVR(amount) {
 }
 
 function showMsg(text, type = 'info', duration = 3500) {
-    const types = {
-        success: 'success',
-        error: 'error',
-        warning: 'warning',
-        info: 'info'
-    };
-    
+    const types = { success: 'success', error: 'error', warning: 'warning', info: 'info' };
     const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
     
     DOM.message.innerHTML = `
@@ -62,19 +56,14 @@ function showMsg(text, type = 'info', duration = 3500) {
     
     if (duration) {
         setTimeout(() => {
-            if (DOM.message.firstChild) {
-                DOM.message.innerHTML = '';
-            }
+            if (DOM.message.firstChild) DOM.message.innerHTML = '';
         }, duration);
     }
 }
 
 function showLoading(show, text = 'Loading...') {
-    const overlay = DOM.loading;
-    overlay.style.display = show ? 'flex' : 'none';
-    if (DOM.loadingText) {
-        DOM.loadingText.textContent = text;
-    }
+    DOM.loading.style.display = show ? 'flex' : 'none';
+    if (DOM.loadingText) DOM.loadingText.textContent = text;
 }
 
 function getHeaders() {
@@ -93,8 +82,7 @@ function saveToCache(key, data) {
             timestamp: Date.now(),
             bills: data.bills,
             totalAmount: data.totalAmount,
-            totalCount: data.totalCount,
-            billsCount: data.bills.length
+            totalCount: data.totalCount
         };
         localStorage.setItem('bills_cache_' + key, JSON.stringify(cacheData));
     } catch (e) {
@@ -108,7 +96,6 @@ function loadFromCache(key) {
         if (!raw) return null;
         const data = JSON.parse(raw);
         const age = Date.now() - data.timestamp;
-        // Cache valid for 5 minutes
         if (age > 5 * 60 * 1000) {
             console.log('📦 Cache expired');
             return null;
@@ -152,6 +139,9 @@ async function fetchAllBills(forceRefresh = false) {
             state.loaded = true;
             state.usingCache = true;
             
+            // Sort by ID descending (latest first)
+            state.bills.sort((a, b) => b.id - a.id);
+            
             state.filtered = [...state.bills];
             state.filter = 'all';
             state.search = '';
@@ -180,7 +170,6 @@ async function fetchAllBills(forceRefresh = false) {
         let allBills = [];
         let totalAmount = 0;
 
-        // Get total count
         const countUrl = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/?user_field_names=true&size=1';
         const countRes = await fetch(countUrl, { headers: getHeaders() });
         if (!countRes.ok) throw new Error('HTTP ' + countRes.status);
@@ -235,6 +224,9 @@ async function fetchAllBills(forceRefresh = false) {
             showLoading(true, 'Loading bills... ' + progress + '% (' + allBills.length + ' loaded)');
         }
 
+        // Sort by ID descending (latest first)
+        allBills.sort((a, b) => b.id - a.id);
+        
         state.bills = allBills;
         state.totalAmount = totalAmount;
         state.loaded = true;
@@ -323,7 +315,7 @@ function applyFilters() {
 }
 
 // ============================================
-// RENDER - PROFESSIONAL
+// RENDER
 // ============================================
 function render() {
     const bills = state.filtered || [];
@@ -331,9 +323,7 @@ function render() {
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
 
-    // ============================================
-    // STATS
-    // ============================================
+    // Stats
     DOM.stats.innerHTML = `
         <div class="stat-card">
             <div class="stat-icon blue">📄</div>
@@ -373,9 +363,7 @@ function render() {
         </div>
     `;
 
-    // ============================================
-    // FILTERS
-    // ============================================
+    // Filters
     DOM.filter.innerHTML = `
         <button class="filter-btn ${state.filter === 'all' ? 'active' : ''}" onclick="setFilter('all')">📋 All</button>
         <button class="filter-btn ${state.filter === 'today' ? 'active' : ''}" onclick="setFilter('today')">📅 Today</button>
@@ -384,9 +372,7 @@ function render() {
         <span class="filter-count">${total} bills</span>
     `;
 
-    // ============================================
-    // CONTENT
-    // ============================================
+    // Content
     if (!state.loaded) {
         DOM.content.innerHTML = `
             <div class="loading-state">
@@ -412,22 +398,16 @@ function render() {
 
     const isMobile = window.innerWidth < 1024;
 
-    // ============================================
-    // TABLE HEADER
-    // ============================================
     let html = `
         <div class="table-wrapper">
             <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
                 <button class="btn btn-primary" onclick="openCreate()">➕ Add Bill</button>
-                <button class="btn btn-secondary" onclick="exportCSV()">📥 Export CSV</button>
                 <button class="btn btn-secondary" onclick="fetchAllBills(true)">🔄 Refresh</button>
                 <span style="margin-left:auto;font-size:12px;color:var(--text-muted);">${bills.length} of ${state.bills.length} bills</span>
             </div>
     `;
 
-    // ============================================
-    // TABLE (Desktop)
-    // ============================================
+    // Desktop Table
     if (!isMobile) {
         html += `
             <table class="data-table">
@@ -475,9 +455,7 @@ function render() {
         `;
     }
 
-    // ============================================
-    // CARDS (Mobile)
-    // ============================================
+    // Mobile Cards
     if (isMobile) {
         html += `<div class="card-list">`;
         bills.slice(0, 100).forEach(b => {
@@ -510,9 +488,6 @@ function render() {
         html += `</div>`;
     }
 
-    // ============================================
-    // TABLE FOOTER
-    // ============================================
     html += `
             <div class="table-footer">
                 <span>Showing ${Math.min(bills.length, isMobile ? 100 : 500)} of ${bills.length} bills</span>
@@ -799,35 +774,6 @@ DOM.modal.addEventListener('click', function(e) {
 });
 
 // ============================================
-// EXPORT CSV
-// ============================================
-function exportCSV() {
-    const bills = state.filtered;
-    if (!bills || !bills.length) {
-        showMsg('No bills to export', 'warning');
-        return;
-    }
-    const headers = ['ID', 'Vendor', 'Amount (MVR)', 'Date', 'Bill No', 'Location', 'TIN'];
-    const rows = bills.map(b => [
-        b.id,
-        '"' + (b.Vendor || '').replace(/"/g, '""') + '"',
-        b.Amount || 0,
-        b.Date || '',
-        '"' + (b['Bill No'] || '').replace(/"/g, '""') + '"',
-        '"' + (b.Location || '').replace(/"/g, '""') + '"',
-        '"' + (b.TIN || '').replace(/"/g, '""') + '"'
-    ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'bills_' + new Date().toISOString().slice(0, 10) + '.csv';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    showMsg('📥 Exported ' + bills.length + ' bills', 'success');
-}
-
-// ============================================
 // KEYBOARD SHORTCUTS
 // ============================================
 document.addEventListener('keydown', function(e) {
@@ -855,7 +801,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // EXPOSE FUNCTIONS GLOBALLY
 // ============================================
 window.fetchAllBills = fetchAllBills;
-window.exportCSV = exportCSV;
 window.openCreate = openCreate;
 window.setFilter = setFilter;
 window.resetFilters = resetFilters;
