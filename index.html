@@ -19,6 +19,7 @@
             <div class="header-actions">
                 <button class="btn" onclick="fetchAllBills()">🔄</button>
                 <button class="btn" onclick="exportCSV()">📥</button>
+                <button class="btn" onclick="toggleBackupPanel()">🔐</button>
             </div>
         </header>
 
@@ -30,6 +31,11 @@
         <!-- Filter Bar with Smart Search -->
         <div id="filterContainer" class="filter-container">
             <!-- Filters will be rendered here -->
+        </div>
+
+        <!-- Backup Panel (hidden by default) -->
+        <div id="backupContainer" class="backup-container" style="display:none;">
+            <!-- Backup UI will be rendered here -->
         </div>
 
         <!-- Notifications -->
@@ -66,5 +72,7 @@
     <script src="config.js"></script>
     <!-- Then Load App -->
     <script src="app.js"></script>
+    <!-- Then Load Backup System -->
+    <script src="backup.js"></script>
 </body>
 </html>
