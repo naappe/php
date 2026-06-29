@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 Bill Manager - MVR Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>💰 Smart Bill Manager - MVR</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
             <h1>
-                💰 Bill Manager
-                <span>MVR Dashboard</span>
+                💰 Bills
+                <span>MVR</span>
             </h1>
             <div class="header-actions">
-                <button class="btn" onclick="fetchAllBills()">🔄 Refresh</button>
-                <button class="btn" onclick="openCreateModal()">➕ New Bill</button>
-                <button class="btn" onclick="exportCSV()">📥 Export CSV</button>
+                <button class="btn" onclick="fetchAllBills()">🔄</button>
+                <button class="btn" onclick="exportCSV()">📥</button>
             </div>
         </header>
 
@@ -26,7 +27,7 @@
             <!-- Stats will be rendered here -->
         </div>
 
-        <!-- Filter Bar -->
+        <!-- Filter Bar with Smart Search -->
         <div id="filterContainer" class="filter-container">
             <!-- Filters will be rendered here -->
         </div>
@@ -43,6 +44,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="openCreateModal()" aria-label="Add New Bill">
+        +
+    </button>
 
     <!-- Modal -->
     <div id="modal" class="modal-overlay">
