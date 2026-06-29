@@ -1,16 +1,21 @@
 // ============================================
+// APP - FAST LOADING WITH CACHE
+// ============================================
+
+// ============================================
 // STATE
 // ============================================
 const state = {
     bills: [],
     filtered: [],
+    totalAmount: 0,
+    loaded: false,
     search: '',
     filter: 'all',
-    sortField: 'Date',
-    sortDir: 'desc',
-    totalAmount: 0,
     loading: false,
-    loaded: false
+    totalCount: 0,
+    loadedCount: 0,
+    usingCache: false
 };
 
 // ============================================
@@ -24,7 +29,8 @@ const DOM = {
     modalContent: $('modalContent'),
     loading: $('loadingOverlay'),
     filter: $('filterContainer'),
-    message: $('message')
+    message: $('message'),
+    searchInput: $('searchInput')
 };
 
 // ============================================
@@ -32,19 +38,7 @@ const DOM = {
 // ============================================
 function formatMVR(amount) {
     const num = parseFloat(amount) || 0;
-    return new Intl.NumberFormat('dv-MV', {
-        style: 'currency',
-        currency: 'MVR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(num);
-}
-
-function getHeaders() {
-    return {
-        'Authorization': `Token ${BASEROW_CONFIG.API_TOKEN}`,
-        'Content-Type': 'application/json'
-    };
+    return 'MVR ' + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function showMsg(text, type = 'info', duration = 3000) {
@@ -59,152 +53,300 @@ function showMsg(text, type = 'info', duration = 3000) {
     if (duration) setTimeout(() => { DOM.message.innerHTML = ''; }, duration);
 }
 
-function showLoading(show) {
-    DOM.loading.style.display = show ? 'flex' : 'none';
-    state.loading = show;
+function showLoading(show, text = 'Loading...') {
+    const overlay = DOM.loading;
+    overlay.style.display = show ? 'flex' : 'none';
+    if (show) {
+        const spinner = overlay.querySelector('.spinner');
+        if (spinner) {
+            const label = spinner.nextElementSibling || document.createElement('p');
+            if (!label.tagName) {
+                label.style.cssText = 'color: #6b7280; font-size: 14px; margin-top: 12px;';
+                spinner.parentNode.appendChild(label);
+            }
+            label.textContent = text;
+        }
+    }
+}
+
+function getHeaders() {
+    return {
+        'Authorization': 'Token ' + window.CONFIG.API_TOKEN,
+        'Content-Type': 'application/json'
+    };
 }
 
 // ============================================
-// FETCH BILLS (FIXED)
+// CACHE HELPERS
 // ============================================
-async function fetchBills() {
-    showLoading(true);
+function saveToCache(key, data) {
     try {
-        const url = `${BASEROW_CONFIG.BASE_URL}/api/database/rows/table/${BASEROW_CONFIG.TABLE_ID}/?user_field_names=true&size=200`;
-        console.log('📡 Fetching:', url);
-        
-        const response = await fetch(url, { headers: getHeaders() });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('❌ Response error:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText || 'Unknown error'}`);
+        const cacheData = {
+            timestamp: Date.now(),
+            bills: data.bills,
+            totalAmount: data.totalAmount,
+            totalCount: data.totalCount,
+            billsCount: data.bills.length
+        };
+        localStorage.setItem('bills_cache_' + key, JSON.stringify(cacheData));
+    } catch (e) {
+        console.warn('Cache save failed:', e);
+    }
+}
+
+function loadFromCache(key) {
+    try {
+        const raw = localStorage.getItem('bills_cache_' + key);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        const age = Date.now() - data.timestamp;
+        // Cache valid for 5 minutes
+        if (age > 5 * 60 * 1000) {
+            console.log('📦 Cache expired, reloading...');
+            return null;
         }
+        console.log('📦 Cache hit! Age:', Math.round(age / 1000), 'seconds');
+        return data;
+    } catch (e) {
+        return null;
+    }
+}
+
+// ============================================
+// UTC NORMALIZER
+// ============================================
+function normalizeToUTCKey(dateInput) {
+    if (!dateInput) return null;
+    const d = new Date(dateInput);
+    if (isNaN(d.getTime())) return null;
+    const year = d.getUTCFullYear();
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getTodayUTC() {
+    return normalizeToUTCKey(new Date());
+}
+
+// ============================================
+// FETCH ALL BILLS - OPTIMIZED
+// ============================================
+async function fetchAllBills(forceRefresh = false) {
+    if (state.loading) return;
+    
+    // Check cache first (unless forced refresh)
+    if (!forceRefresh) {
+        const cached = loadFromCache('all_bills');
+        if (cached) {
+            state.bills = cached.bills;
+            state.totalAmount = cached.totalAmount;
+            state.totalCount = cached.totalCount;
+            state.loaded = true;
+            state.usingCache = true;
+            
+            state.filtered = [...state.bills];
+            state.filter = 'all';
+            state.search = '';
+            
+            render();
+            showMsg('📦 Loaded ' + state.bills.length + ' bills from cache', 'success', 2000);
+            
+            // Refresh in background
+            setTimeout(() => {
+                console.log('🔄 Refreshing data in background...');
+                fetchAllBills(true);
+            }, 3000);
+            
+            return;
+        }
+    }
+    
+    // Load fresh
+    state.usingCache = false;
+    showLoading(true, 'Loading bills...');
+    state.loaded = false;
+    state.bills = [];
+    state.totalCount = 0;
+    state.loadedCount = 0;
+    
+    try {
+        const pageSize = 200; // Increased to 200 for faster loading
+        let allBills = [];
+        let totalAmount = 0;
+
+        // First, get total count
+        const countUrl = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/?user_field_names=true&size=1';
+        const countRes = await fetch(countUrl, { headers: getHeaders() });
+        if (!countRes.ok) throw new Error('HTTP ' + countRes.status);
+        const countData = await countRes.json();
+        state.totalCount = countData.count || 0;
         
-        const data = await response.json();
-        console.log('✅ Data received:', data);
+        console.log('📊 Total bills:', state.totalCount);
+
+        if (state.totalCount === 0) {
+            state.loaded = true;
+            render();
+            showLoading(false);
+            showMsg('📭 No bills found', 'warning');
+            return;
+        }
+
+        const totalPages = Math.ceil(state.totalCount / pageSize);
         
-        state.bills = data.results || [];
-        state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        // Load pages in parallel batches (3 at a time)
+        const batchSize = 3;
+        let loadedPages = 0;
+        
+        for (let batchStart = 1; batchStart <= totalPages; batchStart += batchSize) {
+            const batchEnd = Math.min(batchStart + batchSize - 1, totalPages);
+            const promises = [];
+            
+            for (let page = batchStart; page <= batchEnd; page++) {
+                const url = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/?user_field_names=true&size=' + pageSize + '&page=' + page;
+                promises.push(
+                    fetch(url, { headers: getHeaders() })
+                        .then(res => res.json())
+                        .then(data => ({
+                            page: page,
+                            bills: data.results || []
+                        }))
+                        .catch(err => ({ page: page, bills: [], error: err }))
+                );
+            }
+            
+            const results = await Promise.all(promises);
+            
+            results.forEach(result => {
+                if (result.bills && result.bills.length > 0) {
+                    const normalized = result.bills.map(b => ({
+                        ...b,
+                        _dateKey: normalizeToUTCKey(b.Date)
+                    }));
+                    allBills = allBills.concat(normalized);
+                    const pageTotal = normalized.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+                    totalAmount += pageTotal;
+                }
+                loadedPages++;
+            });
+            
+            state.loadedCount = allBills.length;
+            
+            // Update progress
+            const progress = Math.round((loadedPages / totalPages) * 100);
+            showLoading(true, 'Loading bills... ' + progress + '% (' + allBills.length + ' loaded)');
+        }
+
+        state.bills = allBills;
+        state.totalAmount = totalAmount;
         state.loaded = true;
-        
-        applyFilters();
+
+        console.log('✅ Loaded:', state.bills.length, 'bills');
+        console.log('💰 Total:', formatMVR(totalAmount));
+
+        // Save to cache
+        saveToCache('all_bills', {
+            bills: state.bills,
+            totalAmount: state.totalAmount,
+            totalCount: state.totalCount
+        });
+
+        state.filtered = [...state.bills];
+        state.filter = 'all';
+        state.search = '';
+
+        if (DOM.searchInput) DOM.searchInput.value = '';
+
         render();
-        showMsg(`✅ ${state.bills.length} bills loaded | Total: ${formatMVR(state.totalAmount)}`, 'success');
-        
+        showLoading(false);
+        showMsg('✅ Loaded ' + state.bills.length + ' bills | Total: ' + formatMVR(state.totalAmount), 'success', 4000);
+
     } catch (error) {
-        console.error('❌ Fetch error:', error);
-        showMsg(`❌ Error: ${error.message}`, 'error');
-        DOM.content.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">🔌</div>
-                <h3>Connection Error</h3>
-                <p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;">${error.message}</p>
-                <button class="btn btn-primary" onclick="fetchBills()">🔄 Retry</button>
-                <button class="btn btn-secondary" onclick="loadSampleData()" style="margin-top:8px;">📋 Load Sample Data</button>
-            </div>
-        `;
-    } finally {
+        console.error('❌ Error:', error);
+        showMsg('❌ Error: ' + error.message, 'error');
+        state.loaded = false;
+        render();
         showLoading(false);
     }
 }
 
 // ============================================
-// SAMPLE DATA (for testing)
+// DATE FILTER
 // ============================================
-function loadSampleData() {
-    state.bills = [
-        { id: 1, Vendor: 'Sample Vendor A', Amount: '1250.50', Date: new Date().toISOString(), 'Bill No': 'INV-001', Location: 'Male', TIN: '123456789' },
-        { id: 2, Vendor: 'Sample Vendor B', Amount: '850.00', Date: new Date(Date.now() - 86400000).toISOString(), 'Bill No': 'INV-002', Location: 'Hulhumale', TIN: '987654321' },
-        { id: 3, Vendor: 'Sample Vendor C', Amount: '2300.75', Date: new Date(Date.now() - 172800000).toISOString(), 'Bill No': 'INV-003', Location: 'Addu', TIN: '456789123' }
-    ];
-    state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
-    state.loaded = true;
-    applyFilters();
-    render();
-    showMsg(`📋 Loaded ${state.bills.length} sample bills (API offline)`, 'info', 4000);
+function filterByDate(bills, type) {
+    if (type === 'all' || !bills || !bills.length) {
+        return bills;
+    }
+
+    const today = getTodayUTC();
+
+    if (type === 'today') {
+        return bills.filter(b => b._dateKey === today);
+    }
+
+    if (type === 'week') {
+        const now = new Date();
+        const start = new Date(now);
+        start.setUTCDate(now.getUTCDate() - now.getUTCDay());
+        const startKey = normalizeToUTCKey(start);
+        return bills.filter(b => b._dateKey >= startKey);
+    }
+
+    if (type === 'month') {
+        const now = new Date();
+        const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+        const startKey = normalizeToUTCKey(start);
+        return bills.filter(b => b._dateKey >= startKey);
+    }
+
+    return bills;
 }
 
 // ============================================
-// FILTERS
+// APPLY FILTERS
 // ============================================
 function applyFilters() {
     if (!state.bills.length) {
         state.filtered = [];
         return;
     }
-    
+
     let filtered = [...state.bills];
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    // Date filter
-    if (state.filter === 'today') {
-        filtered = filtered.filter(b => b.Date && new Date(b.Date) >= today);
-    } else if (state.filter === 'week') {
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - today.getDay());
-        filtered = filtered.filter(b => b.Date && new Date(b.Date) >= weekStart);
-    } else if (state.filter === 'month') {
-        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-        filtered = filtered.filter(b => b.Date && new Date(b.Date) >= monthStart);
-    }
-    
-    // Search
-    if (state.search) {
-        const s = state.search.toLowerCase();
-        filtered = filtered.filter(b => 
-            String(b.Vendor || '').toLowerCase().includes(s) ||
-            String(b['Bill No'] || '').toLowerCase().includes(s) ||
-            String(b.Location || '').toLowerCase().includes(s) ||
-            String(b.id).includes(s)
+    filtered = filterByDate(filtered, state.filter);
+
+    if (state.search && state.search.trim()) {
+        const s = state.search.toLowerCase().trim();
+        filtered = filtered.filter(b =>
+            (b.Vendor || '').toLowerCase().includes(s) ||
+            (b['Bill No'] || '').toLowerCase().includes(s) ||
+            (b.Location || '').toLowerCase().includes(s) ||
+            String(b.id || '').includes(s)
         );
     }
-    
-    // Sort
-    filtered.sort((a, b) => {
-        let va = a[state.sortField] || '';
-        let vb = b[state.sortField] || '';
-        if (state.sortField === 'Amount') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0; }
-        if (state.sortField === 'Date') { va = new Date(va) || 0; vb = new Date(vb) || 0; }
-        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
-        return state.sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
-    });
-    
+
     state.filtered = filtered;
 }
 
-function setFilter(type) {
-    state.filter = type;
-    applyFilters();
-    render();
-}
-
-function handleSearch(value) {
-    state.search = value;
-    applyFilters();
-    render();
-}
-
 // ============================================
-// RENDER
+// RENDER - OPTIMIZED
 // ============================================
 function render() {
     const bills = state.filtered || [];
     const total = bills.length;
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
-    const grandTotal = state.totalAmount || 0;
-    
+
     // Stats
     DOM.stats.innerHTML = `
-        <div class="stat"><span>📄</span><div><div class="sv">${total}</div><div class="sl">Bills</div></div></div>
-        <div class="stat highlight"><span>💰</span><div><div class="sv">${formatMVR(amount)}</div><div class="sl">Filtered</div></div></div>
-        <div class="stat"><span>📊</span><div><div class="sv">${formatMVR(avg)}</div><div class="sl">Average</div></div></div>
-        <div class="stat info"><span>🏦</span><div><div class="sv">${formatMVR(grandTotal)}</div><div class="sl">Grand Total</div></div></div>
+        <div class="stat"><span class="icon">📄</span><div><div class="value">${total}</div><div class="label">Showing</div></div></div>
+        <div class="stat highlight"><span class="icon">💰</span><div><div class="value">${formatMVR(amount)}</div><div class="label">Amount</div></div></div>
+        <div class="stat"><span class="icon">📊</span><div><div class="value">${formatMVR(avg)}</div><div class="label">Average</div></div></div>
+        <div class="stat info"><span class="icon">🏦</span><div><div class="value">${formatMVR(state.totalAmount)}</div><div class="label">Grand Total</div></div></div>
+        <div class="stat info"><span class="icon">📦</span><div><div class="value">${state.bills.length}</div><div class="label">Total Bills</div></div></div>
+        ${state.usingCache ? `<div class="stat" style="background:#fef3c7;"><span class="icon">💾</span><div><div class="value" style="font-size:12px;">Cached</div><div class="label">Data from cache</div></div></div>` : ''}
     `;
-    
-    // Filter buttons
+
+    // Filters
     DOM.filter.innerHTML = `
         <div class="filter-bar">
             <div class="filter-group">
@@ -216,54 +358,52 @@ function render() {
             </div>
             <div class="filter-info">${total} bills</div>
         </div>
-        <div style="margin-top:8px;">
-            <input id="searchInput" class="search-input" placeholder="🔍 Search..." oninput="handleSearch(this.value)" value="${state.search}">
-        </div>
     `;
-    
+
     // Content
     if (!state.loaded) {
         DOM.content.innerHTML = `
             <div class="empty">
-                <div class="empty-icon">⏳</div>
+                <div class="icon">⏳</div>
                 <h3>Loading...</h3>
-                <p>Fetching your bills</p>
+                <p>${state.totalCount > 0 ? 'Loading ' + state.loadedCount + ' of ' + state.totalCount + ' bills...' : 'Fetching your bills'}</p>
             </div>
         `;
         return;
     }
-    
+
     if (bills.length === 0) {
         DOM.content.innerHTML = `
             <div class="empty">
-                <div class="empty-icon">📭</div>
-                <h3>No Bills</h3>
-                <p>${state.bills.length > 0 ? 'Try different filters' : 'Add your first bill'}</p>
-                ${state.bills.length > 0 ? `<button class="btn btn-secondary" onclick="setFilter('all')">Show All</button>` : ''}
+                <div class="icon">📭</div>
+                <h3>No Bills Found</h3>
+                <p>${state.bills.length > 0 ? 'No bills match your filters' : 'No bills in your table'}</p>
+                ${state.bills.length > 0 ? `<button class="btn btn-secondary" onclick="resetFilters()">Show All Bills</button>` : ''}
                 ${state.bills.length === 0 ? `<button class="btn btn-primary" onclick="openCreate()">➕ Add Bill</button>` : ''}
             </div>
         `;
         return;
     }
-    
+
     const isMobile = window.innerWidth < 768;
-    
+
     let html = `
         <div class="table-container">
             <div class="table-header">
-                <div class="table-actions">
-                    <button class="btn btn-primary" onclick="openCreate()">➕ Add</button>
-                    <button class="btn btn-secondary" onclick="exportCSV()">📥 CSV</button>
-                    <button class="btn btn-secondary" onclick="fetchBills()">🔄</button>
-                </div>
+                <button class="btn btn-primary" onclick="openCreate()">➕ Add</button>
+                <button class="btn btn-secondary" onclick="exportCSV()">📥 CSV</button>
+                <button class="btn btn-secondary" onclick="fetchAllBills(true)">🔄 Refresh</button>
+                <span style="font-size:12px; color:#6b7280; margin-left:auto;">
+                    ${bills.length} of ${state.bills.length} bills
+                </span>
             </div>
     `;
-    
+
     if (isMobile) {
         html += '<div class="card-list">';
         bills.forEach(b => {
             const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
-            const isToday = b.Date && new Date(b.Date).toDateString() === new Date().toDateString();
+            const isToday = b._dateKey === getTodayUTC();
             html += `
                 <div class="card ${isToday ? 'today' : ''}" onclick="viewBill(${b.id})">
                     <div class="card-header">
@@ -291,10 +431,10 @@ function render() {
             <div class="table-wrap">
                 <table class="table">
                     <thead><tr>
-                        <th onclick="sort('id')">ID ${getSortIcon('id')}</th>
-                        <th onclick="sort('Vendor')">Vendor ${getSortIcon('Vendor')}</th>
-                        <th onclick="sort('Amount')">Amount ${getSortIcon('Amount')}</th>
-                        <th onclick="sort('Date')">Date ${getSortIcon('Date')}</th>
+                        <th onclick="sort('id')">ID</th>
+                        <th onclick="sort('Vendor')">Vendor</th>
+                        <th onclick="sort('Amount')">Amount</th>
+                        <th onclick="sort('Date')">Date</th>
                         <th>Bill No</th>
                         <th>Location</th>
                         <th>TIN</th>
@@ -314,38 +454,70 @@ function render() {
                     <td>${b.Location || 'N/A'}</td>
                     <td>${b.TIN || 'N/A'}</td>
                     <td>
-                        <button class="btn-icon" onclick="event.stopPropagation(); viewBill(${b.id})">👁️</button>
-                        <button class="btn-icon" onclick="event.stopPropagation(); openEdit(${b.id})">✏️</button>
-                        <button class="btn-icon del" onclick="event.stopPropagation(); deleteBill(${b.id})">🗑️</button>
+                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewBill(${b.id})">👁️</button>
+                        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openEdit(${b.id})">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteBill(${b.id})">🗑️</button>
                     </td>
                 </tr>
             `;
         });
         html += '</tbody></table></div>';
     }
-    
+
     html += `
-        <div class="table-footer">
-            <span>${bills.length} of ${state.bills.length} bills</span>
-            <span>Total: ${formatMVR(state.totalAmount)}</span>
+            <div class="table-footer">
+                <span>${bills.length} of ${state.bills.length} bills</span>
+                <span>Total: ${formatMVR(state.totalAmount)}</span>
+            </div>
         </div>
-    </div>`;
-    
+    `;
+
     DOM.content.innerHTML = html;
 }
 
-function getSortIcon(field) {
-    if (state.sortField !== field) return '↕';
-    return state.sortDir === 'asc' ? '↑' : '↓';
+// ============================================
+// ACTIONS
+// ============================================
+function setFilter(type) {
+    state.filter = type;
+    applyFilters();
+    render();
 }
 
+function handleSearch(value) {
+    state.search = value;
+    applyFilters();
+    render();
+}
+
+function resetFilters() {
+    state.filter = 'all';
+    state.search = '';
+    if (DOM.searchInput) DOM.searchInput.value = '';
+    applyFilters();
+    render();
+}
+
+let sortField = 'Date';
+let sortDir = 'desc';
+
 function sort(field) {
-    if (state.sortField === field) {
-        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+    if (sortField === field) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
     } else {
-        state.sortField = field;
-        state.sortDir = 'desc';
+        sortField = field;
+        sortDir = 'desc';
     }
+    
+    state.bills.sort((a, b) => {
+        let va = a[field] || '';
+        let vb = b[field] || '';
+        if (field === 'Amount') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0; }
+        if (field === 'Date') { va = new Date(va) || 0; vb = new Date(vb) || 0; }
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        return sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+    });
+    
     applyFilters();
     render();
 }
@@ -380,20 +552,20 @@ function viewBill(id) {
 }
 
 async function deleteBill(id) {
-    if (!confirm(`Delete bill #${id}?`)) return;
-    showLoading(true);
+    if (!confirm('Delete bill #' + id + '?')) return;
+    showLoading(true, 'Deleting...');
     try {
-        const url = `${BASEROW_CONFIG.BASE_URL}/api/database/rows/table/${BASEROW_CONFIG.TABLE_ID}/${id}/`;
+        const url = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/' + id + '/';
         const res = await fetch(url, { method: 'DELETE', headers: getHeaders() });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         state.bills = state.bills.filter(b => b.id !== id);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
         applyFilters();
         render();
-        showMsg(`🗑️ Bill #${id} deleted`, 'warning');
+        showLoading(false);
+        showMsg('🗑️ Bill #' + id + ' deleted', 'warning');
     } catch (e) {
-        showMsg(`❌ Error: ${e.message}`, 'error');
-    } finally {
+        showMsg('❌ Error: ' + e.message, 'error');
         showLoading(false);
     }
 }
@@ -403,7 +575,10 @@ async function deleteBill(id) {
 // ============================================
 function openCreate() {
     openModal(`
-        <div class="modal-header"><h2>➕ New Bill</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div class="modal-header">
+            <h2>➕ New Bill</h2>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
         <div class="modal-body">
             <form id="billForm" onsubmit="handleCreate(event)">
                 <div class="form-group"><label>Vendor *</label><input type="text" name="Vendor" required></div>
@@ -428,7 +603,10 @@ function openEdit(id) {
     if (!bill) return;
     const date = bill.Date ? new Date(bill.Date).toISOString().slice(0, 16) : '';
     openModal(`
-        <div class="modal-header"><h2>✏️ Edit #${id}</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div class="modal-header">
+            <h2>✏️ Edit #${id}</h2>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
         <div class="modal-body">
             <form id="billForm" onsubmit="handleUpdate(event, ${id})">
                 <div class="form-group"><label>Vendor</label><input type="text" name="Vendor" value="${bill.Vendor || ''}"></div>
@@ -450,21 +628,25 @@ async function handleCreate(e) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
     Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
-    showLoading(true);
+    showLoading(true, 'Creating...');
     try {
-        const url = `${BASEROW_CONFIG.BASE_URL}/api/database/rows/table/${BASEROW_CONFIG.TABLE_ID}/?user_field_names=true`;
+        const url = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/?user_field_names=true';
         const res = await fetch(url, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const bill = await res.json();
+        bill._dateKey = normalizeToUTCKey(bill.Date);
         state.bills.unshift(bill);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        state.filter = 'all';
+        state.search = '';
+        if (DOM.searchInput) DOM.searchInput.value = '';
         applyFilters();
         render();
         closeModal();
-        showMsg(`✅ Bill #${bill.id} created`, 'success');
+        showLoading(false);
+        showMsg('✅ Bill #' + bill.id + ' created', 'success');
     } catch (e) {
-        showMsg(`❌ Error: ${e.message}`, 'error');
-    } finally {
+        showMsg('❌ Error: ' + e.message, 'error');
         showLoading(false);
     }
 }
@@ -473,22 +655,23 @@ async function handleUpdate(e, id) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
     Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
-    showLoading(true);
+    showLoading(true, 'Updating...');
     try {
-        const url = `${BASEROW_CONFIG.BASE_URL}/api/database/rows/table/${BASEROW_CONFIG.TABLE_ID}/${id}/?user_field_names=true`;
+        const url = window.CONFIG.BASE_URL + '/api/database/rows/table/' + window.CONFIG.TABLE_ID + '/' + id + '/?user_field_names=true';
         const res = await fetch(url, { method: 'PATCH', headers: getHeaders(), body: JSON.stringify(data) });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const bill = await res.json();
+        bill._dateKey = normalizeToUTCKey(bill.Date);
         const idx = state.bills.findIndex(b => b.id === id);
         if (idx > -1) state.bills[idx] = bill;
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
         applyFilters();
         render();
         closeModal();
-        showMsg(`✅ Bill #${id} updated`, 'success');
+        showLoading(false);
+        showMsg('✅ Bill #' + id + ' updated', 'success');
     } catch (e) {
-        showMsg(`❌ Error: ${e.message}`, 'error');
-    } finally {
+        showMsg('❌ Error: ' + e.message, 'error');
         showLoading(false);
     }
 }
@@ -506,58 +689,57 @@ function closeModal() {
     DOM.modal.style.display = 'none';
     document.body.style.overflow = '';
 }
-DOM.modal.addEventListener('click', e => { if (e.target === DOM.modal) closeModal(); });
+DOM.modal.addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
 
 // ============================================
 // EXPORT CSV
 // ============================================
 function exportCSV() {
     const bills = state.filtered;
-    if (!bills.length) { showMsg('No bills to export', 'warning'); return; }
-    const headers = ['ID','Vendor','Amount (MVR)','Date','Bill No','Location','TIN'];
+    if (!bills || !bills.length) {
+        showMsg('No bills to export', 'warning');
+        return;
+    }
+    const headers = ['ID', 'Vendor', 'Amount (MVR)', 'Date', 'Bill No', 'Location', 'TIN'];
     const rows = bills.map(b => [
-        b.id, `"${(b.Vendor||'').replace(/"/g,'""')}"`, b.Amount||0, b.Date||'',
-        `"${(b['Bill No']||'').replace(/"/g,'""')}"`,
-        `"${(b.Location||'').replace(/"/g,'""')}"`,
-        `"${(b.TIN||'').replace(/"/g,'""')}"`
+        b.id,
+        '"' + (b.Vendor || '').replace(/"/g, '""') + '"',
+        b.Amount || 0,
+        b.Date || '',
+        '"' + (b['Bill No'] || '').replace(/"/g, '""') + '"',
+        '"' + (b.Location || '').replace(/"/g, '""') + '"',
+        '"' + (b.TIN || '').replace(/"/g, '""') + '"'
     ]);
     const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `bills_${new Date().toISOString().slice(0,10)}.csv`;
+    a.download = 'bills_' + new Date().toISOString().slice(0, 10) + '.csv';
     a.click();
     URL.revokeObjectURL(a.href);
-    showMsg(`📥 Exported ${bills.length} bills`, 'success');
+    showMsg('📥 Exported ' + bills.length + ' bills', 'success');
 }
 
 // ============================================
 // KEYBOARD SHORTCUTS
 // ============================================
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeModal();
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('searchInput')?.focus();
-    }
-});
-
-// ============================================
-// RESIZE
-// ============================================
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { if (state.bills.length) render(); }, 300);
 });
 
 // ============================================
 // START
 // ============================================
-console.log('🚀 Bill Manager Started');
-console.log('📋 Config:', BASEROW_CONFIG);
+console.log('🚀 App Started - Optimized with Cache');
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM ready, fetching bills...');
-    fetchBills();
+document.addEventListener('DOMContentLoaded', function() {
+    DOM.searchInput = document.getElementById('searchInput');
+    if (DOM.searchInput) {
+        DOM.searchInput.addEventListener('input', function(e) {
+            handleSearch(e.target.value);
+        });
+    }
+    fetchAllBills();
 });

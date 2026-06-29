@@ -2,38 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>💰 Bills MVR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💰 Bills Manager</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <h1>💰 Bills <span>MVR</span></h1>
-            <div class="header-actions">
-                <button class="btn" onclick="fetchBills()">🔄</button>
-                <button class="btn" onclick="exportCSV()">📥</button>
-            </div>
-        </header>
+    <!-- Header -->
+    <header class="header">
+        <h1>💰 Bills <span>MVR</span></h1>
+        <div>
+            <button onclick="fetchAllBills()">🔄</button>
+            <button onclick="exportCSV()">📥</button>
+        </div>
+    </header>
 
-        <!-- Stats -->
-        <div id="stats" class="stats"></div>
+    <!-- Stats -->
+    <div id="stats" class="stats"></div>
 
-        <!-- Filters -->
-        <div id="filterContainer" class="filter-container"></div>
+    <!-- Search -->
+    <div class="search-container">
+        <input id="searchInput" class="search-input" placeholder="🔍 Search bills...">
+    </div>
 
-        <!-- Notifications -->
-        <div id="message"></div>
+    <!-- Filters -->
+    <div id="filterContainer" class="filter-container"></div>
 
-        <!-- Content -->
-        <div id="content">
-            <div class="empty">
-                <div class="empty-icon">📄</div>
-                <h3>Loading...</h3>
-                <p>Please wait</p>
-            </div>
+    <!-- Messages -->
+    <div id="message"></div>
+
+    <!-- Content -->
+    <div id="content">
+        <div class="empty">
+            <div class="icon">📄</div>
+            <h3>Loading...</h3>
+            <p>Please wait</p>
         </div>
     </div>
 
@@ -52,6 +54,7 @@
         <div class="spinner"></div>
     </div>
 
+    <!-- Scripts -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
