@@ -3,58 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>💰 Smart Bill Manager - MVR</title>
+    <title>💰 Bills MVR</title>
     <link rel="stylesheet" href="style.css">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
-    <div class="app-container">
+    <div class="app">
         <!-- Header -->
-        <header class="app-header">
-            <h1>
-                💰 Bills
-                <span>MVR</span>
-            </h1>
+        <header class="header">
+            <h1>💰 Bills <span>MVR</span></h1>
             <div class="header-actions">
-                <button class="btn" onclick="fetchAllBills()">🔄</button>
+                <button class="btn" onclick="fetchBills()">🔄</button>
                 <button class="btn" onclick="exportCSV()">📥</button>
-                <button class="btn" onclick="toggleBackupPanel()">🔐</button>
             </div>
         </header>
 
         <!-- Stats -->
-        <div id="stats" class="stats-grid">
-            <!-- Stats will be rendered here -->
-        </div>
+        <div id="stats" class="stats"></div>
 
-        <!-- Filter Bar with Smart Search -->
-        <div id="filterContainer" class="filter-container">
-            <!-- Filters will be rendered here -->
-        </div>
-
-        <!-- Backup Panel (hidden by default) -->
-        <div id="backupContainer" class="backup-container" style="display:none;">
-            <!-- Backup UI will be rendered here -->
-        </div>
+        <!-- Filters -->
+        <div id="filterContainer" class="filter-container"></div>
 
         <!-- Notifications -->
         <div id="message"></div>
 
-        <!-- Main Content -->
+        <!-- Content -->
         <div id="content">
-            <div class="empty-state">
+            <div class="empty">
                 <div class="empty-icon">📄</div>
-                <h3>Loading Bills...</h3>
-                <p>Please wait while we fetch your data</p>
+                <h3>Loading...</h3>
+                <p>Please wait</p>
             </div>
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="openCreateModal()" aria-label="Add New Bill">
-        +
-    </button>
+    <!-- FAB -->
+    <button class="fab" onclick="openCreate()">+</button>
 
     <!-- Modal -->
     <div id="modal" class="modal-overlay">
@@ -63,16 +47,12 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- Loading -->
     <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
+        <div class="spinner"></div>
     </div>
 
-    <!-- Load Config First -->
     <script src="config.js"></script>
-    <!-- Then Load App -->
     <script src="app.js"></script>
-    <!-- Then Load Backup System -->
-    <script src="backup.js"></script>
 </body>
 </html>
