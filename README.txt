@@ -1,12 +1,20 @@
-WhiteSaffron Bill Manager - Final Split Files
+WhiteSaffron Bill Manager - Clean V3
 
-Upload all files to your GitHub repo:
+Upload these files to GitHub:
 
 - index.html
 - style.css
-- config.js
 - app.js
+- config.js
 
-This version includes login, Baserow connection, latest bill, this month/today totals, search, filters, add/edit/delete, back button, duplicate warning, CSV export, mobile cards, and desktop table.
+This version fixes the previous design:
+- smaller text
+- tighter cards
+- aligned table columns
+- better use of full width
+- cleaner buttons
+- compact professional layout
+- mobile cards
+- desktop table
 
-Edit config.js for API token, table ID, username, and password.
+Edit config.js for token/table/login.
