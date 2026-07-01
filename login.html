@@ -1,379 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WhiteSaffron Villimale - Admin Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* ============================================
-           LOGIN PAGE STYLES
-           ============================================ */
-        :root {
-            --primary: #c8a47e;
-            --primary-dark: #b8946e;
-            --primary-light: #f0e6d8;
-            --bg: #0f0f0f;
-            --card: #1a1a1a;
-            --border: #2a2a2a;
-            --text: #ffffff;
-            --text-muted: #888888;
-            --shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-            --radius: 16px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background-image: 
-                radial-gradient(ellipse at 10% 20%, rgba(200, 164, 126, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(200, 164, 126, 0.05) 0%, transparent 50%);
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(45deg, 
-                    transparent, 
-                    transparent 40px, 
-                    rgba(200, 164, 126, 0.02) 40px, 
-                    rgba(200, 164, 126, 0.02) 41px
-                );
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .login-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .login-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 40px 36px 36px;
-            box-shadow: var(--shadow);
-        }
-
-        .brand {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .brand-icon {
-            width: 72px;
-            height: 72px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 32px;
-            box-shadow: 0 0 40px rgba(200, 164, 126, 0.2);
-        }
-
-        .brand h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: var(--text);
-        }
-
-        .brand .subtitle {
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-
-        .brand .divider {
-            width: 40px;
-            height: 2px;
-            background: var(--primary);
-            margin: 12px auto 0;
-            border-radius: 2px;
-        }
-
-        .login-form {
-            margin-top: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0a0a0a;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 15px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(200, 164, 126, 0.1);
-        }
-
-        .form-group input::placeholder {
-            color: #444;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: #0f0f0f;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            margin-top: 4px;
-        }
-
-        .btn-login:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 30px rgba(200, 164, 126, 0.25);
-        }
-
-        .btn-login:active {
-            transform: scale(0.97);
-        }
-
-        .btn-login:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .login-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 8px;
-            padding: 10px 14px;
-            color: #ef4444;
-            font-size: 13px;
-            margin-bottom: 16px;
-            display: none;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .login-error.show {
-            display: flex;
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .login-footer span {
-            color: var(--primary);
-        }
-
-        .spinner-btn {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(15, 15, 15, 0.2);
-            border-top-color: #0f0f0f;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 480px) {
-            .login-card {
-                padding: 28px 20px 24px;
-            }
-
-            .brand-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 26px;
-            }
-
-            .brand h1 {
-                font-size: 19px;
-            }
-
-            .form-group input {
-                padding: 10px 14px;
-                font-size: 14px;
-            }
-
-            .btn-login {
-                padding: 12px;
-                font-size: 14px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            body {
-                padding: 40px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhiteSaffron Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-    <div class="login-container">
-        <div class="login-card">
-
-            <div class="brand">
-                <div class="brand-icon">🧑‍🍳</div>
-                <h1>WhiteSaffron</h1>
-                <div class="subtitle">Villimale</div>
-                <div class="divider"></div>
-            </div>
-
-            <div id="loginError" class="login-error">
-                <span>⚠️</span>
-                <span id="errorText">Invalid credentials. Please try again.</span>
-            </div>
-
-            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required autofocus>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-                <button type="submit" class="btn-login" id="loginBtn">
-                    <span id="loginText">Sign In</span>
-                </button>
-            </form>
-
-            <div class="login-footer">
-                Secure Admin Access · <span>WhiteSaffron Villimale</span>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        const ADMIN_CREDENTIALS = {
-            username: 'admin',
-            password: 'White@5654'
-        };
-
-        function handleLogin(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorDiv = document.getElementById('loginError');
-            const errorText = document.getElementById('errorText');
-            const loginBtn = document.getElementById('loginBtn');
-            const loginText = document.getElementById('loginText');
-
-            errorDiv.classList.remove('show');
-
-            if (!username || !password) {
-                errorText.textContent = 'Please enter both username and password.';
-                errorDiv.classList.add('show');
-                return;
-            }
-
-            loginBtn.disabled = true;
-            loginText.innerHTML = '<span class="spinner-btn"></span> Verifying...';
-
-            setTimeout(() => {
-                if (username === ADMIN_CREDENTIALS.username && 
-                    password === ADMIN_CREDENTIALS.password) {
-                    
-                    localStorage.setItem('whitesaffron_admin', 'authenticated');
-                    localStorage.setItem('whitesaffron_user', username);
-                    localStorage.setItem('whitesaffron_login_time', new Date().toISOString());
-                    
-                    window.location.href = 'index.html';
-                    
-                } else {
-                    errorText.textContent = 'Invalid username or password. Please try again.';
-                    errorDiv.classList.add('show');
-                    
-                    loginBtn.disabled = false;
-                    loginText.textContent = 'Sign In';
-                    
-                    document.getElementById('password').value = '';
-                    document.getElementById('password').focus();
-                }
-            }, 800);
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                const form = document.getElementById('loginForm');
-                if (form) {
-                    form.dispatchEvent(new Event('submit'));
-                }
-            }
-        });
-
-        (function checkSession() {
-            const isLoggedIn = localStorage.getItem('whitesaffron_admin') === 'authenticated';
-            if (isLoggedIn) {
-                window.location.href = 'index.html';
-            }
-        })();
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('username').focus();
-        });
-    </script>
-
+<body class="login-page">
+  <main class="login-card">
+    <div class="login-mark">WS</div>
+    <h1>Admin Login</h1>
+    <p>WhiteSaffron Villimale Bill Manager</p>
+    <div class="login-error" id="loginError">Invalid username or password.</div>
+    <form id="loginForm">
+      <label>Username</label>
+      <input id="username" autocomplete="username" required autofocus>
+      <label>Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button class="primary-btn full" type="submit">Sign In</button>
+    </form>
+  </main>
+  <script src="config.js"></script>
+  <script>
+    if (localStorage.getItem('ws_auth') === 'yes') location.href = 'index.html';
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      if (user === CONFIG.ADMIN_USERNAME && pass === CONFIG.ADMIN_PASSWORD) {
+        localStorage.setItem('ws_auth', 'yes');
+        localStorage.setItem('ws_user', user);
+        localStorage.setItem('ws_login_time', new Date().toISOString());
+        location.href = 'index.html';
+      } else {
+        document.getElementById('loginError').classList.add('show');
+        document.getElementById('password').value = '';
+      }
+    });
+  </script>
 </body>
 </html>

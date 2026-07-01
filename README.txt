@@ -1,40 +1,34 @@
-Fast fix if nothing changed:
-Replace your repo index.html with the index.html included in this package.
+WhiteSaffron Bill Manager Pro
 
-Then upload these files to the same GitHub repo folder as index.html:
+Files:
+- index.html
+- login.html
+- style.css
+- app.js
+- config.js
 
-1. professional.css
-2. date-fix.js
-3. dashboard-fix.js
-4. speed-home-filters.js
+What is added:
+- Complete professional responsive design
+- Latest Bill Added on front page
+- This Month total and count on front page
+- Last 30 Days total and count
+- Clear Back to Bills button in detail page
+- Automatic back to list after create, update, and delete
+- Duplicate warning before saving same Vendor + Amount + Date + Bill No
+- Entered By display using local browser storage
+- CSV export
+- Mobile card view and desktop table view
 
-Then edit index.html:
+Baserow columns expected:
+- Vendor
+- Amount
+- Date
+- Bill No
+- Location
+- TIN
 
-Inside <head>, after:
-<link rel="stylesheet" href="style.css">
+Optional future Baserow field:
+- Entered By
 
-add:
-<link rel="stylesheet" href="professional.css">
-
-At the bottom, after:
-<script src="app.js"></script>
-
-add:
-<script src="date-fix.js"></script>
-<script src="dashboard-fix.js"></script>
-<script src="speed-home-filters.js"></script>
-
-What this improves:
-- Cleaner professional dashboard styling
-- Better mobile card polish
-- Better table and stat card styling
-- Date fallback support for Date, Created Date, Created, Created At, created_at, Date Created, and Created On
-- Clear Back to Bills button on bill detail page
-- Front page shows latest bill and total for the currently selected filter
-- Faster parallel bill fetching
-- Auto refresh every 45 seconds while the page is open
-- Homepage defaults to This Month bills only
-- Filter buttons: This Month, This Week, Last Week, Last Month, All Time, Custom
-
-Important:
-If your Baserow table has no date field at all, add a field called "Date" or "Created Date".
+Security note:
+Your Baserow token and admin password are inside config.js because this is a static GitHub Pages app. For serious live use, rotate the token and use safer permissions.
