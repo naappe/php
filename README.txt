@@ -1,26 +1,44 @@
-This is logic-only. It does not change your existing design.
+WhiteSaffron Bills - Easy User Friendly Version
 
-Add this file to your current GitHub repo:
+Use these files in your GitHub repo:
 
-logic-only.js
+- index.html
+- login.html
+- style.css
+- app.js
+- config.js
 
-Then open index.html and add this line after app.js:
+Main functions:
 
-<script src="logic-only.js"></script>
+- Home page shows Latest Bill
+- Home page shows This Month total and count
+- Home page shows Today total and count
+- Search by vendor, bill no, location, TIN
+- Filter chips: All, Today, This Month, Last 30 Days
+- Add bill
+- Edit bill
+- Delete bill
+- Detail view with Back to Home
+- Automatic back to home after add/edit/delete
+- Duplicate warning before saving same Vendor + Amount + Date + Bill No
+- Entered By is stored in browser local storage
+- Export current filtered list to CSV
+- Mobile card view and desktop table view
 
-Final bottom scripts should be:
+Baserow fields expected:
 
-<script src="config.js"></script>
-<script src="app.js"></script>
-<script src="logic-only.js"></script>
+- Vendor
+- Amount
+- Date
+- Bill No
+- Location
+- TIN
 
-What it adds:
-- Home/front page shows This Month Bills count
-- Home/front page shows This Month Total
-- Home/front page shows Latest Bill button
-- Clicking This Month shows only this month bills
-- Detail page gets a clear Back to Bills button
-- Auto back to bill list after create/update/delete
-- Date fallback for Created Date / Created / Created At / created_at
+Open config.js to change:
 
-It keeps your current style.css and current design.
+- API_TOKEN
+- TABLE_ID
+- username/password
+
+Security note:
+This is a static GitHub Pages app, so config.js is public. Use a limited Baserow token.

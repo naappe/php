@@ -3,39 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhiteSaffron Login</title>
+  <title>Login - WhiteSaffron Bills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="login-page">
-  <main class="login-card">
-    <div class="login-mark">WS</div>
-    <h1>Admin Login</h1>
-    <p>WhiteSaffron Villimale Bill Manager</p>
-    <div class="login-error" id="loginError">Invalid username or password.</div>
-    <form id="loginForm">
-      <label>Username</label>
-      <input id="username" autocomplete="username" required autofocus>
-      <label>Password</label>
-      <input id="password" type="password" autocomplete="current-password" required>
-      <button class="primary-btn full" type="submit">Sign In</button>
-    </form>
-  </main>
+<body class="login-screen">
+  <form class="login-card" id="loginForm">
+    <div class="login-logo">WS</div>
+    <h1>Welcome Back</h1>
+    <p>Login to manage WhiteSaffron bills.</p>
+    <div class="error" id="errorBox">Wrong username or password.</div>
+    <label>Username</label>
+    <input id="username" required autofocus>
+    <label>Password</label>
+    <input id="password" type="password" required>
+    <button type="submit" class="primary-btn">Login</button>
+  </form>
+
   <script src="config.js"></script>
   <script>
-    if (localStorage.getItem('ws_auth') === 'yes') location.href = 'index.html';
+    if (localStorage.getItem('ws_logged_in') === 'yes') window.location.href = 'index.html';
     document.getElementById('loginForm').addEventListener('submit', function (event) {
       event.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
-      if (user === CONFIG.ADMIN_USERNAME && pass === CONFIG.ADMIN_PASSWORD) {
-        localStorage.setItem('ws_auth', 'yes');
+      if (user === CONFIG.LOGIN_USER && pass === CONFIG.LOGIN_PASS) {
+        localStorage.setItem('ws_logged_in', 'yes');
         localStorage.setItem('ws_user', user);
-        localStorage.setItem('ws_login_time', new Date().toISOString());
-        location.href = 'index.html';
+        window.location.href = 'index.html';
       } else {
-        document.getElementById('loginError').classList.add('show');
+        document.getElementById('errorBox').classList.add('show');
         document.getElementById('password').value = '';
       }
     });
