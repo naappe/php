@@ -1,34 +1,26 @@
-WhiteSaffron Bill Manager Pro
+This is logic-only. It does not change your existing design.
 
-Files:
-- index.html
-- login.html
-- style.css
-- app.js
-- config.js
+Add this file to your current GitHub repo:
 
-What is added:
-- Complete professional responsive design
-- Latest Bill Added on front page
-- This Month total and count on front page
-- Last 30 Days total and count
-- Clear Back to Bills button in detail page
-- Automatic back to list after create, update, and delete
-- Duplicate warning before saving same Vendor + Amount + Date + Bill No
-- Entered By display using local browser storage
-- CSV export
-- Mobile card view and desktop table view
+logic-only.js
 
-Baserow columns expected:
-- Vendor
-- Amount
-- Date
-- Bill No
-- Location
-- TIN
+Then open index.html and add this line after app.js:
 
-Optional future Baserow field:
-- Entered By
+<script src="logic-only.js"></script>
 
-Security note:
-Your Baserow token and admin password are inside config.js because this is a static GitHub Pages app. For serious live use, rotate the token and use safer permissions.
+Final bottom scripts should be:
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="logic-only.js"></script>
+
+What it adds:
+- Home/front page shows This Month Bills count
+- Home/front page shows This Month Total
+- Home/front page shows Latest Bill button
+- Clicking This Month shows only this month bills
+- Detail page gets a clear Back to Bills button
+- Auto back to bill list after create/update/delete
+- Date fallback for Created Date / Created / Created At / created_at
+
+It keeps your current style.css and current design.
