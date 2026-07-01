@@ -81,20 +81,46 @@ function getHeaders() {
 }
 
 // ============================================
-// DATE HELPERS
+// DATE HELPERS - LOCAL DATE SAFE
 // ============================================
+function pad2(n) { return String(n).padStart(2, '0'); }
+
 function normalizeToUTCKey(dateInput) {
+    // Kept same function name so existing code still works.
+    // It now returns a LOCAL calendar date key: YYYY-MM-DD.
     if (!dateInput) return null;
-    const d = new Date(dateInput);
+
+    if (dateInput instanceof Date) {
+        if (isNaN(dateInput.getTime())) return null;
+        return `${dateInput.getFullYear()}-${pad2(dateInput.getMonth() + 1)}-${pad2(dateInput.getDate())}`;
+    }
+
+    const raw = String(dateInput).trim();
+    if (!raw) return null;
+
+    // If Baserow stores YYYY-MM-DD or YYYY-MM-DDTHH:mm, take the date part directly.
+    const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+
+    // Fallback for other readable date formats.
+    const d = new Date(raw);
     if (isNaN(d.getTime())) return null;
-    const year = d.getUTCFullYear();
-    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(d.getUTCDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
 function getTodayUTC() {
     return normalizeToUTCKey(new Date());
+}
+
+function formatBillDate(dateInput) {
+    const key = normalizeToUTCKey(dateInput);
+    if (!key) return 'N/A';
+    const [y, m, d] = key.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function toDateInputValue(dateInput) {
+    return normalizeToUTCKey(dateInput) || '';
 }
 
 function getDateRangeKeys(type) {
@@ -134,9 +160,11 @@ function getDateRangeKeys(type) {
             label = 'This Month';
             break;
         case 'custom':
-            if (state.dateRange.from) from = new Date(state.dateRange.from);
-            if (state.dateRange.to) to = new Date(state.dateRange.to);
-            label = 'Custom';
+            from = state.dateRange.from || null;
+            to = state.dateRange.to || null;
+            label = state.dateRange.from && state.dateRange.to
+                ? `${state.dateRange.from} to ${state.dateRange.to}`
+                : 'Custom';
             break;
         default:
             break;
@@ -145,7 +173,7 @@ function getDateRangeKeys(type) {
     return {
         fromKey: from ? normalizeToUTCKey(from) : null,
         toKey: to ? normalizeToUTCKey(to) : null,
-        label: label
+        label
     };
 }
 
@@ -293,7 +321,7 @@ async function fetchAllBills(forceRefresh = false) {
             state.bills.sort((a, b) => b.id - a.id);
             state.filtered = [...state.bills];
             state.search = '';
-            
+            applyFilters();
             render();
             showMsg('📦 Loaded ' + state.bills.length + ' bills from cache', 'info', 2000);
             
@@ -383,6 +411,7 @@ async function fetchAllBills(forceRefresh = false) {
 
         state.filtered = [...state.bills];
         state.search = '';
+        applyFilters();
 
         if (DOM.searchInput) DOM.searchInput.value = '';
 
@@ -432,35 +461,37 @@ function render() {
     const amount = bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
     const avg = total > 0 ? amount / total : 0;
 
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthBills = state.bills.filter(b => {
-        if (!b.Date) return false;
-        const billDate = new Date(b.Date);
-        return billDate >= monthStart;
-    });
+    const monthStartKey = normalizeToUTCKey(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+    const monthBills = state.bills.filter(b => b._dateKey && b._dateKey >= monthStartKey && b._dateKey <= getTodayUTC());
     const monthTotal = monthBills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
 
     DOM.stats.innerHTML = `
         <div class="stat-card">
-            <div class="stat-icon blue">📄</div>
+            <div class="stat-icon blue">Bills</div>
             <div class="stat-info">
                 <div class="stat-value">${total}</div>
-                <div class="stat-label">Bills</div>
+                <div class="stat-label">Filtered Bills</div>
             </div>
-            ${state.usingCache ? '<span class="stat-badge">💾 Cached</span>' : ''}
+            ${state.usingCache ? '<span class="stat-badge">Cached</span>' : ''}
         </div>
         <div class="stat-card">
-            <div class="stat-icon yellow">📊</div>
+            <div class="stat-icon green">Total</div>
+            <div class="stat-info">
+                <div class="stat-value success">${formatMVR(amount)}</div>
+                <div class="stat-label">Filtered Amount</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow">Avg</div>
             <div class="stat-info">
                 <div class="stat-value">${formatMVR(avg)}</div>
                 <div class="stat-label">Average Bill</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon purple">📅</div>
+            <div class="stat-icon purple">Month</div>
             <div class="stat-info">
-                <div class="stat-value success">${formatMVR(monthTotal)}</div>
+                <div class="stat-value accent">${formatMVR(monthTotal)}</div>
                 <div class="stat-label">This Month</div>
             </div>
         </div>
@@ -518,7 +549,7 @@ function render() {
         `;
         
         bills.slice(0, 500).forEach(b => {
-            const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
+            const date = formatBillDate(b.Date);
             const isToday = b._dateKey === getTodayUTC();
             html += `
                 <tr class="${isToday ? 'row-today' : ''}" onclick="viewBill(${b.id})">
@@ -550,7 +581,7 @@ function render() {
     if (isMobile) {
         html += `<div class="card-list">`;
         bills.slice(0, 100).forEach(b => {
-            const date = b.Date ? new Date(b.Date).toLocaleDateString() : 'N/A';
+            const date = formatBillDate(b.Date);
             const isToday = b._dateKey === getTodayUTC();
             html += `
                 <div class="bill-card ${isToday ? 'today' : ''}" onclick="viewBill(${b.id})">
@@ -582,7 +613,7 @@ function render() {
     html += `
             <div class="table-footer">
                 <span>Showing ${Math.min(bills.length, isMobile ? 100 : 500)} of ${bills.length} bills</span>
-                <span>Total: ${formatMVR(state.totalAmount)}</span>
+                <span>Filtered Total: ${formatMVR(amount)}</span>
             </div>
         </div>
     `;
@@ -636,7 +667,7 @@ function sort(field) {
         let va = a[field] || '';
         let vb = b[field] || '';
         if (field === 'Amount') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0; }
-        if (field === 'Date') { va = new Date(va) || 0; vb = new Date(vb) || 0; }
+        if (field === 'Date') { va = normalizeToUTCKey(va) || ''; vb = normalizeToUTCKey(vb) || ''; }
         if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
         return sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
     });
@@ -651,7 +682,7 @@ function sort(field) {
 function viewBill(id) {
     const bill = state.bills.find(b => b.id === id);
     if (!bill) return;
-    const date = bill.Date ? new Date(bill.Date).toLocaleString() : 'N/A';
+    const date = formatBillDate(bill.Date);
     
     DOM.content.innerHTML = `
         <div class="detail-view">
@@ -702,6 +733,7 @@ async function deleteBill(id) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         state.bills = state.bills.filter(b => b.id !== id);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        localStorage.removeItem('bills_cache_all_bills');
         applyFilters();
         render();
         showLoading(false);
@@ -733,7 +765,7 @@ function openCreate() {
                 </div>
                 <div class="form-group">
                     <label>Date</label>
-                    <input type="datetime-local" name="Date" id="dateInput">
+                    <input type="date" name="Date" id="dateInput">
                 </div>
                 <div class="form-group">
                     <label>Bill Number</label>
@@ -755,13 +787,13 @@ function openCreate() {
         </div>
     `);
     const d = document.getElementById('dateInput');
-    if (d) d.value = new Date().toISOString().slice(0, 16);
+    if (d) d.value = getTodayUTC();
 }
 
 function openEdit(id) {
     const bill = state.bills.find(b => b.id === id);
     if (!bill) return;
-    const date = bill.Date ? new Date(bill.Date).toISOString().slice(0, 16) : '';
+    const date = toDateInputValue(bill.Date);
     
     openModal(`
         <div class="modal-header">
@@ -780,7 +812,7 @@ function openEdit(id) {
                 </div>
                 <div class="form-group">
                     <label>Date</label>
-                    <input type="datetime-local" name="Date" value="${date}">
+                    <input type="date" name="Date" value="${date}">
                 </div>
                 <div class="form-group">
                     <label>Bill Number</label>
@@ -806,6 +838,7 @@ function openEdit(id) {
 async function handleCreate(e) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
+    if (data.Date) data.Date = normalizeToUTCKey(data.Date);
     Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
     showLoading(true, 'Creating...');
     try {
@@ -816,6 +849,7 @@ async function handleCreate(e) {
         bill._dateKey = normalizeToUTCKey(bill.Date);
         state.bills.unshift(bill);
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        localStorage.removeItem('bills_cache_all_bills');
         state.dateRange.type = 'all';
         state.search = '';
         if (DOM.searchInput) DOM.searchInput.value = '';
@@ -834,6 +868,7 @@ async function handleCreate(e) {
 async function handleUpdate(e, id) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
+    if (data.Date) data.Date = normalizeToUTCKey(data.Date);
     Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
     showLoading(true, 'Updating...');
     try {
@@ -845,6 +880,7 @@ async function handleUpdate(e, id) {
         const idx = state.bills.findIndex(b => b.id === id);
         if (idx > -1) state.bills[idx] = bill;
         state.totalAmount = state.bills.reduce((s, b) => s + parseFloat(b.Amount || 0), 0);
+        localStorage.removeItem('bills_cache_all_bills');
         applyFilters();
         render();
         closeModal();
