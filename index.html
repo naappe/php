@@ -2,70 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>WhiteSaffron Bill Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhiteSaffron Bills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <script>
-    if (localStorage.getItem('ws_auth') !== 'yes') location.href = 'login.html';
+    if (localStorage.getItem('ws_logged_in') !== 'yes') window.location.href = 'login.html';
   </script>
 
-  <div class="shell">
+  <div class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">WS</div>
+        <div class="logo">WS</div>
         <div>
           <h1>Bill Manager</h1>
           <p>WhiteSaffron Villimale</p>
         </div>
       </div>
       <div class="top-actions">
-        <button class="icon-btn" id="refreshBtn" title="Refresh">Refresh</button>
-        <button class="icon-btn" id="exportBtn" title="Export CSV">Export</button>
-        <button class="icon-btn danger-text" id="logoutBtn" title="Logout">Logout</button>
+        <button id="refreshBtn" class="light-btn">Refresh</button>
+        <button id="exportBtn" class="light-btn">Export</button>
+        <button id="logoutBtn" class="light-btn danger-text">Logout</button>
       </div>
     </header>
 
-    <section class="hero-grid">
-      <button class="hero-card hero-latest" id="latestCard">
-        <span>Latest Bill Added</span>
-        <strong id="latestVendor">Loading...</strong>
-        <small id="latestMeta">Please wait</small>
+    <section class="quick-home">
+      <button class="latest-box" id="latestBox">
+        <span>Latest Bill</span>
+        <strong id="latestTitle">Loading...</strong>
+        <small id="latestInfo">Please wait</small>
       </button>
-      <div class="hero-card">
+      <div class="summary-box">
         <span>This Month</span>
         <strong id="monthTotal">MVR 0.00</strong>
         <small id="monthCount">0 bills</small>
       </div>
-      <div class="hero-card">
-        <span>Last 30 Days</span>
-        <strong id="last30Total">MVR 0.00</strong>
-        <small id="last30Count">0 bills</small>
+      <div class="summary-box">
+        <span>Today</span>
+        <strong id="todayTotal">MVR 0.00</strong>
+        <small id="todayCount">0 bills</small>
+      </div>
+      <button class="add-main" id="addMainBtn">+ Add Bill</button>
+    </section>
+
+    <section class="tools">
+      <input id="searchInput" placeholder="Search vendor, bill no, location, TIN...">
+      <div class="chips">
+        <button class="chip active" data-range="all">All</button>
+        <button class="chip" data-range="today">Today</button>
+        <button class="chip" data-range="month">This Month</button>
+        <button class="chip" data-range="last30">Last 30 Days</button>
       </div>
     </section>
 
-    <section class="stats-grid" id="statsGrid"></section>
+    <section class="stats" id="stats"></section>
 
-    <section class="toolbar">
-      <div class="search-box">
-        <span>Search</span>
-        <input id="searchInput" placeholder="Vendor, bill no, location, TIN..." autocomplete="off">
-      </div>
-      <select id="rangeFilter">
-        <option value="all">All Time</option>
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="last30">Last 30 Days</option>
-      </select>
-      <button class="primary-btn" id="addBtn">Add Bill</button>
-    </section>
-
-    <main class="panel" id="content">
-      <div class="loading-state">
+    <main class="content" id="content">
+      <div class="loading">
         <div class="spinner"></div>
         <p>Loading bills...</p>
       </div>
@@ -73,12 +69,10 @@
   </div>
 
   <div class="modal-layer" id="modalLayer">
-    <div class="modal">
-      <div id="modalContent"></div>
-    </div>
+    <div class="modal" id="modal"></div>
   </div>
 
-  <div class="toast-wrap" id="toastWrap"></div>
+  <div class="toast-area" id="toastArea"></div>
 
   <script src="config.js"></script>
   <script src="app.js"></script>
