@@ -1,0 +1,230 @@
+/* Professional polish for WhiteSaffron Bill Manager */
+:root {
+  --bg: #eef2f6;
+  --panel: #ffffff;
+  --panel2: #f8fafc;
+  --text: #0f172a;
+  --muted: #64748b;
+  --soft: #94a3b8;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --accent: #0f766e;
+  --accent2: #115e59;
+  --success: #047857;
+  --danger: #dc2626;
+  --warning: #b45309;
+  --radius: 12px;
+  --shadow: 0 18px 50px rgba(15, 23, 42, .10);
+}
+
+body {
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, .08), transparent 32%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+  color: var(--text);
+}
+
+.app-container {
+  max-width: 1240px;
+}
+
+.app-header {
+  border: 0;
+  border-radius: 20px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #164e63 100%);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.app-header h1,
+.app-header .restaurant-name,
+.app-header .btn-ghost,
+.app-header .user-avatar {
+  color: #fff;
+}
+
+.restaurant-name {
+  color: rgba(255, 255, 255, .72) !important;
+}
+
+.logo-icon,
+.user-avatar {
+  background: rgba(255, 255, 255, .14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .16);
+}
+
+.logo-icon:before {
+  content: "WS";
+}
+
+.user-avatar:before {
+  content: "AD";
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, .10);
+  border-color: rgba(255, 255, 255, .16);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, .18);
+  border-color: rgba(255, 255, 255, .28);
+}
+
+.stat-card,
+.search-filter-bar,
+.content-area,
+.bill-card,
+.modal,
+.detail-item {
+  border: 1px solid rgba(148, 163, 184, .22);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .05);
+}
+
+.stat-card {
+  border-radius: 18px;
+  padding: 17px;
+}
+
+.stat-icon {
+  color: var(--muted);
+}
+
+.stat-value {
+  letter-spacing: -.05em;
+}
+
+.search-filter-bar {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(10px);
+}
+
+.search-input,
+.date-range-toggle,
+.date-input,
+.form-group input {
+  background: #fff;
+  border-color: #dbe3ea;
+}
+
+.content-area {
+  border-radius: 18px;
+}
+
+.data-table thead {
+  background: #f8fafc;
+}
+
+.data-table th {
+  color: #475569;
+  font-size: 10px;
+}
+
+.data-table td {
+  color: #334155;
+}
+
+.bill-id {
+  background: #ecfeff;
+  color: #0e7490;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.bill-vendor {
+  color: #0f172a;
+}
+
+.bill-amount,
+.card-amount {
+  color: #047857;
+}
+
+.row-today {
+  background: #f0fdfa !important;
+}
+
+.btn {
+  border-radius: 11px;
+}
+
+.btn-primary,
+.fab {
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  box-shadow: 0 12px 30px rgba(8, 145, 178, .22);
+}
+
+.btn-primary:hover,
+.fab:hover {
+  background: linear-gradient(135deg, #115e59, #0e7490);
+}
+
+.btn-secondary {
+  background: #fff;
+}
+
+.fab {
+  border-radius: 20px;
+}
+
+.card-list {
+  padding: 14px;
+}
+
+.bill-card {
+  border-radius: 18px;
+}
+
+.card-header {
+  align-items: flex-start;
+}
+
+.card-id {
+  background: #ecfeff;
+  color: #0e7490;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.date-range-panel,
+.notification {
+  box-shadow: var(--shadow);
+}
+
+.empty-state h3,
+.detail-header h2,
+.modal-header h2 {
+  letter-spacing: -.03em;
+}
+
+@media (max-width: 900px) {
+  .app-header {
+    border-radius: 18px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+    padding-bottom: 88px;
+  }
+
+  .app-header {
+    padding: 14px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+}
