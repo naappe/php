@@ -438,8 +438,9 @@ document.querySelectorAll('.chip').forEach(btn => {
 });
 
 $('addMainBtn').addEventListener('click', () => openBillForm());
+$('sideAddBtn').addEventListener('click', () => openBillForm());
 $('refreshBtn').addEventListener('click', loadBills);
-$('exportBtn').addEventListener('click', exportCsv);
+$('sideExportBtn').addEventListener('click', exportCsv);
 $('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('ws_logged_in');
   window.location.href = 'login.html';

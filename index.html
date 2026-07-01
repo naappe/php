@@ -13,58 +13,71 @@
     if (localStorage.getItem('ws_logged_in') !== 'yes') window.location.href = 'login.html';
   </script>
 
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-brand">
         <div class="logo">WS</div>
         <div>
-          <h1>Bill Manager</h1>
-          <p>WhiteSaffron Villimale</p>
+          <h1>WhiteSaffron</h1>
+          <p>Bill Control</p>
         </div>
       </div>
-      <div class="top-actions">
-        <button id="refreshBtn" class="light-btn">Refresh</button>
-        <button id="exportBtn" class="light-btn">Export</button>
-        <button id="logoutBtn" class="light-btn danger-text">Logout</button>
-      </div>
-    </header>
+      <nav class="side-nav">
+        <button class="nav-item active">Dashboard</button>
+        <button class="nav-item" id="sideAddBtn">Add Bill</button>
+        <button class="nav-item" id="sideExportBtn">Export CSV</button>
+      </nav>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
 
-    <section class="quick-home">
-      <button class="latest-box" id="latestBox">
-        <span>Latest Bill</span>
-        <strong id="latestTitle">Loading...</strong>
-        <small id="latestInfo">Please wait</small>
-      </button>
-      <div class="summary-box">
-        <span>This Month</span>
-        <strong id="monthTotal">MVR 0.00</strong>
-        <small id="monthCount">0 bills</small>
-      </div>
-      <div class="summary-box">
-        <span>Today</span>
-        <strong id="todayTotal">MVR 0.00</strong>
-        <small id="todayCount">0 bills</small>
-      </div>
-      <button class="add-main" id="addMainBtn">+ Add Bill</button>
-    </section>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">WhiteSaffron Villimale</p>
+          <h2>Bill Manager</h2>
+        </div>
+        <div class="top-actions">
+          <button id="refreshBtn" class="light-btn">Refresh</button>
+          <button id="addMainBtn" class="primary-btn">Add Bill</button>
+        </div>
+      </header>
 
-    <section class="tools">
-      <input id="searchInput" placeholder="Search vendor, bill no, location, TIN...">
-      <div class="chips">
-        <button class="chip active" data-range="all">All</button>
-        <button class="chip" data-range="today">Today</button>
-        <button class="chip" data-range="month">This Month</button>
-        <button class="chip" data-range="last30">Last 30 Days</button>
-      </div>
-    </section>
+      <section class="quick-home">
+        <button class="metric-card latest-card" id="latestBox">
+          <span>Latest bill</span>
+          <strong id="latestTitle">Loading...</strong>
+          <small id="latestInfo">Please wait</small>
+        </button>
+        <div class="metric-card">
+          <span>This month</span>
+          <strong id="monthTotal">MVR 0.00</strong>
+          <small id="monthCount">0 bills</small>
+        </div>
+        <div class="metric-card">
+          <span>Today</span>
+          <strong id="todayTotal">MVR 0.00</strong>
+          <small id="todayCount">0 bills</small>
+        </div>
+      </section>
 
-    <section class="stats" id="stats"></section>
+      <section class="tools">
+        <input id="searchInput" placeholder="Search vendor, bill no, location, TIN">
+        <div class="chips">
+          <button class="chip active" data-range="all">All</button>
+          <button class="chip" data-range="today">Today</button>
+          <button class="chip" data-range="month">Month</button>
+          <button class="chip" data-range="last30">30 Days</button>
+        </div>
+      </section>
 
-    <main class="content" id="content">
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Loading bills...</p>
-      </div>
+      <section class="stats" id="stats"></section>
+
+      <section class="content" id="content">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading bills...</p>
+        </div>
+      </section>
     </main>
   </div>
 
