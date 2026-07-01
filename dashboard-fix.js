@@ -8,9 +8,14 @@
     return bill._dateKey || normalizeToUTCKey(getBillDateValue(bill));
   }
 
-  function latestBill() {
-    if (typeof state === 'undefined' || !Array.isArray(state.bills) || !state.bills.length) return null;
-    return [...state.bills].sort((a, b) => {
+  function currentRangeBills() {
+    if (typeof state === 'undefined' || !Array.isArray(state.filtered)) return [];
+    return state.filtered;
+  }
+
+  function latestBill(bills) {
+    if (!Array.isArray(bills) || !bills.length) return null;
+    return [...bills].sort((a, b) => {
       const dateA = billDateKey(a) || '';
       const dateB = billDateKey(b) || '';
       if (dateA !== dateB) return dateA < dateB ? 1 : -1;
@@ -18,35 +23,33 @@
     })[0];
   }
 
-  function thisMonthBills() {
-    if (typeof state === 'undefined' || !Array.isArray(state.bills)) return [];
-    const start = normalizeToUTCKey(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
-    const today = getTodayUTC();
-    return state.bills.filter(bill => {
-      const key = billDateKey(bill);
-      return key && key >= start && key <= today;
-    });
+  function activeRangeLabel() {
+    if (typeof DOM !== 'undefined' && DOM.dateRangeLabel && DOM.dateRangeLabel.textContent) {
+      return DOM.dateRangeLabel.textContent;
+    }
+    return 'Selected Period';
   }
 
   function injectFrontSummary() {
     if (typeof state === 'undefined' || !state.loaded || !DOM || !DOM.content) return;
     if (DOM.content.querySelector('.front-summary')) return;
 
-    const latest = latestBill();
-    const monthBills = thisMonthBills();
-    const monthTotal = monthBills.reduce((sum, bill) => sum + (parseFloat(bill.Amount) || 0), 0);
+    const bills = currentRangeBills();
+    const latest = latestBill(bills);
+    const selectedTotal = bills.reduce((sum, bill) => sum + (parseFloat(bill.Amount) || 0), 0);
+    const label = activeRangeLabel();
 
     const latestHtml = latest ? `
       <button class="summary-card latest-card" onclick="viewBill(${latest.id})">
-        <span class="summary-label">Latest Bill Added</span>
+        <span class="summary-label">Latest Bill in ${label}</span>
         <strong>${latest.Vendor || 'Unnamed vendor'}</strong>
         <small>${formatMVR(latest.Amount)} · ${formatBillDate(getBillDateValue(latest))} · #${latest.id}</small>
       </button>
     ` : `
       <div class="summary-card">
-        <span class="summary-label">Latest Bill Added</span>
-        <strong>No bills yet</strong>
-        <small>Add your first bill to see it here.</small>
+        <span class="summary-label">Latest Bill in ${label}</span>
+        <strong>No bills found</strong>
+        <small>Change the filter or add a bill.</small>
       </div>
     `;
 
@@ -55,9 +58,9 @@
     summary.innerHTML = `
       ${latestHtml}
       <div class="summary-card">
-        <span class="summary-label">This Month</span>
-        <strong>${formatMVR(monthTotal)}</strong>
-        <small>${monthBills.length} bills recorded this month</small>
+        <span class="summary-label">${label} Total</span>
+        <strong>${formatMVR(selectedTotal)}</strong>
+        <small>${bills.length} bills in this filter</small>
       </div>
     `;
 

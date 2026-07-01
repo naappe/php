@@ -96,6 +96,7 @@
     applyFilters();
     render();
   };
+  window.setDateRange = setDateRange;
 
   async function fetchFast(forceRefresh = false) {
     if (state.loading) return;

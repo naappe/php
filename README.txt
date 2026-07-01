@@ -1,4 +1,7 @@
-Upload these two files to the same GitHub repo folder as index.html:
+Fast fix if nothing changed:
+Replace your repo index.html with the index.html included in this package.
+
+Then upload these files to the same GitHub repo folder as index.html:
 
 1. professional.css
 2. date-fix.js
@@ -27,7 +30,7 @@ What this improves:
 - Better table and stat card styling
 - Date fallback support for Date, Created Date, Created, Created At, created_at, Date Created, and Created On
 - Clear Back to Bills button on bill detail page
-- Front page always shows Latest Bill Added and This Month total/count
+- Front page shows latest bill and total for the currently selected filter
 - Faster parallel bill fetching
 - Auto refresh every 45 seconds while the page is open
 - Homepage defaults to This Month bills only
