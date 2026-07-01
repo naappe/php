@@ -3,81 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhiteSaffron Bills</title>
+  <title>WhiteSaffron Bill Manager</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-  <script>
-    if (localStorage.getItem('ws_logged_in') !== 'yes') window.location.href = 'login.html';
-  </script>
+  <div class="login-layer" id="loginLayer">
+    <form class="login-card" id="loginForm">
+      <div class="brand-mark">WS</div>
+      <h2>Admin Login</h2>
+      <p>Sign in to manage WhiteSaffron bills.</p>
+      <div class="error" id="loginError">Wrong username or password.</div>
+      <label class="form-field">Username
+        <input id="loginUser" autocomplete="username" required>
+      </label>
+      <label class="form-field">Password
+        <input id="loginPass" type="password" autocomplete="current-password" required>
+      </label>
+      <div class="form-actions">
+        <button class="btn primary" type="submit">Sign In</button>
+      </div>
+    </form>
+  </div>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="side-brand">
-        <div class="logo">WS</div>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">WS</div>
         <div>
-          <h1>WhiteSaffron</h1>
-          <p>Bill Control</p>
+          <h1>Bill Manager</h1>
+          <p>WhiteSaffron Villimale</p>
         </div>
       </div>
-      <nav class="side-nav">
-        <button class="nav-item active">Dashboard</button>
-        <button class="nav-item" id="sideAddBtn">Add Bill</button>
-        <button class="nav-item" id="sideExportBtn">Export CSV</button>
-      </nav>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
-    </aside>
+      <div class="top-actions">
+        <button class="btn" id="refreshBtn">Refresh</button>
+        <button class="btn" id="exportBtn">Export CSV</button>
+        <button class="btn danger" id="logoutBtn">Logout</button>
+        <button class="btn primary" id="addBtn">Add Bill</button>
+      </div>
+    </header>
 
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">WhiteSaffron Villimale</p>
-          <h2>Bill Manager</h2>
-        </div>
-        <div class="top-actions">
-          <button id="refreshBtn" class="light-btn">Refresh</button>
-          <button id="addMainBtn" class="primary-btn">Add Bill</button>
-        </div>
-      </header>
+    <section class="dashboard">
+      <button class="card latest-card" id="latestCard">
+        <span class="label">Latest bill</span>
+        <strong class="value" id="latestVendor">Loading...</strong>
+        <small class="hint" id="latestMeta">Please wait</small>
+      </button>
+      <div class="card">
+        <span class="label">This month</span>
+        <strong class="value" id="monthTotal">MVR 0.00</strong>
+        <small class="hint" id="monthCount">0 bills</small>
+      </div>
+      <div class="card">
+        <span class="label">Today</span>
+        <strong class="value" id="todayTotal">MVR 0.00</strong>
+        <small class="hint" id="todayCount">0 bills</small>
+      </div>
+      <div class="card">
+        <span class="label">Current view</span>
+        <strong class="value" id="viewTotal">MVR 0.00</strong>
+        <small class="hint" id="viewCount">0 bills shown</small>
+      </div>
+    </section>
 
-      <section class="quick-home">
-        <button class="metric-card latest-card" id="latestBox">
-          <span>Latest bill</span>
-          <strong id="latestTitle">Loading...</strong>
-          <small id="latestInfo">Please wait</small>
-        </button>
-        <div class="metric-card">
-          <span>This month</span>
-          <strong id="monthTotal">MVR 0.00</strong>
-          <small id="monthCount">0 bills</small>
-        </div>
-        <div class="metric-card">
-          <span>Today</span>
-          <strong id="todayTotal">MVR 0.00</strong>
-          <small id="todayCount">0 bills</small>
-        </div>
-      </section>
+    <section class="toolbar">
+      <input class="search" id="searchInput" placeholder="Search vendor, bill no, location, TIN">
+      <div class="filters">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="today">Today</button>
+        <button class="chip" data-filter="month">Month</button>
+        <button class="chip" data-filter="last30">30 Days</button>
+      </div>
+    </section>
 
-      <section class="tools">
-        <input id="searchInput" placeholder="Search vendor, bill no, location, TIN">
-        <div class="chips">
-          <button class="chip active" data-range="all">All</button>
-          <button class="chip" data-range="today">Today</button>
-          <button class="chip" data-range="month">Month</button>
-          <button class="chip" data-range="last30">30 Days</button>
-        </div>
-      </section>
-
-      <section class="stats" id="stats"></section>
-
-      <section class="content" id="content">
-        <div class="loading">
-          <div class="spinner"></div>
-          <p>Loading bills...</p>
-        </div>
-      </section>
+    <main class="content" id="content">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading bills...</p>
+      </div>
     </main>
   </div>
 
@@ -88,6 +93,7 @@
   <div class="toast-area" id="toastArea"></div>
 
   <script src="config.js"></script>
-  <script src="app.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>

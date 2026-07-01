@@ -1,459 +1,500 @@
 const state = {
-  bills: [],
-  filtered: [],
-  range: 'all',
-  search: ''
-};
+      bills: [],
+      filtered: [],
+      filter: 'all',
+      search: '',
+      loaded: false
+    };
 
-const $ = id => document.getElementById(id);
-const DOM = {
-  content: $('content'),
-  stats: $('stats'),
-  search: $('searchInput'),
-  modalLayer: $('modalLayer'),
-  modal: $('modal'),
-  toast: $('toastArea')
-};
+    const $ = id => document.getElementById(id);
+    const DOM = {
+      app: $('app'),
+      loginLayer: $('loginLayer'),
+      loginForm: $('loginForm'),
+      loginError: $('loginError'),
+      content: $('content'),
+      modalLayer: $('modalLayer'),
+      modal: $('modal'),
+      toast: $('toastArea'),
+      search: $('searchInput')
+    };
 
-function apiHeaders() {
-  return {
-    Authorization: 'Token ' + CONFIG.API_TOKEN,
-    'Content-Type': 'application/json'
-  };
-}
-
-function pad(n) {
-  return String(n).padStart(2, '0');
-}
-
-function toDateKey(value) {
-  if (!value) return '';
-  const raw = String(value).trim();
-  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (match) return `${match[1]}-${match[2]}-${match[3]}`;
-  const d = new Date(raw);
-  if (isNaN(d.getTime())) return '';
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-function todayKey() {
-  return toDateKey(new Date());
-}
-
-function displayDate(value) {
-  const key = toDateKey(value);
-  if (!key) return 'N/A';
-  const [y, m, d] = key.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-function billDateValue(bill) {
-  return bill.Date || bill['Created Date'] || bill.Created || bill['Created At'] || bill.created_at || '';
-}
-
-function normalizeBill(bill) {
-  const date = billDateValue(bill);
-  return {
-    ...bill,
-    Date: bill.Date || date,
-    _dateKey: toDateKey(date),
-    _enteredBy: localStorage.getItem(`bill_by_${bill.id}`) || localStorage.getItem('ws_user') || 'Admin'
-  };
-}
-
-function mvr(value) {
-  const n = parseFloat(value) || 0;
-  return 'MVR ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-function clean(value) {
-  return String(value ?? '').replace(/[&<>"']/g, ch => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }[ch]));
-}
-
-function notify(text, type = 'success') {
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.textContent = text;
-  DOM.toast.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
-}
-
-async function loadBills() {
-  DOM.content.innerHTML = `<div class="loading"><div class="spinner"></div><p>Loading bills...</p></div>`;
-  try {
-    let page = 1;
-    let all = [];
-    let hasNext = true;
-    while (hasNext) {
-      const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}/?user_field_names=true&size=200&page=${page}`;
-      const res = await fetch(url, { headers: apiHeaders() });
-      if (!res.ok) throw new Error('Could not load bills: ' + res.status);
-      const data = await res.json();
-      all = all.concat((data.results || []).map(normalizeBill));
-      hasNext = Boolean(data.next);
-      page += 1;
+    function headers() {
+      return {
+        Authorization: 'Token ' + CONFIG.API_TOKEN,
+        'Content-Type': 'application/json'
+      };
     }
-    state.bills = all.sort((a, b) => (b.id || 0) - (a.id || 0));
-    applyFilters();
-    render();
-  } catch (error) {
-    DOM.content.innerHTML = `<div class="empty"><h2>Could not load bills</h2><p>${clean(error.message)}</p></div>`;
-    notify(error.message, 'error');
-  }
-}
 
-function rangeDates(type) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let from = '';
-  if (type === 'today') from = today;
-  if (type === 'month') from = new Date(today.getFullYear(), today.getMonth(), 1);
-  if (type === 'last30') {
-    from = new Date(today);
-    from.setDate(today.getDate() - 29);
-  }
-  return { from: from ? toDateKey(from) : '', to: todayKey() };
-}
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
 
-function applyFilters() {
-  const q = state.search.toLowerCase().trim();
-  const range = rangeDates(state.range);
-  state.filtered = state.bills.filter(bill => {
-    if (range.from && (!bill._dateKey || bill._dateKey < range.from || bill._dateKey > range.to)) return false;
-    if (!q) return true;
-    return [bill.id, bill.Vendor, bill.Amount, bill.Date, bill['Bill No'], bill.Location, bill.TIN, bill._enteredBy]
-      .some(v => String(v || '').toLowerCase().includes(q));
-  });
-}
+    function dateKey(value) {
+      if (!value) return '';
+      const raw = String(value).trim();
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+      const parsed = new Date(raw);
+      if (isNaN(parsed.getTime())) return '';
+      return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())}`;
+    }
 
-function billsIn(type) {
-  const range = rangeDates(type);
-  return state.bills.filter(b => b._dateKey && (!range.from || (b._dateKey >= range.from && b._dateKey <= range.to)));
-}
+    function todayKey() {
+      return dateKey(new Date());
+    }
 
-function latestBill() {
-  return [...state.bills].sort((a, b) => {
-    if (a._dateKey !== b._dateKey) return a._dateKey < b._dateKey ? 1 : -1;
-    return (b.id || 0) - (a.id || 0);
-  })[0];
-}
+    function displayDate(value) {
+      const key = dateKey(value);
+      if (!key) return 'N/A';
+      const [year, month, day] = key.split('-');
+      return `${day}/${month}/${year}`;
+    }
 
-function totalOf(bills) {
-  return bills.reduce((sum, b) => sum + (parseFloat(b.Amount) || 0), 0);
-}
+    function billDateValue(bill) {
+      return bill.Date || bill['Created Date'] || bill.Created || bill['Created At'] || bill.created_at || '';
+    }
 
-function updateHome() {
-  const latest = latestBill();
-  const month = billsIn('month');
-  const today = billsIn('today');
-  $('latestTitle').textContent = latest ? latest.Vendor || 'N/A' : 'No bills yet';
-  $('latestInfo').textContent = latest ? `${mvr(latest.Amount)} | ${displayDate(latest.Date)} | #${latest.id}` : 'Add your first bill';
-  $('latestBox').onclick = latest ? () => viewBill(latest.id) : () => openBillForm();
-  $('monthTotal').textContent = mvr(totalOf(month));
-  $('monthCount').textContent = `${month.length} bills`;
-  $('todayTotal').textContent = mvr(totalOf(today));
-  $('todayCount').textContent = `${today.length} bills`;
-}
+    function normalizeBill(bill) {
+      const rawDate = billDateValue(bill);
+      return {
+        ...bill,
+        Date: bill.Date || rawDate,
+        _dateKey: dateKey(rawDate),
+        _enteredBy: localStorage.getItem(`ws_bill_by_${bill.id}`) || localStorage.getItem('ws_user') || 'Admin'
+      };
+    }
 
-function renderStats() {
-  const amount = totalOf(state.filtered);
-  const avg = state.filtered.length ? amount / state.filtered.length : 0;
-  DOM.stats.innerHTML = `
-    ${stat('Showing', state.filtered.length, 'Bills in current view')}
-    ${stat('Total', mvr(amount), 'Current view total')}
-    ${stat('Average', mvr(avg), 'Average bill')}
-    ${stat('All Bills', state.bills.length, 'Loaded records')}
-  `;
-}
+    function mvr(value) {
+      const amount = parseFloat(value) || 0;
+      return 'MVR ' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
 
-function stat(label, value, note) {
-  return `<div class="stat-card"><span>${label}</span><strong>${value}</strong><small>${note}</small></div>`;
-}
+    function safe(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[ch]));
+    }
 
-function render() {
-  updateHome();
-  renderStats();
+    function toast(message, type = 'success') {
+      const item = document.createElement('div');
+      item.className = `toast ${type}`;
+      item.textContent = message;
+      DOM.toast.appendChild(item);
+      setTimeout(() => item.remove(), 3000);
+    }
 
-  if (!state.filtered.length) {
-    DOM.content.innerHTML = `<div class="empty"><h2>No bills found</h2><p>Try another filter or add a bill.</p><button class="primary-btn" onclick="openBillForm()">Add Bill</button></div>`;
-    return;
-  }
+    function isLoggedIn() {
+      return localStorage.getItem('ws_bill_login') === 'yes';
+    }
 
-  DOM.content.innerHTML = `
-    <div class="content-head">
-      <h2>Bills</h2>
-      <span>${state.filtered.length} records</span>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Vendor</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Bill No</th>
-            <th>Location</th>
-            <th>Entered By</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>${state.filtered.slice(0, 500).map(row).join('')}</tbody>
-      </table>
-      <div class="cards">${state.filtered.slice(0, 150).map(card).join('')}</div>
-    </div>
-    <div class="footer">
-      <span>Showing ${state.filtered.length} bills</span>
-      <span>Total ${mvr(totalOf(state.filtered))}</span>
-    </div>
-  `;
-}
+    function showLoginIfNeeded() {
+      DOM.loginLayer.style.display = isLoggedIn() ? 'none' : 'flex';
+      DOM.app.style.display = isLoggedIn() ? 'block' : 'none';
+      if (isLoggedIn()) loadBills();
+    }
 
-function row(b) {
-  return `
-    <tr onclick="viewBill(${b.id})">
-      <td><span class="pill">#${b.id}</span></td>
-      <td><strong>${clean(b.Vendor || 'N/A')}</strong></td>
-      <td class="amount">${mvr(b.Amount)}</td>
-      <td>${displayDate(b.Date)}</td>
-      <td>${clean(b['Bill No'] || 'N/A')}</td>
-      <td>${clean(b.Location || 'N/A')}</td>
-      <td>${clean(b._enteredBy || 'Admin')}</td>
-      <td><div class="row-actions">
-        <button class="mini-btn" onclick="event.stopPropagation(); openBillForm(${b.id})">Edit</button>
-        <button class="mini-btn danger" onclick="event.stopPropagation(); deleteBill(${b.id})">Delete</button>
-      </div></td>
-    </tr>
-  `;
-}
+    DOM.loginForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const user = $('loginUser').value.trim();
+      const pass = $('loginPass').value.trim();
+      if (user === CONFIG.LOGIN_USER && pass === CONFIG.LOGIN_PASS) {
+        localStorage.setItem('ws_bill_login', 'yes');
+        localStorage.setItem('ws_user', user);
+        DOM.loginError.classList.remove('show');
+        showLoginIfNeeded();
+      } else {
+        DOM.loginError.classList.add('show');
+        $('loginPass').value = '';
+      }
+    });
 
-function card(b) {
-  return `
-    <article class="bill-card" onclick="viewBill(${b.id})">
-      <div class="bill-card-top">
-        <span class="pill">#${b.id}</span>
-        <strong class="amount">${mvr(b.Amount)}</strong>
-      </div>
-      <h3>${clean(b.Vendor || 'N/A')}</h3>
-      <div class="card-grid">
-        ${info('Date', displayDate(b.Date))}
-        ${info('Bill No', b['Bill No'] || 'N/A')}
-        ${info('Location', b.Location || 'N/A')}
-        ${info('Entered By', b._enteredBy || 'Admin')}
-      </div>
-    </article>
-  `;
-}
+    async function loadBills() {
+      DOM.content.innerHTML = loadingHtml('Loading bills...');
+      try {
+        let page = 1;
+        let all = [];
+        let keepGoing = true;
 
-function info(label, value) {
-  return `<div class="info-box"><label>${label}</label><div>${clean(value)}</div></div>`;
-}
+        while (keepGoing) {
+          const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}/?user_field_names=true&size=200&page=${page}`;
+          const response = await fetch(url, { headers: headers() });
+          if (!response.ok) throw new Error('Could not load bills: ' + response.status);
+          const data = await response.json();
+          all = all.concat((data.results || []).map(normalizeBill));
+          keepGoing = Boolean(data.next);
+          page += 1;
+        }
 
-function viewBill(id) {
-  const b = state.bills.find(x => x.id === id);
-  if (!b) return;
-  DOM.content.innerHTML = `
-    <div class="detail">
-      <div class="back-row">
-        <button class="light-btn" onclick="render()">Back to Home</button>
-        <span class="pill">#${b.id}</span>
-      </div>
-      <div class="detail-top">
-        <div>
-          <h2>${clean(b.Vendor || 'Bill Detail')}</h2>
-          <p>${displayDate(b.Date)} | ${mvr(b.Amount)}</p>
+        state.bills = all.sort((a, b) => (b.id || 0) - (a.id || 0));
+        state.loaded = true;
+        applyFilters();
+        render();
+      } catch (error) {
+        DOM.content.innerHTML = emptyHtml('Could not load bills', error.message);
+        toast(error.message, 'error');
+      }
+    }
+
+    function filterRange(type) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      let from = '';
+      if (type === 'today') from = today;
+      if (type === 'month') from = new Date(today.getFullYear(), today.getMonth(), 1);
+      if (type === 'last30') {
+        from = new Date(today);
+        from.setDate(today.getDate() - 29);
+      }
+      return { from: from ? dateKey(from) : '', to: todayKey() };
+    }
+
+    function inRange(bill, type) {
+      const range = filterRange(type);
+      if (!range.from) return true;
+      return bill._dateKey && bill._dateKey >= range.from && bill._dateKey <= range.to;
+    }
+
+    function applyFilters() {
+      const query = state.search.toLowerCase().trim();
+      state.filtered = state.bills.filter(bill => {
+        if (!inRange(bill, state.filter)) return false;
+        if (!query) return true;
+        return [bill.id, bill.Vendor, bill.Amount, bill.Date, bill['Bill No'], bill.Location, bill.TIN, bill._enteredBy]
+          .some(value => String(value || '').toLowerCase().includes(query));
+      });
+    }
+
+    function billsFor(type) {
+      return state.bills.filter(bill => inRange(bill, type));
+    }
+
+    function totalOf(bills) {
+      return bills.reduce((sum, bill) => sum + (parseFloat(bill.Amount) || 0), 0);
+    }
+
+    function latestBill() {
+      return [...state.bills].sort((a, b) => {
+        if ((a._dateKey || '') !== (b._dateKey || '')) return (a._dateKey || '') < (b._dateKey || '') ? 1 : -1;
+        return (b.id || 0) - (a.id || 0);
+      })[0] || null;
+    }
+
+    function updateDashboard() {
+      const latest = latestBill();
+      const month = billsFor('month');
+      const today = billsFor('today');
+
+      $('latestVendor').textContent = latest ? latest.Vendor || 'N/A' : 'No bills yet';
+      $('latestMeta').textContent = latest ? `${mvr(latest.Amount)} | ${displayDate(latest.Date)} | #${latest.id}` : 'Add your first bill';
+      $('latestCard').onclick = latest ? () => viewBill(latest.id) : () => openForm();
+
+      $('monthTotal').textContent = mvr(totalOf(month));
+      $('monthCount').textContent = `${month.length} bills`;
+      $('todayTotal').textContent = mvr(totalOf(today));
+      $('todayCount').textContent = `${today.length} bills`;
+      $('viewTotal').textContent = mvr(totalOf(state.filtered));
+      $('viewCount').textContent = `${state.filtered.length} bills shown`;
+    }
+
+    function render() {
+      updateDashboard();
+      if (!state.filtered.length) {
+        DOM.content.innerHTML = emptyHtml('No bills found', 'Try another filter or add a bill.');
+        return;
+      }
+
+      DOM.content.innerHTML = `
+        <div class="content-head">
+          <h2>Bills</h2>
+          <span>${state.filtered.length} records</span>
         </div>
-        <div class="row-actions">
-          <button class="light-btn" onclick="openBillForm(${b.id})">Edit</button>
-          <button class="light-btn danger-text" onclick="deleteBill(${b.id})">Delete</button>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Vendor</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Bill No</th>
+                <th>Location</th>
+                <th>Entered By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>${state.filtered.slice(0, 500).map(rowHtml).join('')}</tbody>
+          </table>
+          <div class="cards">${state.filtered.slice(0, 150).map(cardHtml).join('')}</div>
         </div>
-      </div>
-      <div class="detail-grid">
-        ${info('Vendor', b.Vendor || 'N/A')}
-        ${info('Amount', mvr(b.Amount))}
-        ${info('Date / Created Date', displayDate(b.Date))}
-        ${info('Bill Number', b['Bill No'] || 'N/A')}
-        ${info('Location', b.Location || 'N/A')}
-        ${info('TIN', b.TIN || 'N/A')}
-        ${info('Entered By', b._enteredBy || 'Admin')}
-        ${info('Record ID', '#' + b.id)}
-      </div>
-    </div>
-  `;
-}
-
-function openBillForm(id = null) {
-  const b = id ? state.bills.find(x => x.id === id) : {};
-  const edit = Boolean(id);
-  openModal(`
-    <div class="modal-head">
-      <h2>${edit ? 'Edit Bill' : 'Add Bill'}</h2>
-      <button class="mini-btn" onclick="closeModal()">Close</button>
-    </div>
-    <div class="modal-body">
-      <form class="form" id="billForm">
-        <div class="warning" id="dupeBox">Possible duplicate bill found. Check before saving.</div>
-        <label>Vendor *<input name="Vendor" required value="${clean(b.Vendor || '')}"></label>
-        <label>Amount *<input name="Amount" type="number" step="0.01" required value="${clean(b.Amount || '')}"></label>
-        <label>Date *<input name="Date" type="date" required value="${toDateKey(b.Date) || todayKey()}"></label>
-        <label>Bill No<input name="Bill No" value="${clean(b['Bill No'] || '')}"></label>
-        <label>Location<input name="Location" value="${clean(b.Location || '')}"></label>
-        <label>TIN<input name="TIN" value="${clean(b.TIN || '')}"></label>
-        <label>Entered By<input name="EnteredBy" value="${clean(b._enteredBy || localStorage.getItem('ws_user') || 'Admin')}"></label>
-        <div class="form-actions">
-          <button type="button" class="light-btn" onclick="closeModal()">Cancel</button>
-          <button class="primary-btn" type="submit">${edit ? 'Update' : 'Save'}</button>
+        <div class="footer">
+          <span>Showing ${state.filtered.length} bills</span>
+          <span>Total ${mvr(totalOf(state.filtered))}</span>
         </div>
-      </form>
-    </div>
-  `);
-  const form = $('billForm');
-  form.addEventListener('input', () => checkDuplicate(form, id));
-  form.addEventListener('submit', event => saveBill(event, id));
-  checkDuplicate(form, id);
-}
+      `;
+    }
 
-function dataFromForm(form) {
-  const raw = Object.fromEntries(new FormData(form));
-  const enteredBy = raw.EnteredBy || 'Admin';
-  delete raw.EnteredBy;
-  raw.Date = toDateKey(raw.Date) || todayKey();
-  Object.keys(raw).forEach(k => {
-    if (raw[k] === '') delete raw[k];
-  });
-  return { raw, enteredBy };
-}
+    function rowHtml(bill) {
+      return `
+        <tr onclick="viewBill(${bill.id})">
+          <td><span class="id-pill">#${bill.id}</span></td>
+          <td><strong>${safe(bill.Vendor || 'N/A')}</strong></td>
+          <td class="amount">${mvr(bill.Amount)}</td>
+          <td>${displayDate(bill.Date)}</td>
+          <td>${safe(bill['Bill No'] || 'N/A')}</td>
+          <td>${safe(bill.Location || 'N/A')}</td>
+          <td>${safe(bill._enteredBy || 'Admin')}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn mini" onclick="event.stopPropagation(); openForm(${bill.id})">Edit</button>
+              <button class="btn mini danger" onclick="event.stopPropagation(); deleteBill(${bill.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
 
-function duplicateExists(data, currentId) {
-  return state.bills.some(b => {
-    if (currentId && b.id === currentId) return false;
-    return String(b.Vendor || '').trim().toLowerCase() === String(data.Vendor || '').trim().toLowerCase()
-      && Number(parseFloat(b.Amount || 0).toFixed(2)) === Number(parseFloat(data.Amount || 0).toFixed(2))
-      && toDateKey(b.Date) === toDateKey(data.Date)
-      && String(b['Bill No'] || '').trim().toLowerCase() === String(data['Bill No'] || '').trim().toLowerCase();
-  });
-}
+    function cardHtml(bill) {
+      return `
+        <article class="bill-card" onclick="viewBill(${bill.id})">
+          <div class="bill-card-top">
+            <span class="id-pill">#${bill.id}</span>
+            <strong class="amount">${mvr(bill.Amount)}</strong>
+          </div>
+          <h3>${safe(bill.Vendor || 'N/A')}</h3>
+          <div class="grid-2">
+            ${info('Date', displayDate(bill.Date))}
+            ${info('Bill No', bill['Bill No'] || 'N/A')}
+            ${info('Location', bill.Location || 'N/A')}
+            ${info('Entered By', bill._enteredBy || 'Admin')}
+          </div>
+        </article>
+      `;
+    }
 
-function checkDuplicate(form, id) {
-  const { raw } = dataFromForm(form);
-  const dupe = duplicateExists(raw, id);
-  $('dupeBox').classList.toggle('show', dupe);
-}
+    function info(label, value) {
+      return `<div class="info"><label>${label}</label><div>${safe(value)}</div></div>`;
+    }
 
-async function saveBill(event, id) {
-  event.preventDefault();
-  const { raw, enteredBy } = dataFromForm(event.target);
-  if (duplicateExists(raw, id) && !confirm('Possible duplicate. Save anyway?')) return;
-  try {
-    const method = id ? 'PATCH' : 'POST';
-    const path = id ? `/${id}/` : '/';
-    const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}${path}?user_field_names=true`;
-    const res = await fetch(url, { method, headers: apiHeaders(), body: JSON.stringify(raw) });
-    if (!res.ok) throw new Error('Save failed: ' + res.status);
-    const saved = normalizeBill(await res.json());
-    localStorage.setItem(`bill_by_${saved.id}`, enteredBy);
-    saved._enteredBy = enteredBy;
-    const index = state.bills.findIndex(b => b.id === saved.id);
-    if (index >= 0) state.bills[index] = saved;
-    else state.bills.unshift(saved);
-    closeModal();
-    state.range = 'all';
-    setActiveChip('all');
-    state.search = '';
-    DOM.search.value = '';
-    applyFilters();
-    render();
-    notify(editText(id));
-  } catch (error) {
-    notify(error.message, 'error');
-  }
-}
+    function viewBill(id) {
+      const bill = state.bills.find(item => item.id === id);
+      if (!bill) return;
+      DOM.content.innerHTML = `
+        <div class="detail">
+          <div class="back-row">
+            <button class="btn" onclick="render()">Back to Bills</button>
+            <span class="id-pill">#${bill.id}</span>
+          </div>
+          <div class="detail-top">
+            <div>
+              <h2>${safe(bill.Vendor || 'Bill Detail')}</h2>
+              <p>${displayDate(bill.Date)} | ${mvr(bill.Amount)}</p>
+            </div>
+            <div class="row-actions">
+              <button class="btn" onclick="openForm(${bill.id})">Edit</button>
+              <button class="btn danger" onclick="deleteBill(${bill.id})">Delete</button>
+            </div>
+          </div>
+          <div class="detail-grid">
+            ${info('Vendor', bill.Vendor || 'N/A')}
+            ${info('Amount', mvr(bill.Amount))}
+            ${info('Date / Created Date', displayDate(bill.Date))}
+            ${info('Bill Number', bill['Bill No'] || 'N/A')}
+            ${info('Location', bill.Location || 'N/A')}
+            ${info('TIN', bill.TIN || 'N/A')}
+            ${info('Entered By', bill._enteredBy || 'Admin')}
+            ${info('Record ID', '#' + bill.id)}
+          </div>
+        </div>
+      `;
+    }
 
-function editText(id) {
-  return id ? 'Bill updated. Back to home.' : 'Bill added. Back to home.';
-}
+    function openForm(id = null) {
+      const bill = id ? state.bills.find(item => item.id === id) : {};
+      const isEdit = Boolean(id);
+      DOM.modal.innerHTML = `
+        <div class="modal-head">
+          <h2>${isEdit ? 'Edit Bill' : 'Add Bill'}</h2>
+          <button class="btn mini" onclick="closeModal()">Close</button>
+        </div>
+        <div class="modal-body">
+          <form class="form" id="billForm">
+            <div class="warning" id="duplicateBox">Possible duplicate bill found. Check before saving.</div>
+            ${field('Vendor', 'Vendor', bill.Vendor || '', true)}
+            ${field('Amount', 'Amount', bill.Amount || '', true, 'number', '0.01')}
+            ${field('Date', 'Date', dateKey(bill.Date) || todayKey(), true, 'date')}
+            ${field('Bill No', 'Bill No', bill['Bill No'] || '')}
+            ${field('Location', 'Location', bill.Location || '')}
+            ${field('TIN', 'TIN', bill.TIN || '')}
+            ${field('Entered By', 'EnteredBy', bill._enteredBy || localStorage.getItem('ws_user') || 'Admin')}
+            <div class="form-actions">
+              <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn primary">${isEdit ? 'Update' : 'Save'}</button>
+            </div>
+          </form>
+        </div>
+      `;
+      DOM.modalLayer.style.display = 'flex';
+      const form = $('billForm');
+      form.addEventListener('input', () => showDuplicate(form, id));
+      form.addEventListener('submit', event => saveBill(event, id));
+      showDuplicate(form, id);
+    }
 
-async function deleteBill(id) {
-  if (!confirm('Delete bill #' + id + '?')) return;
-  try {
-    const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}/${id}/`;
-    const res = await fetch(url, { method: 'DELETE', headers: apiHeaders() });
-    if (!res.ok) throw new Error('Delete failed: ' + res.status);
-    state.bills = state.bills.filter(b => b.id !== id);
-    applyFilters();
-    render();
-    notify('Bill deleted. Back to home.');
-  } catch (error) {
-    notify(error.message, 'error');
-  }
-}
+    function field(label, name, value, required = false, type = 'text', step = '') {
+      return `
+        <label class="form-field">${label}
+          <input name="${safe(name)}" type="${type}" value="${safe(value)}" ${required ? 'required' : ''} ${step ? `step="${step}"` : ''}>
+        </label>
+      `;
+    }
 
-function openModal(html) {
-  DOM.modal.innerHTML = html;
-  DOM.modalLayer.style.display = 'flex';
-}
+    function readForm(form) {
+      const data = Object.fromEntries(new FormData(form));
+      const enteredBy = data.EnteredBy || 'Admin';
+      delete data.EnteredBy;
+      data.Date = dateKey(data.Date) || todayKey();
+      Object.keys(data).forEach(key => {
+        if (data[key] === '') delete data[key];
+      });
+      return { data, enteredBy };
+    }
 
-function closeModal() {
-  DOM.modalLayer.style.display = 'none';
-  DOM.modal.innerHTML = '';
-}
+    function isDuplicate(data, currentId) {
+      return state.bills.some(bill => {
+        if (currentId && bill.id === currentId) return false;
+        return String(bill.Vendor || '').trim().toLowerCase() === String(data.Vendor || '').trim().toLowerCase()
+          && Number(parseFloat(bill.Amount || 0).toFixed(2)) === Number(parseFloat(data.Amount || 0).toFixed(2))
+          && dateKey(bill.Date) === dateKey(data.Date)
+          && String(bill['Bill No'] || '').trim().toLowerCase() === String(data['Bill No'] || '').trim().toLowerCase();
+      });
+    }
 
-function setActiveChip(range) {
-  state.range = range;
-  document.querySelectorAll('.chip').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.range === range);
-  });
-}
+    function showDuplicate(form, id) {
+      const { data } = readForm(form);
+      $('duplicateBox').classList.toggle('show', isDuplicate(data, id));
+    }
 
-function exportCsv() {
-  const rows = [['id', 'Vendor', 'Amount', 'Date', 'Bill No', 'Location', 'TIN', 'Entered By']];
-  state.filtered.forEach(b => rows.push([b.id, b.Vendor || '', b.Amount || '', b.Date || '', b['Bill No'] || '', b.Location || '', b.TIN || '', b._enteredBy || '']));
-  const csv = rows.map(row => row.map(v => `"${String(v).replaceAll('"', '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'whitesaffron-bills.csv';
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
+    async function saveBill(event, id) {
+      event.preventDefault();
+      const { data, enteredBy } = readForm(event.target);
+      if (isDuplicate(data, id) && !confirm('Possible duplicate. Save anyway?')) return;
 
-DOM.search.addEventListener('input', event => {
-  state.search = event.target.value;
-  applyFilters();
-  render();
-});
+      try {
+        const method = id ? 'PATCH' : 'POST';
+        const path = id ? `/${id}/` : '/';
+        const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}${path}?user_field_names=true`;
+        const response = await fetch(url, { method, headers: headers(), body: JSON.stringify(data) });
+        if (!response.ok) throw new Error('Save failed: ' + response.status);
 
-document.querySelectorAll('.chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    setActiveChip(btn.dataset.range);
-    applyFilters();
-    render();
-  });
-});
+        const saved = normalizeBill(await response.json());
+        localStorage.setItem(`ws_bill_by_${saved.id}`, enteredBy);
+        saved._enteredBy = enteredBy;
 
-$('addMainBtn').addEventListener('click', () => openBillForm());
-$('sideAddBtn').addEventListener('click', () => openBillForm());
-$('refreshBtn').addEventListener('click', loadBills);
-$('sideExportBtn').addEventListener('click', exportCsv);
-$('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('ws_logged_in');
-  window.location.href = 'login.html';
-});
+        const index = state.bills.findIndex(bill => bill.id === saved.id);
+        if (index >= 0) state.bills[index] = saved;
+        else state.bills.unshift(saved);
 
-DOM.modalLayer.addEventListener('click', event => {
-  if (event.target === DOM.modalLayer) closeModal();
-});
+        closeModal();
+        state.filter = 'all';
+        state.search = '';
+        DOM.search.value = '';
+        setActiveFilter('all');
+        applyFilters();
+        render();
+        toast(id ? 'Bill updated. Back to list.' : 'Bill added. Back to list.');
+      } catch (error) {
+        toast(error.message, 'error');
+      }
+    }
 
-window.openBillForm = openBillForm;
-window.viewBill = viewBill;
-window.deleteBill = deleteBill;
-window.closeModal = closeModal;
-window.render = render;
+    async function deleteBill(id) {
+      if (!confirm('Delete bill #' + id + '?')) return;
+      try {
+        const url = `${CONFIG.BASE_URL}/api/database/rows/table/${CONFIG.TABLE_ID}/${id}/`;
+        const response = await fetch(url, { method: 'DELETE', headers: headers() });
+        if (!response.ok) throw new Error('Delete failed: ' + response.status);
+        state.bills = state.bills.filter(bill => bill.id !== id);
+        applyFilters();
+        render();
+        toast('Bill deleted. Back to list.');
+      } catch (error) {
+        toast(error.message, 'error');
+      }
+    }
 
-loadBills();
+    function closeModal() {
+      DOM.modalLayer.style.display = 'none';
+      DOM.modal.innerHTML = '';
+    }
+
+    function setActiveFilter(filter) {
+      state.filter = filter;
+      document.querySelectorAll('.chip').forEach(button => {
+        button.classList.toggle('active', button.dataset.filter === filter);
+      });
+    }
+
+    function exportCsv() {
+      const rows = [['id', 'Vendor', 'Amount', 'Date', 'Bill No', 'Location', 'TIN', 'Entered By']];
+      state.filtered.forEach(bill => {
+        rows.push([bill.id, bill.Vendor || '', bill.Amount || '', bill.Date || '', bill['Bill No'] || '', bill.Location || '', bill.TIN || '', bill._enteredBy || '']);
+      });
+      const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'whitesaffron-bills.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function loadingHtml(message) {
+      return `<div class="loading"><div class="spinner"></div><p>${safe(message)}</p></div>`;
+    }
+
+    function emptyHtml(title, note) {
+      return `<div class="empty"><h2>${safe(title)}</h2><p>${safe(note)}</p><button class="btn primary" onclick="openForm()">Add Bill</button></div>`;
+    }
+
+    $('addBtn').addEventListener('click', () => openForm());
+    $('refreshBtn').addEventListener('click', loadBills);
+    $('exportBtn').addEventListener('click', exportCsv);
+    $('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('ws_bill_login');
+      showLoginIfNeeded();
+    });
+
+    DOM.search.addEventListener('input', event => {
+      state.search = event.target.value;
+      applyFilters();
+      render();
+    });
+
+    document.querySelectorAll('.chip').forEach(button => {
+      button.addEventListener('click', () => {
+        setActiveFilter(button.dataset.filter);
+        applyFilters();
+        render();
+      });
+    });
+
+    DOM.modalLayer.addEventListener('click', event => {
+      if (event.target === DOM.modalLayer) closeModal();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeModal();
+    });
+
+    window.openForm = openForm;
+    window.viewBill = viewBill;
+    window.deleteBill = deleteBill;
+    window.closeModal = closeModal;
+    window.render = render;
+
+    showLoginIfNeeded();
