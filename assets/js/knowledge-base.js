@@ -1,0 +1,79 @@
+/**
+ * Permanent verified knowledge only.
+ * Never add guessed translations here. See AI-BRAIN.md.
+ */
+export const KNOWLEDGE_VERSION = '2.0.0';
+
+export const VERIFIED_PAIRS = [
+  ['how are you','ތިބާ ކިހިނެއް؟'],
+  ['what are you doing','ތިޔަ ކުރަނީ ކޮބައިތޯ؟'],
+  ['thank you','ޝުކުރިއްޔާ'],
+  ['thank you for your help','ތިޔަ ދެއްވި އެހީއަށް ޝުކުރިއްޔާ'],
+  ['good morning','ބާއްޖެވެރި ހެނދުނެއް'],
+  ['good night','ބާއްޖެވެރި ރޭއެއް'],
+  ['what is your name','ތިބާގެ ނަމަކީ ކޮބައިތޯ؟'],
+  ['my name is','އަހަރެންގެ ނަމަކީ'],
+  ['i am fine','އަހަރެން ރަނގަޅު'],
+  ['please help me','އަހަންނަށް އެހީވެދެއްވާ'],
+  ['i understand','އަހަންނަށް އެނގިއްޖެ'],
+  ['i do not understand','އަހަންނަކަށް ނޭނގެ'],
+  ['where are you going','ތިބާ ކޮންތާކަށް ތިޔަ ދަނީ؟'],
+  ['see you later','ފަހުން ދިމާވާނެ'],
+  ['this is a test','މިއީ ޓެސްޓެއް'],
+  ["this structure is now stored in the system's memory for lesson",'މި ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ލެސަނަށް ބަހައްޓައިފި'],
+  ['artificial intelligence can improve writing','މަޞްނޫޢީ ބުއްދިން ލިޔުން ރަނގަޅުކުރެވިދާނެ'],
+  ['please check this document and correct the mistakes','މި ލިޔުން ބަލައި ކުށްތައް ރަނގަޅުކޮށްދެއްވާ'],
+  ['chatgpt is an artificial intelligence tool','ޗެޓްޖީޕީޓީ އަކީ މަޞްނޫޢީ ބުއްދީގެ ވަސީލަތެއް'],
+  ['write the text in your own words','ލިޔުން އަމިއްލަ ބަހުން ލިޔާ'],
+  ['always verify important information','މުހިންމު މަޢުލޫމާތު ދާއިމަށް ކަށަވަރުކުރާ']
+];
+
+export const VERIFIED_WORDS = {
+  one:'އެކެއް',island:'ރަށް',red:'ރަތް',heart:'ހިތް',then:'ދެން',egg:'ބިސް',father:'ބައްޕަ',mother:'މަންމަ',school:'އިސްކޫލު',mouth:'އަނގަ',stomach:'ބަނޑު',moon:'ހަނދު',mango:'އަނބު',doctor:'ޑޮކްޓަރ',director:'ޑައިރެކްޓަރ',rice:'ބަތް',book:'ފޮތް',house:'ގެ',maldives:'ރާއްޖެ',
+  i:'އަހަރެން',you:'ތިބާ',he:'އޭނާ',she:'އޭނާ',we:'އަހަރުމެން',they:'އެމީހުން',this:'މި',that:'އެ',my:'އަހަރެންގެ',your:'ތިބާގެ',our:'އަހަރުމެންގެ',their:'އެމީހުންގެ',who:'ކާކު',what:'ކޮބައި',where:'ކޮންތާކު',when:'ކޮންއިރަކު',why:'ކީއްވެ',how:'ކިހިނެއް',yes:'އާނ',no:'ނޫން',not:'ނޫން',and:'އަދި',or:'ނުވަތަ',but:'ނަމަވެސް',because:'ސަބަބަކީ',if:'އިދި',with:'އެކު',without:'ނުލައި',in:'ގައި',on:'މަތީގައި',from:'އިން',to:'އަށް',of:'ގެ',
+  is:'އަކީ',are:'އަކީ',was:'ވީ',were:'ވީ',be:'ވުން',can:'ކުރެވިދާނެ',will:'ވާނެ',should:'ޖެހޭ',must:'ލާޒިމު',do:'ކުރުން',doing:'ކުރަނީ',make:'ހެދުން',use:'ބޭނުންކުރުން',write:'ލިޔުން',read:'ކިޔުން',check:'ބެލުން',correct:'ރަނގަޅުކުރުން',translate:'ތަރުޖަމާކުރުން',learn:'ދަސްކުރުން',think:'ވިސްނުން',help:'އެހީ',improve:'ރަނގަޅުކުރުން',create:'އުފެއްދުން',give:'ދިނުން',take:'ނެގުން',go:'ދިއުން',come:'އައުން',see:'ފެނުން',know:'އެނގުން',understand:'ދޭހަވުން',
+  text:'ލިޔުން',word:'ބަސް',words:'ބަސްތައް',sentence:'ޖުމްލަ',sentences:'ޖުމްލަތައް',language:'ބަސް',english:'އިނގިރޭސި',dhivehi:'ދިވެހި',information:'މަޢުލޫމާތު',document:'ލިޔުން',mistake:'ކުށް',mistakes:'ކުށްތައް',grammar:'ގަވާއިދު',spelling:'އިމްލާ',style:'އުސްލޫބު',tool:'ވަސީލަތް',technology:'ޓެކްނޮލޮޖީ',human:'އިންސާން',intelligence:'ބުއްދި',writing:'ލިޔުން',writer:'ލިޔާ މީހާ',system:'ސިސްޓަމް',memory:'މެމޮރީ',lesson:'ލެސަން',structure:'ސްޓްރަކްޗަރ',test:'ޓެސްޓް',
+  good:'ރަނގަޅު',well:'ރަނގަޅު',bad:'ނުބައި',important:'މުހިންމު',easy:'ފަސޭހަ',difficult:'އުނދަގޫ',new:'އާ',old:'ކުރީގެ',big:'ބޮޑު',small:'ކުޑަ',black:'ކަޅު',cat:'ބުޅާ',apple:'އާފަލު',bird:'ދޫނި',birds:'ދޫނިތައް',maldivians:'ދިވެހިން',hand:'އަތް',plate:'ތަށި',fast:'އަވަސް',slow:'ލަސް',today:'މިއަދު',tomorrow:'މާދަމާ',yesterday:'އިއްޔެ',day:'ދުވަސް',time:'ވަގުތު',work:'މަސައްކަތް',student:'ދަރިވަރު',teacher:'މުދައްރިސް',food:'ކާނާ',water:'ފެން',name:'ނަން',friend:'ރައްޓެހި',people:'މީހުން',world:'ދުނިޔެ'
+};
+
+export const VERIFIED_PHRASES = {
+  'artificial intelligence':'މަޞްނޫޢީ ބުއްދި','language tool':'ލޭންގުއޭޖްޓޫލް','translation engine':'ތަރުޖަމާ އެންޖިން','translation memory':'ތަރުޖަމާ މެމޮރީ','personal dictionary':'އަމިއްލަ ޑިކްޝަނަރީ','style guide':'އުސްލޫބުގެ މަގުދެއްކުން','writing assistant':'ލިޔުމުގެ މުއާވަން','natural language':'ޤުދުރަތީ ބަސް','for example':'މިސާލަކަށް','in other words':'އެހެން ބަހަކުން','as a result':'އެގޮތުން','right now':'މިހާރު','every day':'ކޮންމެ ދުވަހަކު'
+};
+
+export const DHIVEHI_SUFFIXES = [
+  ['ތަކަށް','to plural'],['ތަކުން','from plural'],['ތަކުގެ','of plural'],['ތައް','plural'],['އަށް','to'],['އިން','from'],['ގައި','in'],['ގެ','of'],['އާއި','and'],['އެއް','a']
+];
+
+export const SCRIPT_RANGES = {
+  thaana:/[\u0780-\u07BF]/u,
+  // Unicode Script property excludes common punctuation such as ؟ and ،.
+  arabic:/\p{Script=Arabic}/u,
+  latin:/[A-Za-z]/u
+};
+
+export const CORE_THAANA = [...'ހށނރބޅކއވމފދތލގޏސޑޒޓޔޕޖޗ'];
+export const FILI = [...'ަާިީުޫެޭޮޯ'];
+export const SUKUN = 'ް';
+
+/**
+ * Lesson 4 — Repetition, quotation and word order.
+ * Source supplied by the project owner; dated 2016-09-18.
+ */
+export const GRAMMAR_RULES = {
+  defaultWordOrder:{id:'DV-SOV-001',pattern:'subject-object-verb',status:'verified'},
+  repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
+  quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'}
+};
+
+export const FOCUS_FORM_MEMORY = {
+  'ބުޅަލޭ':{base:'ބުޅާ',mode:'repetition'},
+  'ބުޅަލެކޭ':{base:'ބުޅަލެއް',mode:'repetition'},
+  'ރަށޭ':{base:'ރަށް',mode:'repetition'},
+  'މަންމަމެނޭ':{base:'މަންމަމެން',mode:'repetition'},
+  'ދޫނިތަކެކޭ':{base:'ދޫނިތަކެއް',mode:'repetition'},
+  'ދިވެހިންނޭ':{base:'ދިވެހިން',mode:'repetition'},
+  'ބުޅަލެކޯ':{base:'ބުޅަލެއް',mode:'quotation'},
+  'ދިވެހިންނޯ':{base:'ދިވެހިން',mode:'quotation'},
+  'އަތޯ':{base:'އަތް',mode:'quotation'},
+  'ތައްޓޯ':{base:'ތަށި',mode:'quotation'}
+};
