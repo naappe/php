@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Maldives ISP Map</title>
+  <style>
+    :root{--bg:#07111f;--panel:#0f1d30;--line:#24364d;--text:#eef7ff;--muted:#9eb1c7;--cyan:#34d5e6;--green:#57df9b;--yellow:#f7c65a;--red:#ff7885}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#123451 0,#07111f 42%);color:var(--text);font-family:Inter,system-ui,sans-serif;min-height:100vh}
+    main{width:min(980px,calc(100% - 28px));margin:auto;padding:40px 0 64px}.hero{display:flex;gap:18px;align-items:center;margin-bottom:24px}.mark{display:grid;place-items:center;width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--cyan),#1685b2);font-size:30px;box-shadow:0 12px 40px #00c6df2b}.hero h1{margin:0;font-size:clamp(25px,5vw,42px)}.hero p{margin:6px 0 0;color:var(--muted)}
+    .notice{padding:14px 16px;border:1px solid #31506b;border-radius:14px;background:#0d2236;color:#c7d9ea;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:#0f1d30e8;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 50px #0004}.wide{grid-column:1/-1}.label{display:block;color:var(--muted);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}.value{font-size:24px;font-weight:800;word-break:break-word}.sub{color:var(--muted);font-size:14px;margin-top:7px}input,select{width:100%;border:1px solid #31445c;background:#091626;color:var(--text);border-radius:12px;padding:12px 13px;font:inherit;outline:none}input:focus,select:focus{border-color:var(--cyan)}button,.button{border:0;border-radius:13px;padding:13px 18px;font-weight:800;font-size:15px;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}.primary{background:linear-gradient(135deg,var(--cyan),#2b9dcc);color:#03131c}.secondary{background:#1d3047;color:var(--text);border:1px solid #334a65}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.status{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;background:#1b3349;color:var(--cyan)}.running{animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.5}}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line)}th{color:var(--muted)}.empty{text-align:center;color:var(--muted);padding:25px}.foot{color:var(--muted);font-size:13px;line-height:1.55;margin-top:18px}.hidden{display:none}@media(max-width:680px){main{padding-top:24px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:17px}.value{font-size:20px}.actions>*{flex:1 1 150px}}
+  </style>
+</head>
+<body>
+<main>
+  <header class="hero"><div class="mark">🏝️</div><div><h1>Maldives ISP Map</h1><p>Browser-based connection measurement and local data collection</p></div></header>
+  <div class="notice">This page measures your browser connection. Browsers cannot directly read your Windows DNS servers or router settings, so those fields require your confirmation.</div>
+
+  <section class="grid">
+    <div class="card wide">
+      <label class="label" for="location">Island or atoll</label>
+      <input id="location" placeholder="Example: Villimalé, Kaafu Atoll" autocomplete="address-level2">
+      <div class="actions"><button class="primary" id="run">▶ Run connection test</button><button class="secondary" id="save" disabled>Save result</button><button class="secondary" id="export">Export CSV</button></div>
+    </div>
+    <div class="card"><span class="label">Public connection</span><div class="value" id="isp">Not tested</div><div class="sub" id="ip">Public IP unavailable</div></div>
+    <div class="card"><span class="label">Approximate location</span><div class="value" id="networkLocation">Not tested</div><div class="sub">Derived from public IP; it may be inaccurate.</div></div>
+    <div class="card"><span class="label">HTTP latency</span><div class="value" id="latency">Not tested</div><div class="sub">Median request time to this hosted page—not ICMP ping.</div></div>
+    <div class="card"><span class="label">Browser connection estimate</span><div class="value" id="speed">Unavailable</div><div class="sub" id="connectionType">Not supported by every browser.</div></div>
+    <div class="card">
+      <label class="label" for="dns">DNS confirmation</label>
+      <select id="dns"><option value="Not checked">Not checked</option><option value="Cloudflare DoH">Cloudflare DoH confirmed</option><option value="Cloudflare DNS">Cloudflare DNS, encryption unknown</option><option value="ISP or router DNS">ISP or router DNS</option><option value="Other DNS">Other DNS</option></select>
+      <div class="actions"><a class="button secondary" href="https://1.1.1.1/help" target="_blank" rel="noopener">Check Cloudflare DNS</a></div>
+    </div>
+    <div class="card">
+      <label class="label" for="router">Router access</label>
+      <select id="router"><option value="Not checked">Not checked</option><option value="Accessible">Accessible</option><option value="Not responding">Not responding</option><option value="Cloud-managed">Cloud-managed</option></select>
+      <div class="sub">A failed router ping alone does not prove that the router is locked.</div>
+    </div>
+    <div class="card wide"><span class="label">Test status</span><div class="value"><span class="status" id="status">Ready</span></div><div class="sub" id="timestamp">No test performed</div></div>
+    <div class="card wide"><span class="label">Saved results on this device</span><div style="overflow:auto"><table><thead><tr><th>Time</th><th>Location</th><th>ISP</th><th>Latency</th><th>DNS</th><th>Router</th></tr></thead><tbody id="rows"></tbody></table></div><div class="actions"><button class="secondary" id="clear">Clear saved data</button></div></div>
+  </section>
+  <p class="foot">Privacy: results remain in this browser unless you export and share the CSV. Public-IP lookup is requested only when you start the test. This tool reports observations; it does not prove ISP exploitation or intent.</p>
+</main>
+<script>
+  const $=id=>document.getElementById(id);let latest=null;const key='maldives-isp-map-v1';
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const stored=()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}};
+  function render(){const data=stored();$('rows').innerHTML=data.length?data.slice().reverse().map(r=>`<tr><td>${esc(r.timestamp)}</td><td>${esc(r.location)}</td><td>${esc(r.isp)}</td><td>${esc(r.latency)}</td><td>${esc(r.dns)}</td><td>${esc(r.router)}</td></tr>`).join(''):'<tr><td class="empty" colspan="6">No saved results</td></tr>'}
+  async function ipInfo(){const res=await fetch('https://ipwho.is/',{cache:'no-store'});if(!res.ok)throw new Error('IP lookup failed');const d=await res.json();if(d.success===false)throw new Error(d.message||'IP lookup failed');return d}
+  async function latency(){const samples=[];for(let i=0;i<5;i++){const t=performance.now();await fetch(location.href.split('#')[0]+`?probe=${Date.now()}-${i}`,{method:'HEAD',cache:'no-store'});samples.push(performance.now()-t)}samples.sort((a,b)=>a-b);return Math.round(samples[Math.floor(samples.length/2)])}
+  $('run').onclick=async()=>{const b=$('run');b.disabled=true;$('save').disabled=true;$('status').textContent='Testing…';$('status').classList.add('running');let info=null,ms=null;const results=await Promise.allSettled([ipInfo(),latency()]);if(results[0].status==='fulfilled'){info=results[0].value;$('isp').textContent=info.connection?.isp||info.connection?.org||'Unknown ISP';$('ip').textContent=`Public IP: ${info.ip||'Unknown'}`;$('networkLocation').textContent=[info.city,info.region,info.country].filter(Boolean).join(', ')||'Unknown'}else{$('isp').textContent='Lookup unavailable';$('ip').textContent=results[0].reason?.message||'Request blocked';$('networkLocation').textContent='Unavailable'}if(results[1].status==='fulfilled'){ms=results[1].value;$('latency').textContent=`${ms} ms`}else{$('latency').textContent='Test failed'}const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;if(c){$('speed').textContent=c.downlink?`${c.downlink} Mbps estimate`:'Estimate unavailable';$('connectionType').textContent=[c.effectiveType,c.rtt?`browser RTT ${c.rtt} ms`:null].filter(Boolean).join(' · ')||'Connection API available'}latest={timestamp:new Date().toLocaleString('en-GB',{timeZone:'Indian/Maldives'}),location:$('location').value.trim()||'Not provided',isp:info?.connection?.isp||info?.connection?.org||'Unknown',publicIP:info?.ip||'Unknown',latency:ms===null?'Failed':`${ms} ms`,speed:c?.downlink?`${c.downlink} Mbps estimate`:'Unavailable',dns:$('dns').value,router:$('router').value};$('timestamp').textContent=`Completed: ${latest.timestamp}`;$('status').textContent=results.some(r=>r.status==='rejected')?'Completed with limitations':'Completed';$('status').classList.remove('running');$('save').disabled=false;b.disabled=false};
+  $('save').onclick=()=>{if(!latest)return;latest.location=$('location').value.trim()||latest.location;latest.dns=$('dns').value;latest.router=$('router').value;const data=stored();data.push(latest);localStorage.setItem(key,JSON.stringify(data));render();$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save result',1200)};
+  $('export').onclick=()=>{const data=stored();if(!data.length){alert('No saved results to export.');return}const cols=['timestamp','location','isp','publicIP','latency','speed','dns','router'];const csv=[cols.join(','),...data.map(r=>cols.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Maldives_ISP_Map.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+  $('clear').onclick=()=>{if(confirm('Delete all results saved in this browser?')){localStorage.removeItem(key);render()}};render();
+</script>
+</body>
+</html>
