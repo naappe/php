@@ -12,6 +12,7 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 - Reuses verified phrases and vocabulary.
 - Applies limited Dhivehi/English word-order reasoning.
 - Recognizes learned `އޭ` emphasis and `އޯ` reported-speech forms.
+- Keeps `އެއް` specific-indefinite and `އަކު` unspecified-indefinite meanings separate.
 - Rejects Arabic/Sindhi/Urdu characters from Dhivehi lessons.
 - Marks unknown meanings instead of inventing a translation.
 - Learns paired lines in the visitor's browser.
@@ -20,6 +21,10 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 ## Important limitation
 
 This is a rule-based translation-memory engine, not a large language model. It becomes useful by accumulating verified English–Dhivehi sentence pairs and grammar lessons. It should prefer “unknown” over a convincing but false answer.
+
+## Lesson status
+
+Eight lesson topics are registered. Lessons 4 and the supplied Lesson 8 summary are encoded with regression tests. A lesson summary is catalogued but is not treated as a complete implementation of every rule and example.
 
 ## File structure
 
