@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -52,7 +52,7 @@ export class TranslationBrain{
   }
 
   translate(text,direction='en-dv'){
-    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[]};
+    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[]};
     const fn=direction==='en-dv'?this.toDhivehi.bind(this):this.toEnglish.bind(this);
     const output=splitSentences(text).map(s=>fn(s.trim(),stats)).join(' ');
     if(direction==='en-dv'&&hasArabicScript(output))throw new Error('Safety block: non-Thaana Arabic-script output was detected.');
@@ -87,6 +87,7 @@ export class TranslationBrain{
   }
 
   lookupDhivehi(token){
+    if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
     return null;
@@ -97,7 +98,7 @@ export class TranslationBrain{
     if(this.reverseMemory.has(key)){const value=this.reverseMemory.get(key);stats.total+=key.split(' ').length;stats.matched+=key.split(' ').length;stats.reasoning.push('Exact verified reverse-sentence memory');return capitalize(addPunctuation(value,p,false))}
     const subject=[],verb=[],rest=[];
     key.split(/\s+/).filter(Boolean).forEach(token=>{
-      stats.total++;const focus=this.analyzeFocus(token,stats),base=focus?focus.base:token,value=this.lookupDhivehi(base);
+      stats.total++;const focus=this.analyzeFocus(token,stats),base=focus?focus.base:token,indefinite=INDEFINITE_FORM_MEMORY[base];if(indefinite)stats.indefinite.push({token:base,...indefinite,rule:indefinite.mode==='specific-indefinite'?GRAMMAR_RULES.specificIndefinite:GRAMMAR_RULES.unspecifiedIndefinite});const value=this.lookupDhivehi(base);
       if(!value){rest.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;let translated=value;
       if(focus?.mode==='repetition')translated=`indeed/as previously stated: ${value}`;
@@ -107,6 +108,7 @@ export class TranslationBrain{
     });
     stats.reasoning.push('No exact reverse-sentence memory','Focus/quotation suffixes checked','Dhivehi suffixes checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
+    if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
     return capitalize(addPunctuation([...subject,...verb,...rest].join(' '),p,false));
   }
 }
