@@ -1,147 +1,72 @@
 <!doctype html>
-<html lang="dv" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ ރަނގަޅަށް ބޭނުންކުރާނެ ގޮތް ދިވެހިން">
-  <title>ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ</title>
+  <meta name="description" content="Free offline English and Dhivehi two-way translator">
+  <title>English ↔ Dhivehi Translator</title>
   <style>
-    :root{--ink:#17212b;--muted:#68737f;--line:#e3e8ed;--paper:#fff;--bg:#f4f7f9;--blue:#176b87;--soft:#eaf6f8;--gold:#d99a24}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"MV Waheed","Faruma","Noto Sans Thaana",Arial,sans-serif;line-height:2.05}
-    .top{background:linear-gradient(135deg,#07394b,#176b87);color:#fff;padding:14px 20px;position:sticky;top:0;z-index:3;box-shadow:0 5px 18px #07394b26}.top-inner{max-width:980px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-size:18px;font-weight:700}.tag{font:12px Arial,sans-serif;opacity:.78;direction:ltr}
-    .hero{background:linear-gradient(145deg,#07394b 0%,#176b87 60%,#2694a2 100%);color:#fff;padding:72px 22px 88px}.hero-inner{max-width:900px;margin:auto}.eyebrow{display:inline-block;border:1px solid #ffffff55;border-radius:99px;padding:4px 13px;font-size:13px;background:#ffffff12}.hero h1{font-size:clamp(34px,6vw,62px);line-height:1.45;margin:22px 0 14px;max-width:830px}.hero p{font-size:18px;max-width:720px;opacity:.88}.meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;font-size:13px}.meta span{background:#ffffff14;border:1px solid #ffffff2a;border-radius:8px;padding:5px 10px}
-    .layout{max-width:1100px;margin:-44px auto 70px;padding:0 20px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start}.toc{position:sticky;top:78px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 30px #17212b0d}.toc strong{display:block;margin-bottom:12px}.toc a{display:block;color:#52606c;text-decoration:none;padding:8px 0;border-bottom:1px solid #eef1f3;font-size:14px}.toc a:hover{color:var(--blue)}
-    article{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:clamp(25px,5vw,58px);box-shadow:0 16px 44px #17212b0d;overflow:hidden}article h2{font-size:29px;line-height:1.55;color:#0d5269;margin:58px 0 18px;padding-top:12px;border-top:1px solid var(--line)}article h2:first-child{margin-top:0;border-top:0}article h3{font-size:21px;color:#174a5a;margin:34px 0 10px}article p{font-size:17px;margin:0 0 20px}article ul{margin:8px 0 26px;padding-right:28px}article li{margin:7px 0}.lead{font-size:20px!important;color:#384853;border-right:4px solid var(--gold);padding:3px 18px 3px 0}.callout{background:var(--soft);border:1px solid #cce9ec;border-radius:15px;padding:20px 22px;margin:28px 0}.example{direction:rtl;background:#f8fafb;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:22px 0}.arrow{color:var(--gold);font-size:25px;text-align:center}.source{margin-top:45px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:25px;font-size:13px}
-    @media(max-width:820px){.layout{display:block;margin-top:-35px}.toc{position:relative;top:auto;margin-bottom:18px}.hero{padding-top:50px}.hero h1{font-size:36px}.tag{display:none}article{border-radius:18px;padding:25px 20px}article h2{font-size:25px}article p{font-size:16px}}
-    @media print{.top,.toc,footer{display:none}.hero{padding:25px;color:#000;background:#fff}.layout{display:block;margin:0;max-width:none;padding:0}article{border:0;box-shadow:none}.hero p,.meta{color:#333}}
+    :root{--bg:#f3f6f8;--card:#fff;--ink:#17212b;--muted:#66737f;--line:#dfe6ea;--brand:#08778c;--brand2:#075b70;--soft:#e9f7f8;--warn:#a56300;--bad:#b42318;--shadow:0 16px 45px #15303a12}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(145deg,#eef6f7,#f8fafb 55%,#edf2f5);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}.wrap{max-width:1120px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:45px;height:45px;border-radius:14px;background:linear-gradient(135deg,var(--brand2),#19a4ad);color:#fff;display:grid;place-items:center;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:3px 0 0}.offline{font-size:12px;color:#087443;background:#e9f8ef;border:1px solid #c6ead2;padding:7px 11px;border-radius:99px}
+    .hero{padding:25px 0 22px;text-align:center}.hero h2{font-size:clamp(30px,5vw,53px);line-height:1.18;margin:4px 0 12px;letter-spacing:-.045em}.hero p{max-width:720px;margin:auto;color:var(--muted);line-height:1.65}.translator{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.langbar{display:grid;grid-template-columns:1fr 58px 1fr;align-items:center;border-bottom:1px solid var(--line);padding:10px 18px}.lang{text-align:center;font-weight:800;font-size:14px}.swap{width:38px;height:38px;margin:auto;border:1px solid var(--line);background:#fff;border-radius:11px;cursor:pointer;color:var(--brand);font-size:18px}.swap:hover{background:var(--soft)}.panes{display:grid;grid-template-columns:1fr 1fr}.pane{min-width:0;padding:18px}.pane:first-child{border-right:1px solid var(--line)}textarea{display:block;width:100%;height:270px;resize:vertical;border:0;outline:0;background:transparent;color:var(--ink);font:18px/1.85 inherit}textarea.dv{font-family:"MV Waheed","Faruma","Noto Sans Thaana",Arial,sans-serif;font-size:21px;direction:rtl}.pane-foot{min-height:38px;border-top:1px solid #eef1f3;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px}.icon-btn{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px 8px;border-radius:7px}.icon-btn:hover{background:#f1f4f6;color:var(--ink)}.actions{display:flex;justify-content:center;gap:10px;padding:16px;border-top:1px solid var(--line);background:#fafcfc}.btn{min-height:43px;border:1px solid var(--line);border-radius:11px;padding:0 18px;background:#fff;color:var(--ink);font-weight:800;cursor:pointer}.btn.primary{min-width:170px;background:var(--brand);border-color:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand2)}
+    .status{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px}.metric label{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.metric strong{font-size:14px}.good{color:#087443}.medium{color:var(--warn)}.low{color:var(--bad)}.details{margin-top:15px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}.details summary{cursor:pointer;padding:15px 18px;font-weight:800}.explain{padding:0 18px 18px;color:#40505c;font-size:13px;line-height:1.65}.tokens{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;direction:ltr}.token{background:#f1f5f6;border:1px solid #e1e7ea;border-radius:7px;padding:4px 7px;font-size:11px}.token.matched{background:#e8f7ef;border-color:#cbead7;color:#087443}.token.unknown{background:#fff3e6;border-color:#f3d3a9;color:#945600}.examples{margin:28px 0 50px}.examples h3{text-align:center;margin-bottom:15px}.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.chip{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#fff;color:#41505b;cursor:pointer}.chip:hover{border-color:#8bbfca;color:var(--brand)}footer{text-align:center;color:var(--muted);font-size:12px;padding:5px 0 20px}
+    @media(max-width:760px){.wrap{padding:14px}.top{margin-bottom:8px}.offline{display:none}.hero{padding:18px 0}.hero h2{font-size:34px}.langbar{grid-template-columns:1fr 50px 1fr;padding:9px}.panes{display:block}.pane:first-child{border-right:0;border-bottom:1px solid var(--line)}textarea{height:200px}.actions{position:sticky;bottom:0;z-index:2}.status{grid-template-columns:1fr}.translator{border-radius:17px}}
   </style>
 </head>
 <body>
-  <header class="top"><div class="top-inner"><div class="brand">ދިވެހި މާއްދާ</div><div class="tag">LANGUAGETOOL × CHATGPT</div></div></header>
-  <section class="hero"><div class="hero-inner"><span class="eyebrow">ޓެކްނޮލޮޖީ • ލިޔުން • AI</span><h1>ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ އެއްކޮށް ބޭނުންކުރާނެ ގޮތް</h1><p>AI އަށް ލިޔުން ހަވާލުކުރުމާއި، AI އިން ލިޔުން ރަނގަޅުކުރުމާ ދެމެދުގެ މުހިންމު ތަފާތު.</p><div class="meta"><span>12 ޖޫން 2025</span><span>އަޕްޑޭޓް: 10 މާރިޗު 2026</span><span>ލިޔުން: Gina Rancaño</span></div></div></section>
-  <div class="layout">
-    <nav class="toc"><strong>ފިހުރިސްތު</strong><a href="#intro">ތަޢާރަފު</a><a href="#lt">ލޭންގުއޭޖްޓޫލް</a><a href="#gpt">ޗެޓްޖީޕީޓީ</a><a href="#risk">ނުބައި އަސަރު</a><a href="#method">ބޭނުންކުރާނެ ގޮތް</a><a href="#human">އިންސާނީ ބުއްދި ފުރަތަމަ</a></nav>
-    <article id="article">
-      <div id="formatted"></div>
-      <pre id="raw" hidden>
-ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ އެއްކޮށް ބޭނުންކުރާނެ ގޮތް
-
-އިންސާނުންގެ ދިރިއުޅުން އާއި ދުނިޔެ ބަދަލުކޮށްލާނެ ޓެކްނޮލޮޖީއެއް އުފެދެމުންދާތީ ދެކެވޭނީ ކޮންމެ ދުވަހަކު ނޫނެވެ. އަހަރުތަކެއް ތެރޭ އެކި ފިލްމާއި ޓީވީ ޕްރޮގްރާމްތަކުގައި އާޓިފިޝަލް އިންޓެލިޖެންސް (AI) ދައްކާފައި ވެއެވެ. އެއިރު އެއީ މުސްތަގްބަލުގައި ވެދާނެ ކަމަކަށް ހީކުރެވުނު ސައިންސް ފިކްޝަނެކެވެ. ނަމަވެސް، އެ މުސްތަގްބަލު މިހާރު އައިސްފިއެވެ.
-
-AI އާންމުވުމާއެކު، ކުރިން ކުރަމުން އައި ގިނަ ކަންތައްތައް އާ ގޮތަކަށް ކުރާނެ ގޮތް ދަސްކުރަން ޖެހެއެވެ. އެއް މިސާލަކީ، ލިޔުމުން އަމިއްލަ ހިޔާލު ބަޔާންކުރުމެވެ.
-
-AI އިން ލިޔުން ރަނގަޅުކުރަން ބޮޑު އެހީއެއް ލިބިދެއެވެ. ނަމަވެސް، މުޅި ލިޔުމެއް AI އަށް ލިޔެދޭށޭ ބުނުން އެކަނި ކަމަކަށް ނުވެއެވެ. އެގޮތަށް ބޭނުންކުރުމުން ތައުލީމީ، މަސައްކަތާއި އަޚްލާގީ ދާއިރާތަކުގައި މައްސަލަތަކެއް އުފެދިދާނެއެވެ. މި ލިޔުމުގައި ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ އެއްކޮށް ބޭނުންކޮށް، ފަސޭހައިން ކިޔާލެވޭ، ކުށްމަދު، ބާރުގަދަ ލިޔުމެއް އެކުލަވާލާނެ ގޮތް ބަލާލަމެވެ.
-
-
-ލޭންގުއޭޖްޓޫލް އަކީ ކޮބައިތޯ؟
-
-ލޭންގުއޭޖްޓޫލް އަކީ ގިނަ ބަހެއްގައި ބޭނުންކުރެވޭ ލިޔުމުގެ މުއާވަނެކެވެ. އޭގެ މަޤްޞަދަކީ އިމްލާ، ގަވާއިދު، އަލާމާތް އަދި ލިޔުމުގެ އުސްލޫބުގައި ހުންނަ ކުށްތައް ދައްކައިދީ، ލިޔުން ރަނގަޅުކުރަން ލަފާދިނުމެވެ. ލިޔާ މީހާގެ ބޭނުމަށް ފެތޭ ގޮތަށް މި ޓޫލް ބަދަލުކޮށްގެންވެސް ބޭނުންކުރެވެއެވެ.
-
-މިސާލަކަށް:
-
-• އަމިއްލަ ޑިކްޝަނަރީއަށް ބަސްތައް އިތުރުކުރެވޭތީ، އެ ބަސްތައް ފަހުން ކުށް އިމްލާއެކޭ ނުދައްކައެވެ.
-• އަމިއްލަ ލިޔުމުގެ ގަވާއިދުތައް ސްޓައިލް ގައިޑެއްގައި ކަނޑައެޅި، މުޅި ލިޔުމުގައި އެއް އުސްލޫބެއް ދެމެހެއްޓެވެއެވެ.
-• ލިޔާ ލިޔުމުގެ ބާވަތް ކަނޑައެޅުމުން، އެ މަޤްޞަދަށް ފެތޭ ލަފާ ލިބެއެވެ.
-• ވާހަކަ ބުނެދޭ މީހުންނާ ފެތޭ ގޮތަށް، ޖުމްލަތައް ރަސްމީ، ފަސޭހަ، ރަވާން ނުވަތަ ކުރުކޮށް އަލުން ލިޔެދެއެވެ.
-
-މި ޓޫލުގައި AI ބޭނުންކުރާ ނަމަވެސް، އިންސާނުން އެކުލަވާލާ ގަވާއިދުތަކެއްވެސް އޭގައި ހިމެނެއެވެ. އެހެންވެ، އެއީ AI އެކަނި ނިންމާ ޓޫލެއް ނޫނެވެ.
-
-
-ޗެޓްޖީޕީޓީ އަކީ ކޮބައިތޯ؟
-
-ޗެޓްޖީޕީޓީ އަކީ އިންސާނުން ވާހަކަދައްކާ ގޮތަށް ބަހުން ޖަވާބުދީ ލިޔުން އުފައްދާ، ބޮޑު ބަހުގެ މޮޑެލެއް މަތީ ބިނާކޮށްފައިވާ AI މުއާވަނެކެވެ. އެއީ އޯޕަންއޭއައި އިން ތަރައްޤީކޮށް 2022 ނޮވެމްބަރުގައި އާންމުންނަށް ހުޅުވާލި ޚިދުމަތެކެވެ.
-
-ޗެޓްޖީޕީޓީއަށް ކުރެވޭ ކަންތައްތަކުގެ ތެރެއިން ބައެއް:
-
-• ލިޔުން އުފެއްދުން
-• ސުވާލުތަކަށް ޖަވާބުދިނުން
-• ވާހަކަދެއްކުން
-• އެއް ބަހުން އަނެއް ބަހަކަށް ތަރުޖަމާކުރުން
-• ކޯޑު ލިޔެ ޕްރޮގްރާމިންގަށް އެހީވުން
-• ލިޔުން ބަލައި ކުށްތައް ރަނގަޅުކުރުން
-
-މިފަދަ ގިނަ ކަންތަކެއް އަވަހަށް ކުރެވޭތީ، ޗެޓްޖީޕީޓީ ކުރު މުއްދަތެއްގައި ދުނިޔޭގެ އެންމެ އަވަހަށް ތަރައްޤީވި ކޮންސިއުމަރ ސޮފްޓްވެއަރ ޚިދުމަތްތަކުގެ ތެރެއަށް ވަނެވެ. މީހުން ސީވީ، ވަޒީފާއަށް ހުށަހަޅާ ސިޓީ، މަޒުމޫނު އަދި އެހެނިހެން ލިޔުންތައް އުފައްދަން މި ޓޫލް ބޭނުންކުރަން ފެށިއެވެ.
-
-ނަމަވެސް، މި ފަސޭހަކަން ފެންނަ ވަރަށް މަސައްކަތްނެތް ހައްލެއް ނޫނެވެ. AI އިން ލިޔެފައިވާ ލިޔުން ދެނެގަންނަން އުޅޭ ޓޫލްތައް އުފެދިފައިވެއެވެ. އެއް ނަމޫނާގެ ލިޔުން ގިނަ މީހުން ހުށަހަޅާއިރު، ލިޔުމުގައި އެ މީހާގެ އަމިއްލަ އަޑާއި ތަޖުރިބާ ނެތްކަން ފަސޭހައިން އެނގިދާނެއެވެ.
-
-
-މުޅި ލިޔުން AI އަށް ލިޔެދިނުމުގެ ނުބައި އަސަރު
-
-1. ތައުލީމީ އަދި ވަޒީފާގެ ދާއިރާގައި ސަންގީން ނަތީޖާ ނެރެދާނެއެވެ
-
-AI އިން ލިޔެފައިވާ ލިޔުން ދެނެގަންނަ ޓޫލްތައް ފުރިހަމަ ނޫނަސް، ލިޔުން އަމިއްލަ މަސައްކަތެއް ނޫންކަން އެހެން ގޮތްތަކުންވެސް އެނގިދާނެއެވެ. މިސާލަކަށް، އެއް ގޮތަށް ލިޔެފައިވާ ވަޒީފާ ސިޓީތައް ގިނަ މީހުން ހުށަހަޅާނަމަ، އެ ސިޓީއަކީ އެ މީހާގެ އަމިއްލަ ލިޔުމެއް ނޫންކަން ވަޒީފާދޭ ފަރާތަށް ފާހަގަވެދާނެއެވެ. އެހެންވެ، ވަޒީފާ ލިބުމުގެ ފުރުޞަތު ގެއްލިދާނެއެވެ.
-
-ދަރިވަރަކު AI ބޭނުންކޮށް މަޒުމޫނެއް ލިޔައި، އެއީ އަމިއްލަ މަސައްކަތެކޭ ބުނެ ހުށަހަޅާނަމަ، އެއީ އަޚްލާގީ ކުށެކެވެ. މަދަރުސާ ނުވަތަ ޔުނިވަރސިޓީގެ ގަވާއިދުތަކާ ޚިލާފުވާނަމަ، އެއިން ތައުލީމީ ފިޔަވަޅު ނަގާފައިވެސް ދާނެއެވެ. މުވައްޒަފަކު އަމިއްލަ މަސައްކަތް AI އަށް ކުރުވައި، އެއީ އަމިއްލަ މަސައްކަތެކޭ ހުށަހަޅާނަމަ، ވަޒީފާގެ ގަވާއިދުތަކާ ޚިލާފުވެ ވަޒީފާއަށް އަސަރުކުރިދާނެއެވެ.
-
-2. ވިސްނުމާއި، ދަސްކުރުމާއި، ލިޔުމުގެ ފަންނު ދަށްވެދާނެއެވެ
-
-އިންސާނާގެ ވިސްނާ ބާރަކީ މަސްޕޭއް ފަދައެވެ؛ ބޭނުންކުރާ ވަރަކަށް ބާރުވެއެވެ. ދަސްކުރުމާއި ލިޔުން ދޫކޮށް، ކޮންމެ ކަމަކަށް AI އަށް ބަރޯސާވެއްޖެނަމަ، އަމިއްލަ ވިސްނުމާއި ލިޔުމުގެ ހުނަރު ކަމަކުނުދާނެއެވެ. ޗެޓްޖީޕީޓީ ތިބާ ބަދަލުގައި ވިސްނަން، ދަސްކުރަން ނުވަތަ ލިޔަން ނުޖެހެއެވެ. އެއީ ތިބާގެ ވިސްނުމާއި ލިޔުން ރަނގަޅުކުރާ އެހީތެރިއެއް ކަމުގައި ބޭނުންކުރާނީއެވެ.
-
-3. ނުބައި ނުވަތަ ކުށް މަޢުލޫމާތު ލިބިދާނެއެވެ
-
-ޗެޓްޖީޕީޓީ ފުރިހަމަ ނޫނެވެ. އޭނާ ދޭ ޖަވާބުގައި ކުށް މަޢުލޫމާތު ހިމެނިދާނެއެވެ. ތިބާ ތަޙްޤީޤު ނުކޮށް އެ މަޢުލޫމާތު ލިޔުމުގައި ހިމަނާނަމަ، ބޮޑެތި ކުށްތައް ހެދިދާނެއެވެ. އެއަށްވުރެ ނުބައީ، ކުށް މަޢުލޫމާތަކީ ތެދު މަޢުލޫމާތެކޭ ހީކޮށް ޤަބޫލުކުރިދާނެކަމެވެ. އެހެންވެ، މުހިންމު މަޢުލޫމާތު އެހެން މުޢުތަބަރު މަސްދަރުތަކުން ކަށަވަރުކުރާށެވެ.
-
-މި ސަބަބުތަކުން ދެކޭނީ، މުޅި ލިޔުމެއް AI އަށް ލިޔެދިނުމުގެ ނުބައި އަސަރު ފައިދާއަށްވުރެ ބޮޑުވެދާނެކަމެވެ. އެހެނަސް، AI އަކީ ލިޔުމުގެ މަސައްކަތުގައި އެހީވާ އިތުރު ފިޔަވަޅެއް ކަމުގައި ބޭނުންކުރެވިދާނެއެވެ. އެއީ ލިޔާ މީހާގެ ކުރިއެރުން ހުއްޓުވާ އެއްޗެއް ނުވެ، ކުރިއަރުވާ ވަސީލަތެއް ވާންޖެހެއެވެ.
-
-
-ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ ރަނގަޅަށް ބޭނުންކުރާނެ ގޮތް
-
-1. ފުރަތަމަ އަމިއްލައިން ލިޔާށެވެ
-
-ލިޔާ މައުޟޫއާ ބެހޭ އަމިއްލަ ހިޔާލާއި މަޤްޞަދު ފުރަތަމަ އަމިއްލައިން ލިޔާށެވެ. ލޭންގުއޭޖްޓޫލްގެ އެޑިޓަރުގައި ލިޔެ ލިޔުން ސޭވްކުރެވެއެވެ. އަދި އޭގެ ބްރައުޒަރ އެކްސްޓެންޝަން، ޕްލަގްއިން އަދި އެޑްއޮންތައް ބޭނުންކޮށް އެކި ޕްރޮގްރާމްތަކުގައި ލިޔާއިރުވެސް ކުށްތައް ބަލާލެވެއެވެ.
-
-ލިޔަން ފަށާނެ ގޮތެއް ނޭނގޭނަމަ، ހިޔާލު ހޯދަން ޗެޓްޖީޕީޓީ ބޭނުންކުރެވިދާނެއެވެ. ނަމޫނާ އީމެއިލެއް ނުވަތަ ލިޔުމުގެ ޚާކާއެއް ހަދައިދޭށޭ އެދިދާނެއެވެ. ނަމަވެސް، އެ ނަމޫނާ އަމިއްލަ ބަހާއި އަޑުން އަލުން ލިޔުން މުހިންމެވެ.
-
-2. އިމްލާ، ގަވާއިދު އަދި އަލާމާތް ބަލާށެވެ
-
-ލޭންގުއޭޖްޓޫލް ލިޔުމުގެ މުއާވަނަކަށް ބޭނުންކޮށް، ލިޔާއިރުވެސް ކުށްތައް ބަލާލެވެއެވެ. އެއަށްފަހު، ލިޔުން ޗެޓްޖީޕީޓީއަށް ދީ އިމްލާ، ގަވާއިދު އަދި އަލާމާތުގެ ކުށްތައް ވަކިން ދައްކައިދޭށޭ އެދިދާނެއެވެ. ދެ ޓޫލުން ދޭ ލަފާ އެއްގޮތްތޯ ބަލާ، ކޮންމެ ބަދަލެއްވެސް ޤަބޫލުކުރުމުގެ ކުރިން އަމިއްލައިން ވިސްނާށެވެ.
-
-3. ލިޔުމުގެ އުސްލޫބު ރަނގަޅުކުރާށެވެ
-
-އިމްލާ އަދި ގަވާއިދު ރަނގަޅުކުރުން އެކަނި ފުދޭކަމެއް ނޫނެވެ. ޖުމްލަތައް ފަސޭހައިން ކިޔާލެވޭތޯ، އެއް ހިޔާލުން އަނެއް ހިޔާލަށް ރަވާންކޮށް ދެވޭތޯ، އަދި ބޭނުންވާ ރަސްމީ ނުވަތަ އާންމު އުސްލޫބު ދެމެހެއްޓޭތޯ ބަލާށެވެ. ލޭންގުއޭޖްޓޫލްގެ ސްޓައިލް ލަފާތައް މި މަރުޙަލާގައި ފައިދާހުރިކަމެއް ވެއެވެ.
-
-4. މުޅި ލިޔުން އަލުން ނުލިޔުވައި، ބޭނުންވާ ޖުމްލަތައް އެކަނި ރަނގަޅުކުރާށެވެ
-
-AI އަށް މުޅި ލިޔުން އަލުން ލިޔަން ދިނުމުން، ލިޔުމުގައި ހުންނަ އިންސާނީ އަޑާއި ޚާއްޞަ ބާރު ނެތިދާނެއެވެ. އެހެނަސް، މުޅި ލިޔުމުގެ ތެރެއިން ނުރަނގަޅު ޖުމްލައެއް ނުވަތަ ދޭހަނުވާ ބައެއް ވަކިން އަލުން ލިޔެދޭށޭ އެދުން ފައިދާހުރި ގޮތެކެވެ. މިގޮތަށް ކުރުމުން، މައި ހިޔާލާއި ލިޔާ މީހާގެ އަޑު ދެމެހެއްޓި، ކުށް އެކަނި ރަނގަޅުކުރެވެއެވެ.
-
-މިސާލަކަށް:
-
-ކުރިން: “ގަންނަ މީހުންގެ ސުވާލުތައް ބަލައިލުމަށް ވަގުތު ދިނުމަށް ޝުކުރިއްޔާ.”
-
-ރަނގަޅުކުރި ފަހު: “ގަންނަ ފަރާތްތަކުން ހުށަހަޅާ ސުވާލުތައް ބަލައިލުމަށް ތިޔަ ދެއްވި ވަގުތަށް ވަރަށް ޝުކުރިއްޔާ.”
-
-ދެ ޖުމްލައިގެ މާނަ އެއްގޮތް ނަމަވެސް، ދެވަނަ ޖުމްލަ މާ ދޭހަ، އަދަބުވެރި އަދި ރަވާންކޮށް ކިޔާލެވޭ ޖުމްލައެކެވެ.
-
-
-އިންސާނީ ބުއްދި ފުރަތަމަ، AI ދެވަނައަށް
-
-ޗެޓްޖީޕީޓީ ނުވަތަ އެހެން AI ޗެޓްބޮޓެއް ބޭނުންކޮށް މުޅި ލިޔުން އުފައްދައި، އެއީ އަމިއްލަ ލިޔުމެކޭ ހުށަހަޅާކަށް ނުޖެހެއެވެ. އެހެނަސް، AI އިން ލިޔުން ރަނގަޅުކުރަން އެހީ ހޯދުން ރަނގަޅު ކަމެކެވެ. ރަނގަޅަށް ބޭނުންކުރެވޭނަމަ، ޗެޓްޖީޕީޓީ އަކީ ބާރުގަދަ އަދި ފައިދާހުރި ވަސީލަތެކެވެ.
-
-މުހިންމީ، AI އަށް ތިބާގެ މަސައްކަތުގެ ތަން ދިނުން ނޫނެވެ؛ އެއީ ތިބާގެ މަސައްކަތް ރަނގަޅުކުރާ އެހީތެރިއެއް ކަމުގައި ބޭނުންކުރުމެވެ. ކޮންމެ ލިޔުމެއްގައި ވެސް ތިބާގެ އަމިއްލަ ހިޔާލު، ތަޖުރިބާ، ވިސްނުން އަދި އަޑު ދެމެހެއްޓޭނެގޮތަށް ލިޔާށެވެ. އެއިރުން AI އަކީ ތިބާގެ ހުނަރު ނައްތާލާ ވަސީލަތެއް ނުވެ، އެ ހުނަރު އިތުރަށް ރީތިކޮށްދޭ އެހީތެރިއެއް ވާނެއެވެ.
-
-
-އަސްލު މާއްދާ: “LanguageTool and ChatGPT | How to Use Them Together”
-މައި ލިޔުން: Gina Rancaño
-ޝާއިޢުކުރި ތާރީޚު: 12 ޖޫން 2025
-އަލުން ބަލައި ރަނގަޅުކުރި ތާރީޚު: 10 މާރިޗު 2026
-
-ނޯޓު: މި ދިވެހި ލިޔުމަކީ ލަފްޒުން ލަފްޒަށް ކުރެވުނު ތަރުޖަމާއެއް ނޫނެވެ. އަސްލު ލިޔުމުގެ މައި މާނަ، ހެކި އަދި ތަރުތީބު ދެމެހެއްޓި، ދިވެހިން ފަސޭހައިން ކިޔާލެވޭ މާއްދާއެއްގެ ގޮތަށް އަލުން ލިޔެފައިވާ ލިޔުމެކެވެ.
-      </pre>
-    </article>
+  <div class="wrap">
+    <header class="top"><div class="brand"><div class="logo">Aހ</div><div><h1>Bas Translate</h1><p>English ↔ Dhivehi</p></div></div><span class="offline">● Offline & private</span></header>
+    <section class="hero"><h2>Translate English and Dhivehi</h2><p>A rule-based translation engine using verified phrases, longest-match vocabulary, grammar reordering and Dhivehi suffix analysis. No login or API key.</p></section>
+    <section class="translator">
+      <div class="langbar"><div class="lang" id="fromLabel">English</div><button class="swap" id="swapBtn" title="Swap languages">⇄</button><div class="lang" id="toLabel">ދިވެހި</div></div>
+      <div class="panes">
+        <div class="pane"><textarea id="source" maxlength="5000" placeholder="Type or paste English text..."></textarea><div class="pane-foot"><span id="count">0 / 5000</span><div><button class="icon-btn" id="clearBtn">Clear</button><button class="icon-btn" id="pasteBtn">Paste</button></div></div></div>
+        <div class="pane"><textarea id="result" class="dv" readonly placeholder="ތަރުޖަމާ މިތާ ފެންނާނެ..."></textarea><div class="pane-foot"><span id="engineNote">Ready</span><button class="icon-btn" id="copyBtn">Copy</button></div></div>
+      </div>
+      <div class="actions"><button class="btn" id="clearAll">Reset</button><button class="btn primary" id="translateBtn">Translate</button></div>
+    </section>
+    <div class="status"><div class="metric"><label>Direction</label><strong id="direction">English → Dhivehi</strong></div><div class="metric"><label>Dictionary coverage</label><strong id="coverage">—</strong></div><div class="metric"><label>Method</label><strong>Memory + rules</strong></div></div>
+    <details class="details"><summary>How this translation was made</summary><div class="explain" id="explain">Enter text and press Translate. The engine first checks complete verified sentences, then phrases, words, grammar order and suffixes.<div class="tokens" id="tokens"></div></div></details>
+    <section class="examples"><h3>Try an example</h3><div class="chips"><button class="chip" data-en="How are you?">How are you?</button><button class="chip" data-en="Thank you for your help.">Thank you for your help.</button><button class="chip" data-en="Artificial intelligence can improve writing.">AI and writing</button><button class="chip" data-en="Please check this document and correct the mistakes.">Check a document</button></div></section>
+    <footer>This is an expandable offline translation algorithm. Verified sentence pairs improve its accuracy.</footer>
   </div>
-  <footer>އަސްލު މާއްދާގެ މާނަ ދެމެހެއްޓި، ފަސޭހަ ދިވެހި ބަހުން އަލުން ލިޔެފައިވާ މާއްދާއެކެވެ.</footer>
   <script>
-    const raw=document.getElementById('raw').textContent.trim();
-    const lines=raw.split(/\n/);const out=document.getElementById('formatted');let ul=null,section=0;
-    const ids=['intro','lt','gpt','risk','method','human'];
-    const headings=new Set(['ލޭންގުއޭޖްޓޫލް އަކީ ކޮބައިތޯ؟','ޗެޓްޖީޕީޓީ އަކީ ކޮބައިތޯ؟','މުޅި ލިޔުން AI އަށް ލިޔެދިނުމުގެ ނުބައި އަސަރު','ލޭންގުއޭޖްޓޫލް އާއި ޗެޓްޖީޕީޓީ ރަނގަޅަށް ބޭނުންކުރާނެ ގޮތް','އިންސާނީ ބުއްދި ފުރަތަމަ، AI ދެވަނައަށް']);
-    const flush=()=>ul=null;
-    lines.forEach((line,i)=>{line=line.trim();if(!line||i===0)return;
-      if(headings.has(line)){flush();const h=document.createElement('h2');h.textContent=line;h.id=ids[++section]||'';out.append(h);return}
-      if(/^\d+\./.test(line)){flush();const h=document.createElement('h3');h.textContent=line;out.append(h);return}
-      if(line.startsWith('•')){if(!ul){ul=document.createElement('ul');out.append(ul)}const li=document.createElement('li');li.textContent=line.slice(1).trim();ul.append(li);return}
-      flush();const p=document.createElement('p');p.textContent=line;if(!out.children.length){p.id='intro';p.className='lead'}if(line==='މިސާލަކަށް:')p.className='callout';if(line.startsWith('ކުރިން:')||line.startsWith('ރަނގަޅުކުރި ފަހު:'))p.className='example';if(line.startsWith('އަސްލު މާއްދާ:')||line.startsWith('މައި ލިޔުން:')||line.startsWith('ޝާއިޢުކުރި')||line.startsWith('އަލުން ބަލައި')||line.startsWith('ނޯޓު:'))p.className='source';out.append(p)});
-    document.getElementById('raw').remove();
+  (()=>{
+    const $=id=>document.getElementById(id);
+    let direction='en-dv';
+    const memory={
+      'how are you':'ތިބާ ކިހިނެއް؟','thank you':'ޝުކުރިއްޔާ','thank you for your help':'ތިޔަ ދެއްވި އެހީއަށް ޝުކުރިއްޔާ','good morning':'ބާއްޖެވެރި ހެނދުނެއް','good night':'ބާއްޖެވެރި ރޭއެއް','what is your name':'ތިބާގެ ނަމަކީ ކޮބައިތޯ؟','my name is':'އަހަރެންގެ ނަމަކީ','i am fine':'އަހަރެން ރަނގަޅު','please help me':'އަހަންނަށް އެހީވެދެއްވާ','i understand':'އަހަންނަށް އެނގިއްޖެ','i do not understand':'އަހަންނަކަށް ނޭނގެ','where are you going':'ތިބާ ކޮންތާކަށް ތިޔަ ދަނީ؟','see you later':'ފަހުން ދިމާވާނެ','artificial intelligence can improve writing':'މަޞްނޫޢީ ބުއްދިން ލިޔުން ރަނގަޅުކުރެވިދާނެ','please check this document and correct the mistakes':'މި ލިޔުން ބަލައި ކުށްތައް ރަނގަޅުކޮށްދެއްވާ','chatgpt is an artificial intelligence tool':'ޗެޓްޖީޕީޓީ އަކީ މަޞްނޫޢީ ބުއްދީގެ ވަސީލަތެއް','write the text in your own words':'ލިޔުން އަމިއްލަ ބަހުން ލިޔާ','always verify important information':'މުހިންމު މަޢުލޫމާތު ދާއިމަށް ކަށަވަރުކުރާ'
+    };
+    const phrases={
+      'artificial intelligence':'މަޞްނޫޢީ ބުއްދި','language tool':'ލޭންގުއޭޖްޓޫލް','chat gpt':'ޗެޓްޖީޕީޓީ','machine learning':'މެޝިން ލާނިންގ','personal dictionary':'އަމިއްލަ ޑިކްޝަނަރީ','style guide':'އުސްލޫބުގެ މަގުދެއްކުން','writing assistant':'ލިޔުމުގެ މުއާވަން','natural language':'ޤުދުރަތީ ބަސް','for example':'މިސާލަކަށް','in other words':'އެހެން ބަހަކުން','as a result':'އެގޮތުން','because of':'ސަބަބުން','according to':'ގޮތުގައި','look forward to':'އުންމީދުކުރަން','right now':'މިހާރު','every day':'ކޮންމެ ދުވަހަކު','thank you':'ޝުކުރިއްޔާ','please':'އަދަބުން','good morning':'ބާއްޖެވެރި ހެނދުނެއް'
+    };
+    const words={
+      i:'އަހަރެން',you:'ތިބާ',he:'އޭނާ',she:'އޭނާ',we:'އަހަރުމެން',they:'އެމީހުން',this:'މި',that:'އެ',these:'މިތައް',those:'އެތައް',my:'އަހަރެންގެ',your:'ތިބާގެ',our:'އަހަރުމެންގެ',their:'އެމީހުންގެ',who:'ކާކު',what:'ކޮބައި',where:'ކޮންތާކު',when:'ކޮންއިރަކު',why:'ކީއްވެ',how:'ކިހިނެއް',yes:'އާނ',no:'ނޫން',not:'ނޫން',and:'އަދި',or:'ނުވަތަ',but:'ނަމަވެސް',because:'ސަބަބަކީ',if:'އިދި',then:'އެހެންނަމަ',with:'އެކު',without:'ނުލައި',in:'ތެރޭގައި',on:'މަތީގައި',at:'ގައި',from:'އިން',to:'އަށް',for:'އަށް',of:'ގެ',is:'އަކީ',are:'އަކީ',was:'ވީ',were:'ވީ',be:'ވުން',have:'ހުރުން',has:'ހުރުން',can:'ކުރެވިދާނެ',will:'ވާނެ',should:'ޖެހޭ',must:'ލާޒިމު',do:'ކުރުން',make:'ހެދުން',use:'ބޭނުންކުރުން',write:'ލިޔުން',read:'ކިޔުން',check:'ބެލުން',correct:'ރަނގަޅުކުރުން',translate:'ތަރުޖަމާކުރުން',learn:'ދަސްކުރުން',think:'ވިސްނުން',help:'އެހީ',improve:'ރަނގަޅުކުރުން',create:'އުފެއްދުން',give:'ދިނުން',take:'ނެގުން',go:'ދިއުން',come:'އައުން',see:'ފެނުން',know:'އެނގުން',understand:'ދޭހަވުން',text:'ލިޔުން',word:'ބަސް',words:'ބަސްތައް',sentence:'ޖުމްލަ',sentences:'ޖުމްލަތައް',language:'ބަސް',english:'އިނގިރޭސި',dhivehi:'ދިވެހި',information:'މަޢުލޫމާތު',document:'ލިޔުން',mistake:'ކުށް',mistakes:'ކުށްތައް',grammar:'ގަވާއިދު',spelling:'އިމްލާ',style:'އުސްލޫބު',tool:'ވަސީލަތް',technology:'ޓެކްނޮލޮޖީ',human:'އިންސާން',intelligence:'ބުއްދި',writing:'ލިޔުން',writer:'ލިޔާ މީހާ',good:'ރަނގަޅު',bad:'ނުބައި',important:'މުހިންމު',easy:'ފަސޭހަ',difficult:'އުނދަގޫ',new:'އާ',old:'ކުރީގެ',big:'ބޮޑު',small:'ކުޑަ',fast:'އަވަސް',slow:'ލަސް',today:'މިއަދު',tomorrow:'މާދަމާ',yesterday:'އިއްޔެ',day:'ދުވަސް',time:'ވަގުތު',work:'މަސައްކަތް',school:'މަދަރުސާ',student:'ދަރިވަރު',teacher:'މުދައްރިސް',book:'ފޮތް',home:'ގެ',water:'ފެން',food:'ކާނާ',name:'ނަން',love:'ލޯބި',friend:'ރައްޓެހި',people:'މީހުން',world:'ދުނިޔެ'
+    };
+    const reverseMemory=Object.fromEntries(Object.entries(memory).map(([a,b])=>[cleanDv(b),a]));
+    const reversePhrases=Object.fromEntries(Object.entries(phrases).map(([a,b])=>[b,a]));
+    const reverseWords={};Object.entries(words).forEach(([a,b])=>{if(!reverseWords[b])reverseWords[b]=a});
+    const stop=new Set(['a','an','the']);
+    function cleanEn(s){return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g,' ').replace(/\s+/g,' ').trim()}
+    function cleanDv(s){return s.replace(/[؟،.!?]/g,'').replace(/\s+/g,' ').trim()}
+    function punct(s){const m=s.match(/[.!?؟]+\s*$/);return m?m[0].trim():''}
+    function sentences(s){return s.match(/[^.!?؟\n]+[.!?؟]?/g)||[]}
+    function preservePunctuation(out,p,dir){if(!p)return out;if(dir==='en-dv')return out+(p.includes('?')?'؟':p);return out+(p.includes('؟')?'?':p)}
+    function matchPhrases(text,map){const found=[];const keys=Object.keys(map).sort((a,b)=>b.length-a.length);let work=' '+text+' ';keys.forEach((k,i)=>{const re=new RegExp('(^|\\s)'+escapeReg(k)+'(?=\\s|$)','gi');if(re.test(work)){const mark=` __P${found.length}__ `;found.push(map[k]);work=work.replace(re,(m,a)=>a+mark)}});return {text:work.trim(),found}}
+    function escapeReg(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+    function enToDv(sentence,stats){const p=punct(sentence),key=cleanEn(sentence);if(memory[key]){stats.matched+=key.split(' ').length;stats.total+=key.split(' ').length;stats.steps.push('Verified full-sentence memory');return preservePunctuation(memory[key],p,'en-dv')}
+      const pm=matchPhrases(key,phrases),toks=pm.text.split(/\s+/).filter(Boolean);const subjects=[],verbs=[],objects=[],other=[],neg=[];
+      toks.forEach(t=>{if(/^__P\d+__$/.test(t)){const val=pm.found[+t.match(/\d+/)[0]];objects.push(val);stats.matched+=2;stats.total+=2;stats.tokens.push([t,val,true]);return}stats.total++;if(stop.has(t)){stats.tokens.push([t,'(removed article)',true]);stats.matched++;return}let base=t.replace(/(ing|ed|s)$/,'');let val=words[t]||words[base];if(val){stats.matched++;stats.tokens.push([t,val,true]);if(['i','you','he','she','we','they'].includes(t))subjects.push(val);else if(['write','read','check','correct','translate','learn','think','help','improve','create','give','take','go','come','see','know','understand','use','make','do'].includes(t)||words[base]===val&&/(ing|ed)$/.test(t))verbs.push(val);else if(t==='not')neg.push(val);else objects.push(val)}else{stats.tokens.push([t,t,false]);other.push(t)}});
+      stats.steps.push('Longest phrase matching','English articles removed','SVO reordered toward Dhivehi SOV');const order=[...subjects,...objects,...other,...neg,...verbs].filter(Boolean);return preservePunctuation(order.join(' ').replace(/\s+/g,' ').trim(),p,'en-dv')}
+    const suffixes=[['ތަކަށް','s to'],['ތަކުން','s from'],['ތަކުގެ',"s'"],['ތައް','s'],['އަށް','to'],['އިން','from'],['ގެ','of'],['ގައި','in'],['އާއި','and'],['އެއް','a']];
+    function dvLookup(t){if(reverseWords[t])return reverseWords[t];for(const [s,en] of suffixes){if(t.endsWith(s)&&t.length>s.length){const stem=t.slice(0,-s.length);if(reverseWords[stem])return en==='s'?reverseWords[stem]+'s':en+' '+reverseWords[stem]}}return null}
+    function dvToEn(sentence,stats){const p=punct(sentence),key=cleanDv(sentence);if(reverseMemory[key]){const v=reverseMemory[key];stats.matched+=key.split(' ').length;stats.total+=key.split(' ').length;stats.steps.push('Verified full-sentence memory');return capitalize(preservePunctuation(v,p,'dv-en'))}
+      const pm=matchPhrases(key,reversePhrases),toks=pm.text.split(/\s+/).filter(Boolean),subject=[],verb=[],rest=[];toks.forEach(t=>{if(/^__P\d+__$/.test(t)){const val=pm.found[+t.match(/\d+/)[0]];rest.push(val);stats.matched+=2;stats.total+=2;stats.tokens.push([t,val,true]);return}stats.total++;const val=dvLookup(t);if(val){stats.matched++;stats.tokens.push([t,val,true]);if(['i','you','he','we','they'].includes(val))subject.push(val);else if(['write','read','check','correct','translate','learn','think','help','improve','create','give','take','go','come','see','know','understand','use','make','do'].includes(val))verb.push(val);else rest.push(val)}else{stats.tokens.push([t,t,false]);rest.push(t)}});stats.steps.push('Dhivehi suffix analysis','SOV reordered toward English SVO','Capitalization restored');return capitalize(preservePunctuation([...subject,...verb,...rest].join(' '),p,'dv-en'))}
+    function capitalize(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s}
+    function run(){const src=$('source').value.trim();if(!src){$('source').focus();return}const stats={matched:0,total:0,tokens:[],steps:[]};const fn=direction==='en-dv'?enToDv:dvToEn;const out=sentences(src).map(s=>fn(s.trim(),stats)).join(' ');$('result').value=out;const pc=stats.total?Math.round(stats.matched/stats.total*100):0;$('coverage').textContent=pc+'%';$('coverage').className=pc>=75?'good':pc>=40?'medium':'low';$('engineNote').textContent=pc>=75?'High dictionary coverage':pc>=40?'Review recommended':'Many unknown words';$('explain').firstChild.textContent=stats.steps.filter((v,i,a)=>a.indexOf(v)===i).join(' → ')+'. ';$('tokens').innerHTML='';stats.tokens.slice(0,80).forEach(([a,b,ok])=>{const e=document.createElement('span');e.className='token '+(ok?'matched':'unknown');e.textContent=a+' → '+b;$('tokens').append(e)})}
+    function setDirection(next){direction=next;const dv=next==='dv-en';$('fromLabel').textContent=dv?'ދިވެހި':'English';$('toLabel').textContent=dv?'English':'ދިވެހި';$('direction').textContent=dv?'Dhivehi → English':'English → Dhivehi';$('source').classList.toggle('dv',dv);$('result').classList.toggle('dv',!dv);$('source').dir=dv?'rtl':'ltr';$('result').dir=dv?'ltr':'rtl';$('source').placeholder=dv?'ދިވެހިން ލިޔާ...':'Type or paste English text...';$('result').placeholder=dv?'English translation appears here...':'ތަރުޖަމާ މިތާ ފެންނާނެ...'}
+    $('translateBtn').onclick=run;$('source').addEventListener('input',()=>{$('count').textContent=$('source').value.length+' / 5000'});$('source').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')run()});$('swapBtn').onclick=()=>{const old=$('source').value;$('source').value=$('result').value;$('result').value=old;setDirection(direction==='en-dv'?'dv-en':'en-dv');$('count').textContent=$('source').value.length+' / 5000'};$('clearBtn').onclick=()=>{$('source').value='';$('count').textContent='0 / 5000'};$('clearAll').onclick=()=>{$('source').value='';$('result').value='';$('coverage').textContent='—';$('count').textContent='0 / 5000';$('engineNote').textContent='Ready'};$('copyBtn').onclick=async()=>{if(!$('result').value)return;await navigator.clipboard.writeText($('result').value);$('copyBtn').textContent='Copied';setTimeout(()=>$('copyBtn').textContent='Copy',1200)};$('pasteBtn').onclick=async()=>{try{$('source').value=await navigator.clipboard.readText();$('count').textContent=$('source').value.length+' / 5000'}catch(e){$('source').focus()}};document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{setDirection('en-dv');$('source').value=b.dataset.en;$('count').textContent=$('source').value.length+' / 5000';run()});setDirection('en-dv');
+  })();
   </script>
 </body>
 </html>
