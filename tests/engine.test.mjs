@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY} from '../assets/js/knowledge-base.js';
 
 const brain=new TranslationBrain([]);
 
@@ -20,5 +21,19 @@ assert.match(quote.output,/reportedly/i);
 
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
+
+assert.equal(LESSON_REGISTRY.length,8);
+assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
+assert.notEqual(GRAMMAR_RULES.specificIndefinite.meaning,GRAMMAR_RULES.unspecifiedIndefinite.meaning);
+assert.equal(INDEFINITE_FORM_MEMORY['މީހެއް'].mode,'specific-indefinite');
+assert.equal(INDEFINITE_FORM_MEMORY['މީހަކު'].mode,'unspecified-indefinite');
+assert.equal(INDEFINITE_FORM_MEMORY['ތާކު'].base,'ތަން');
+
+const specific=brain.translate('މީހެއް','dv-en');
+const unspecified=brain.translate('މީހަކު','dv-en');
+assert.match(specific.output,/specific person/i);
+assert.match(unspecified.output,/some person/i);
+assert.equal(specific.indefinite[0].rule.id,'DV-INDEF-EH');
+assert.equal(unspecified.indefinite[0].rule.id,'DV-INDEF-AKU');
 
 console.log('All translation-engine tests passed.');
