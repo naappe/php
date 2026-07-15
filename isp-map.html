@@ -55,6 +55,19 @@
     <div class="card"><span class="label">Map status</span><div class="value" id="mapStatus">Loading shared map…</div><div class="sub">Sharing is optional. Public IP addresses are never uploaded.</div></div>
     <div class="card wide"><span class="label">Test status</span><div class="value"><span class="status" id="status">Ready</span></div><div class="sub" id="timestamp">No test performed</div></div>
     <div class="card wide"><span class="label">Shared Maldives map</span><div class="map-stats"><div class="mini"><strong id="sharedCount">0</strong><span>Shared tests</span></div><div class="mini"><strong id="sharedProviders">0</strong><span>ISPs observed</span></div><div class="mini"><strong id="sharedMedian">—</strong><span>Median HTTP latency</span></div></div><div id="map" class="map" aria-label="Map of shared Maldives ISP measurements"></div><div class="actions"><button class="secondary" id="refreshMap">Refresh shared map</button></div></div>
+    <div class="card wide">
+      <span class="label">Experimental physical sensor</span>
+      <div class="value">🧲 Real magnetic-field test</div>
+      <div class="sub">This test uses the browser Magnetometer API only. It never converts phone rotation into fake magnetic readings.</div>
+      <div class="map-stats">
+        <div class="mini"><strong id="magX">—</strong><span>X axis (µT)</span></div>
+        <div class="mini"><strong id="magY">—</strong><span>Y axis (µT)</span></div>
+        <div class="mini"><strong id="magZ">—</strong><span>Z axis (µT)</span></div>
+      </div>
+      <div class="mini" style="margin-top:10px"><strong id="magTotal">—</strong><span>Total field (µT)</span></div>
+      <div class="actions"><button class="primary" id="startMagnetometer">Start real sensor</button><button class="secondary" id="stopMagnetometer" disabled>Stop</button></div>
+      <div class="notice" id="magStatus" role="status" aria-live="polite" style="margin:14px 0 0">Waiting. Sensor access must be started by your tap and may not be supported by your browser.</div>
+    </div>
     <div class="card wide"><span class="label">Saved results on this device</span><div style="overflow:auto"><table><thead><tr><th>Time</th><th>Location</th><th>ISP</th><th>Latency</th><th>DNS</th><th>Router</th><th>Method</th></tr></thead><tbody id="rows"></tbody></table></div><div class="actions"><button class="secondary" id="clear">Clear saved data</button></div></div>
     <div class="card wide"><span class="label">Development logic</span><div class="sub">Kindness: protect participants → Time: collect repeated observations → Honesty: label limitations → Design: use consistent fields → Build: run the tool → Test: compare results → Improve: correct the method.</div></div>
   </section>
@@ -68,6 +81,7 @@
   const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdXBicnV3bXdscm1ld2hvb2RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4MDExODMsImV4cCI6MjA5NzM3NzE4M30.R56YPNFMHFkPUnoDm8yXrmc3AtjT2q__TZaIPbwQR5Q';
   const API_HEADERS={apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`};
   let sharedMap=null;let markerLayer=null;
+  let magnetometer=null;
   const lifecycle=new MobileAppAlgorithm({consent:false,cacheTTL:300000});
   const updateLiveNetwork=()=>{
     const network=lifecycle.showNetworkStatus();
@@ -141,10 +155,43 @@
   $('save').onclick=()=>{if(!latest)return;latest.location=$('location').value.trim()||latest.location;latest.dns=$('dns').value;latest.router=$('router').value;const data=stored();data.push(latest);localStorage.setItem(key,JSON.stringify(data));render();$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save result',1200)};
   $('share').onclick=shareLatest;
   $('refreshMap').onclick=loadSharedMap;
+  $('startMagnetometer').onclick=()=>{
+    const status=$('magStatus');
+    if(!('Magnetometer' in globalThis)){
+      status.textContent='Unsupported: this browser does not expose the Magnetometer API. The map cannot unlock a blocked sensor; use an Android sensor app for real readings.';
+      return;
+    }
+    try{
+      if(magnetometer)magnetometer.stop();
+      magnetometer=new Magnetometer({frequency:20,referenceFrame:'device'});
+      magnetometer.addEventListener('reading',()=>{
+        const values=[magnetometer.x,magnetometer.y,magnetometer.z];
+        if(!values.every(Number.isFinite))return;
+        $('magX').textContent=magnetometer.x.toFixed(1);
+        $('magY').textContent=magnetometer.y.toFixed(1);
+        $('magZ').textContent=magnetometer.z.toFixed(1);
+        $('magTotal').textContent=Math.hypot(...values).toFixed(1);
+        status.textContent='Live, genuine magnetometer readings. Move a small magnet carefully near the phone to observe changes.';
+      });
+      magnetometer.addEventListener('error',event=>{
+        const error=event.error||event;
+        status.textContent=`Sensor blocked: ${error.name||'Error'}${error.message?` — ${error.message}`:''}`;
+        $('startMagnetometer').disabled=false;$('stopMagnetometer').disabled=true;
+      });
+      magnetometer.start();
+      $('startMagnetometer').disabled=true;$('stopMagnetometer').disabled=false;
+      status.textContent='Starting real magnetometer…';
+    }catch(error){status.textContent=`Sensor unavailable: ${error.name||'Error'}${error.message?` — ${error.message}`:''}`}
+  };
+  $('stopMagnetometer').onclick=()=>{
+    if(magnetometer){magnetometer.stop();magnetometer=null}
+    $('startMagnetometer').disabled=false;$('stopMagnetometer').disabled=true;
+    $('magStatus').textContent='Sensor stopped.';
+  };
   $('dns').addEventListener('change',updateDnsGuide);
   $('export').onclick=()=>{const data=stored();if(!data.length){alert('No saved results to export.');return}const cols=['timestamp','location','isp','publicIP','latency','latencyMedianMs','latencyVariationMs','testDurationMs','speed','networkType','dns','router','method','evidenceQuality'];const csv=[cols.join(','),...data.map(r=>cols.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Maldives_ISP_Map.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
   $('clear').onclick=()=>{if(confirm('Delete all results saved in this browser?')){localStorage.removeItem(key);render()}};
-  addEventListener('online',updateLiveNetwork);addEventListener('offline',updateLiveNetwork);addEventListener('pagehide',()=>lifecycle.destroy(),{once:true});
+  addEventListener('online',updateLiveNetwork);addEventListener('offline',updateLiveNetwork);addEventListener('pagehide',()=>{if(magnetometer)magnetometer.stop();lifecycle.destroy()},{once:true});
   render();updateLiveNetwork();updateDnsGuide();if(initializeMap())loadSharedMap();
   if(new URLSearchParams(location.search).get('debug')==='1'){lifecycle.runDevelopmentTests().then(results=>console.log('Development tests',results))}
 </script>
