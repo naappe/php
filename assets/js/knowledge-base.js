@@ -4,6 +4,21 @@
  */
 export const KNOWLEDGE_VERSION = '2.0.0';
 
+/**
+ * Lesson catalog tracks what has been received separately from what has been
+ * fully encoded and tested. A summary is not treated as a complete lesson.
+ */
+export const LESSON_REGISTRY = [
+  {id:1,topic:'Thaana Script',focus:'Consonants, vowels (fili), dotted letters',status:'partially-encoded'},
+  {id:2,topic:'Sukun, Empty Letters & Emphasis',focus:'Sukun rules, empty letters, emphasis',status:'partially-encoded'},
+  {id:3,topic:'Nouns, Plural & Indefinite Markers',focus:'Plural markers and އެއް',status:'summary-received'},
+  {id:4,topic:'Repetition, Quotation & Word Order',focus:'އޭ, އޯ and SOV order',status:'encoded-and-tested'},
+  {id:5,topic:'Adjectives',focus:'Position, negative adjectives, good/bad words',status:'summary-received'},
+  {id:6,topic:'Demonstratives',focus:'Three-way distinction, determiners, pronouns',status:'summary-received'},
+  {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
+  {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'}
+];
+
 export const VERIFIED_PAIRS = [
   ['how are you','ތިބާ ކިހިނެއް؟'],
   ['what are you doing','ތިޔަ ކުރަނީ ކޮބައިތޯ؟'],
@@ -33,7 +48,7 @@ export const VERIFIED_WORDS = {
   i:'އަހަރެން',you:'ތިބާ',he:'އޭނާ',she:'އޭނާ',we:'އަހަރުމެން',they:'އެމީހުން',this:'މި',that:'އެ',my:'އަހަރެންގެ',your:'ތިބާގެ',our:'އަހަރުމެންގެ',their:'އެމީހުންގެ',who:'ކާކު',what:'ކޮބައި',where:'ކޮންތާކު',when:'ކޮންއިރަކު',why:'ކީއްވެ',how:'ކިހިނެއް',yes:'އާނ',no:'ނޫން',not:'ނޫން',and:'އަދި',or:'ނުވަތަ',but:'ނަމަވެސް',because:'ސަބަބަކީ',if:'އިދި',with:'އެކު',without:'ނުލައި',in:'ގައި',on:'މަތީގައި',from:'އިން',to:'އަށް',of:'ގެ',
   is:'އަކީ',are:'އަކީ',was:'ވީ',were:'ވީ',be:'ވުން',can:'ކުރެވިދާނެ',will:'ވާނެ',should:'ޖެހޭ',must:'ލާޒިމު',do:'ކުރުން',doing:'ކުރަނީ',make:'ހެދުން',use:'ބޭނުންކުރުން',write:'ލިޔުން',read:'ކިޔުން',check:'ބެލުން',correct:'ރަނގަޅުކުރުން',translate:'ތަރުޖަމާކުރުން',learn:'ދަސްކުރުން',think:'ވިސްނުން',help:'އެހީ',improve:'ރަނގަޅުކުރުން',create:'އުފެއްދުން',give:'ދިނުން',take:'ނެގުން',go:'ދިއުން',come:'އައުން',see:'ފެނުން',know:'އެނގުން',understand:'ދޭހަވުން',
   text:'ލިޔުން',word:'ބަސް',words:'ބަސްތައް',sentence:'ޖުމްލަ',sentences:'ޖުމްލަތައް',language:'ބަސް',english:'އިނގިރޭސި',dhivehi:'ދިވެހި',information:'މަޢުލޫމާތު',document:'ލިޔުން',mistake:'ކުށް',mistakes:'ކުށްތައް',grammar:'ގަވާއިދު',spelling:'އިމްލާ',style:'އުސްލޫބު',tool:'ވަސީލަތް',technology:'ޓެކްނޮލޮޖީ',human:'އިންސާން',intelligence:'ބުއްދި',writing:'ލިޔުން',writer:'ލިޔާ މީހާ',system:'ސިސްޓަމް',memory:'މެމޮރީ',lesson:'ލެސަން',structure:'ސްޓްރަކްޗަރ',test:'ޓެސްޓް',
-  good:'ރަނގަޅު',well:'ރަނގަޅު',bad:'ނުބައި',important:'މުހިންމު',easy:'ފަސޭހަ',difficult:'އުނދަގޫ',new:'އާ',old:'ކުރީގެ',big:'ބޮޑު',small:'ކުޑަ',black:'ކަޅު',cat:'ބުޅާ',apple:'އާފަލު',bird:'ދޫނި',birds:'ދޫނިތައް',maldivians:'ދިވެހިން',hand:'އަތް',plate:'ތަށި',fast:'އަވަސް',slow:'ލަސް',today:'މިއަދު',tomorrow:'މާދަމާ',yesterday:'އިއްޔެ',day:'ދުވަސް',time:'ވަގުތު',work:'މަސައްކަތް',student:'ދަރިވަރު',teacher:'މުދައްރިސް',food:'ކާނާ',water:'ފެން',name:'ނަން',friend:'ރައްޓެހި',people:'މީހުން',world:'ދުނިޔެ'
+  good:'ރަނގަޅު',well:'ރަނގަޅު',bad:'ނުބައި',important:'މުހިންމު',easy:'ފަސޭހަ',difficult:'އުނދަގޫ',new:'އާ',old:'ކުރީގެ',big:'ބޮޑު',small:'ކުޑަ',black:'ކަޅު',cat:'ބުޅާ',apple:'އާފަލު',bird:'ދޫނި',birds:'ދޫނިތައް',maldivians:'ދިވެހިން',person:'މީހާ',place:'ތަން',hand:'އަތް',plate:'ތަށި',fast:'އަވަސް',slow:'ލަސް',today:'މިއަދު',tomorrow:'މާދަމާ',yesterday:'އިއްޔެ',day:'ދުވަސް',time:'ވަގުތު',work:'މަސައްކަތް',student:'ދަރިވަރު',teacher:'މުދައްރިސް',food:'ކާނާ',water:'ފެން',name:'ނަން',friend:'ރައްޓެހި',people:'މީހުން',world:'ދުނިޔެ'
 };
 
 export const VERIFIED_PHRASES = {
@@ -41,7 +56,7 @@ export const VERIFIED_PHRASES = {
 };
 
 export const DHIVEHI_SUFFIXES = [
-  ['ތަކަށް','to plural'],['ތަކުން','from plural'],['ތަކުގެ','of plural'],['ތައް','plural'],['އަށް','to'],['އިން','from'],['ގައި','in'],['ގެ','of'],['އާއި','and'],['އެއް','a']
+  ['ތަކަށް','to plural'],['ތަކުން','from plural'],['ތަކުގެ','of plural'],['ތައް','plural'],['އަށް','to'],['އިން','from'],['ގައި','in'],['ގެ','of'],['އާއި','and'],['އެއް','specific indefinite'],['އަކު','unspecified indefinite']
 ];
 
 export const SCRIPT_RANGES = {
@@ -62,7 +77,16 @@ export const SUKUN = 'ް';
 export const GRAMMAR_RULES = {
   defaultWordOrder:{id:'DV-SOV-001',pattern:'subject-object-verb',status:'verified'},
   repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
-  quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'}
+  quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'},
+  specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-8-summary'},
+  unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'}
+};
+
+export const INDEFINITE_FORM_MEMORY = {
+  'މީހެއް':{base:'މީހާ',mode:'specific-indefinite',english:'a specific person'},
+  'މީހަކު':{base:'މީހާ',mode:'unspecified-indefinite',english:'some person'},
+  'ތަނަކު':{base:'ތަން',mode:'unspecified-indefinite',english:'some place',irregular:true},
+  'ތާކު':{base:'ތަން',mode:'unspecified-indefinite',english:'some place',irregular:true}
 };
 
 export const FOCUS_FORM_MEMORY = {
