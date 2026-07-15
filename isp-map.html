@@ -38,6 +38,19 @@
       <select id="router"><option value="Not checked">Not checked</option><option value="Accessible">Accessible</option><option value="Not responding">Not responding</option><option value="Cloud-managed">Cloud-managed</option></select>
       <div class="sub">A failed router ping alone does not prove that the router is locked.</div>
     </div>
+    <div class="card wide">
+      <span class="label">Cloudflare result guide</span>
+      <div class="value" id="dnsGuideTitle">Check your encrypted DNS status</div>
+      <div class="sub" id="dnsGuideText">Open Cloudflare's checker, then select the matching DNS confirmation above.</div>
+      <div style="overflow:auto;margin-top:12px"><table><tbody>
+        <tr><th>Connected to 1.1.1.1: Yes</th><td>Cloudflare is answering DNS queries.</td></tr>
+        <tr><th>DoH or DoT: Yes</th><td>DNS queries are encrypted.</td></tr>
+        <tr><th>WARP: No</th><td>Normal when only Private DNS is enabled. WARP is optional.</td></tr>
+        <tr><th>IPv6 resolver: No</th><td>IPv4 can still work normally; this alone is not a fault.</td></tr>
+      </tbody></table></div>
+      <div class="notice" style="margin:14px 0 0"><strong>Speed truth:</strong> Cloudflare DNS may improve domain lookup time. WARP changes the traffic route and may improve, reduce, or leave speed unchanged. Neither guarantees higher Mbps or lower ping.</div>
+      <div class="actions"><a class="button secondary" href="https://1.1.1.1/help" target="_blank" rel="noopener">Open Cloudflare checker</a><a class="button secondary" href="https://developers.cloudflare.com/1.1.1.1/setup/android/" target="_blank" rel="noopener">Android setup guide</a></div>
+    </div>
     <div class="card"><span class="label">Evidence quality</span><div class="value" id="quality">Not tested</div><div class="sub" id="qualityDetail">Measured and manually confirmed fields are scored separately.</div></div>
     <div class="card"><span class="label">Map status</span><div class="value" id="mapStatus">Loading shared map…</div><div class="sub">Sharing is optional. Public IP addresses are never uploaded.</div></div>
     <div class="card wide"><span class="label">Test status</span><div class="value"><span class="status" id="status">Ready</span></div><div class="sub" id="timestamp">No test performed</div></div>
@@ -68,6 +81,17 @@
   };
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const stored=()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}};
+  function updateDnsGuide(){
+    const value=$('dns').value;
+    const messages={
+      'Cloudflare DoH':['Encrypted Cloudflare DNS confirmed','Your DNS is encrypted. WARP is optional and is not required for DNS protection.'],
+      'Cloudflare DNS':['Cloudflare selected; encryption unconfirmed','Confirm DoH or DoT on Cloudflare’s checker before calling the DNS connection encrypted.'],
+      'ISP or router DNS':['Network DNS selected','DNS privacy depends on the network or router configuration. Do not label this as tracking without evidence.'],
+      'Other DNS':['Another DNS provider selected','Check that provider’s encrypted DNS status and privacy policy.'],
+      'Not checked':['Check your encrypted DNS status','Open Cloudflare’s checker, then select the matching DNS confirmation above.']
+    };
+    [$('dnsGuideTitle').textContent,$('dnsGuideText').textContent]=messages[value]||messages['Not checked'];
+  }
   function initializeMap(){
     if(!globalThis.L){$('mapStatus').textContent='Map library unavailable';return false}
     sharedMap=L.map('map',{minZoom:5,maxZoom:14}).setView([3.2,73.2],6);
@@ -117,10 +141,11 @@
   $('save').onclick=()=>{if(!latest)return;latest.location=$('location').value.trim()||latest.location;latest.dns=$('dns').value;latest.router=$('router').value;const data=stored();data.push(latest);localStorage.setItem(key,JSON.stringify(data));render();$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save result',1200)};
   $('share').onclick=shareLatest;
   $('refreshMap').onclick=loadSharedMap;
+  $('dns').addEventListener('change',updateDnsGuide);
   $('export').onclick=()=>{const data=stored();if(!data.length){alert('No saved results to export.');return}const cols=['timestamp','location','isp','publicIP','latency','latencyMedianMs','latencyVariationMs','testDurationMs','speed','networkType','dns','router','method','evidenceQuality'];const csv=[cols.join(','),...data.map(r=>cols.map(k=>`"${String(r[k]??'').replaceAll('"','""')}"`).join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Maldives_ISP_Map.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
   $('clear').onclick=()=>{if(confirm('Delete all results saved in this browser?')){localStorage.removeItem(key);render()}};
   addEventListener('online',updateLiveNetwork);addEventListener('offline',updateLiveNetwork);addEventListener('pagehide',()=>lifecycle.destroy(),{once:true});
-  render();updateLiveNetwork();if(initializeMap())loadSharedMap();
+  render();updateLiveNetwork();updateDnsGuide();if(initializeMap())loadSharedMap();
   if(new URLSearchParams(location.search).get('debug')==='1'){lifecycle.runDevelopmentTests().then(results=>console.log('Development tests',results))}
 </script>
 </body>
