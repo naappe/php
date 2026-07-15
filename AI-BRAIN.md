@@ -62,6 +62,23 @@ When teaching a Dhivehi pair:
 
 ## Current grammar memory
 
+## Lesson registry
+
+Eight lessons have been received. “Received” and “fully encoded” are separate states.
+
+| Lesson | Topic | Repository status |
+| --- | --- | --- |
+| 1 | Thaana script | Partially encoded |
+| 2 | Sukun, empty letters and emphasis | Partially encoded |
+| 3 | Nouns, plurals and indefinite markers | Summary received |
+| 4 | Repetition, quotation and word order | Encoded and tested |
+| 5 | Adjectives | Summary received |
+| 6 | Demonstratives | Summary received |
+| 7 | Pronouns and formality | Summary received |
+| 8 | `އެއް` versus `އަކު` | Current summary encoded and tested |
+
+Do not claim that the “50+ words, 60+ rules and 150+ examples” are implemented until the actual items exist in `knowledge-base.js` and have tests.
+
 ### Default word order — `DV-SOV-001`
 
 Dhivehi normally uses Subject–Object–Verb. Word order is flexible, so this is a default reasoning rule, not an absolute rewrite rule.
@@ -84,6 +101,22 @@ Dhivehi normally uses Subject–Object–Verb. Word order is flexible, so this i
 ### Important limitation
 
 The sound changes that occur when `އޭ` or `އޯ` attaches are lexical/morphological. Use verified form memory before attempting to strip the suffix mechanically.
+
+### Specific indefinite — `DV-INDEF-EH`
+
+- Suffix: `އެއް`
+- Meaning: a particular thing/person exists, but its identity is unknown or not stated.
+- Lesson 8 example: `މީހެއް` — a person (specific but unidentified).
+
+### Unspecified indefinite — `DV-INDEF-AKU`
+
+- Suffix: `އަކު`
+- Meaning: some unspecified or vague thing/person.
+- It is also the indefinite form used when further suffixes are added.
+- Lesson 8 example: `މީހަކު` — some person.
+- Verified irregular place forms: `ތަން → ތަނަކު / ތާކު`.
+
+Never collapse `އެއް` and `އަކު` to the same generic English article in reasoning. English surface translation may need context, but the internal semantic distinction must remain recorded.
 
 ## Supplied Lesson 4 forms
 
