@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,LESSON_14_MORE_VERBS,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=3.9.0';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,LESSON_14_MORE_VERBS,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=4.0.0';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -127,10 +127,11 @@ export class TranslationBrain{
   }
 
   translate(text,direction='en-dv'){
-    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[],verbs:[],questions:[],questionWords:[],nounCases:[],predicates:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
+    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],incompleteSentences:[],focus:[],indefinite:[],verbs:[],questions:[],questionWords:[],nounCases:[],predicates:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
     if(stats.script.mixed)stats.warnings.push(`Mixed input detected: ${stats.script.types.join(', ')}. Complete verified sentence meaning has priority over isolated token lookup.`);
     const fn=direction==='en-dv'?this.toDhivehi.bind(this):this.toEnglish.bind(this);
-    const output=splitSentences(text).map(s=>fn(s.trim(),stats)).join(' ');
+    const translatedSentences=splitSentences(text).map(s=>fn(s.trim(),stats)).filter(Boolean);
+    const output=direction==='en-dv'&&stats.incompleteSentences.length?'':translatedSentences.join(' ');
     if(direction==='en-dv'&&hasArabicScript(output))throw new Error('Safety block: non-Thaana Arabic-script output was detected.');
     return {output,coverage:stats.total?Math.round(stats.matched/stats.total*100):0,...stats};
   }
@@ -145,14 +146,15 @@ export class TranslationBrain{
       if(token.startsWith('__phrase')){const value=placeholders[Number(token.match(/\d+/)[0])];object.push(value);stats.matched+=2;stats.total+=2;stats.tokens.push({from:token,to:value,known:true,type:'phrase'});return}
       stats.total++;
       if(ARTICLES.has(token)){stats.matched++;stats.tokens.push({from:token,to:'removed English article',known:true,type:'grammar'});return}
-      if(CONTEXT_SENSITIVE_TERMS[token]){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:`context required — ${CONTEXT_SENSITIVE_TERMS[token].reason}`,known:false,type:'context-sensitive'});return}
+      if(CONTEXT_SENSITIVE_TERMS[token]){unknown.push(token);stats.tokens.push({from:token,to:`context required — ${CONTEXT_SENSITIVE_TERMS[token].reason}`,known:false,type:'context-sensitive'});return}
       const base=token.replace(/(ing|ed|s)$/,'');const value=this.words[token]||this.words[base];
-      if(!value){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
+      if(!value){unknown.push(token);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;stats.tokens.push({from:token,to:value,known:true,type:'word'});
       if(SUBJECTS.has(token))subject.push(value);else if(VERBS.has(token)||VERBS.has(base))verb.push(value);else object.push(value);
     });
-    stats.reasoning.push('No exact sentence memory','Longest verified phrases applied','Known vocabulary tokens applied',`Default ${GRAMMAR_RULES.defaultWordOrder.pattern.toUpperCase()} order applied`,'Unknown meanings marked, not invented');
-    return addPunctuation([...subject,...object,...unknown,...verb].join(' '),p,true);
+    stats.reasoning.push('No exact sentence memory','Longest verified phrases applied','Known vocabulary tokens applied',`Default ${GRAMMAR_RULES.defaultWordOrder.pattern.toUpperCase()} order applied`,'Unknown meanings reported in analysis; partial mixed-language output blocked');
+    if(unknown.length){stats.incompleteSentences.push({source:sentence,unknown});stats.warnings.push(`Translation withheld: unknown or context-dependent meanings: ${unknown.join(', ')}.`);return ''}
+    return addPunctuation([...subject,...object,...verb].join(' '),p,true);
   }
 
   analyzeFocus(token,stats){
