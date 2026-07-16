@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.6.0';
+export const KNOWLEDGE_VERSION = '2.7.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -21,10 +21,30 @@ export const LESSON_REGISTRY = [
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
   {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
-  {id:18,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'}
+  {id:18,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'},
+  {id:19,topic:'Verbs – To Be Continued',focus:'Animate groups with ތިބުން and people/living in general locations with އުޅުން',status:'source-encoded-and-tested'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ['there are some crows in that tree','އެގަހުގައި ކާޅުތަކެއް އެބަ ތިއްބެވެ'],
+  ['there are kids playing outside','ކުދިން ބޭރުގައި ކުޅެން އެބަ ތިއްބެވެ'],
+  ['there are people watching the match on the steps','ސިޑިބަރިމަތީ މެޗު ބަލަން މީހުން އެބަ ތިއްބެވެ'],
+  ['the crows are in that tree','ކާޅުތައް ތިބީ އެގަހުގައެވެ'],
+  ['the kids are playing outside','ކުދިން ތިބީ ބޭރުގައި ކުޅޭށެވެ'],
+  ['there are lots of maldivians in sri lanka','ލަންކާގައި ވަރަށް ގިނަ ދިވެހިން އެބަ އުޅެއެވެ'],
+  ['there are lots of old people on this island','މިރަށުގައި ވަރަށް ގިނަ މުސްކުޅި މީހުން އުޅެވެ'],
+  ['my older sister is at the office','ދައްތަ އޮފީހުގައި އެބަ އުޅެއެވެ'],
+  ['is there any person in this house','މިގޭގައި އެއްވެސް މީހެއް އުޅޭތަ'],
+  ['they live on the fifth floor of this building','އެމީހުން އުޅެނީ މިއިމާރާތުގެ ފަސްވަނަ ބުރީގައެވެ'],
+  ['now he lives in addu','މިހާރު އޭނަ އުޅެނީ އައްޑޫގައެވެ'],
+  ['there are children on the boat','ދޯނީގައި ކުދިނަ އެބަ ތިއްބެވެ'],
+  ['there are women working in the field','ދަނޑުގައި އަނހެނުން މަސެއްކަތް ކުރަން އެބަ ތިއްބެވެ'],
+  ['there are lots of tourists on this island','މިރަށުގައި ވަރަށް ގިނަ ފަތުރުވެރިން އެބަ އުޅެއެވެ'],
+  ['the people are in the car','މީހުން ތިބީ ކާރުތެރޭގައެވެ'],
+  ['there are some birds in the nest','ހާލިތެރޭގައި ދޫނިތަކެއް އެބަ ތިއްބެވެ'],
+  ['my friends are on the roof','އަހަރެންގެ ރައްޓެހިން ތިބީ ފުރާޅުމަތީގައެވެ'],
+  ['is your mum at home','މަންމަ ގޭގައި އެބަ އުޅޭތަ'],
+  ['they are eating in the cafe','އެމީހުން ސައިހޮޓާގައި ކާން އެބަ ތިއްބެވެ'],
   ['there is a bed in that room','އެކޮޓަރީގައި އެނދެއް އެބަހުރި'],
   ['there is a crow in the nest','ހާލިތެރޭގައި ކާޅެއް އެބައިން'],
   ['there is a spoon on the table','މޭޒުމަތީގައި ސަމުސަލެއް އެބައޮތް'],
@@ -162,7 +182,10 @@ export const GRAMMAR_RULES = {
   derivedQuestion:{id:'DV-Q-THA',suffix:'ތަ',formalSuffix:'ތޯ',meaning:'open truth-value question',focusByAttachment:true,status:'verified-from-lesson-16'},
   confirmationQuestion:{id:'DV-Q-DHOA',suffix:'ދޯ',formalSuffix:'ދެއްތޯ',meaning:'confirmation sought; speaker suspects proposition is true',status:'verified-from-lesson-16'},
   negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'},
-  existentialPredication:{id:'DV-EXIST-18',existentialOrder:'location + indefinite entity + އެބަ verb',locationOrder:'definite entity + locative verb + location',traditionalNounClasses:true,modernUsageFlexible:true,status:'verified-from-2020-source-lesson'}
+  existentialPredication:{id:'DV-EXIST-18',existentialOrder:'location + indefinite entity + އެބަ verb',locationOrder:'definite entity + locative verb + location',traditionalNounClasses:true,modernUsageFlexible:true,status:'verified-from-2020-source-lesson'},
+  animateGroupExistence:{id:'DV-EXIST-THIBUN-19',verb:'ތިބުން',meaning:'a group of animate beings exists or is located',actionPattern:'animate group + action infinitive + ތިބުން',status:'verified-from-lesson-19'},
+  generalLocationLiving:{id:'DV-EXIST-ULHUN-19',verb:'އުޅުން',meaning:'people exist, stay or live within a general location',status:'verified-from-lesson-19'},
+  sentenceFinalEve:{id:'DV-INF-EVE-19',observedChanges:{'ެން':'ޭށެވެ','ަން':'ާށެވެ'},status:'verified-for-demonstrated-vowel-classes'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -270,13 +293,26 @@ export const UNCONFIRMED_LESSON_16 = [
 export const EXISTENTIAL_VERB_MEMORY = {
   'ހުރުން':{infinitive:'ހުންނަން',progressive:'ހުންނަނީ',habitual:'ހުރި',habitualEve:'ހުއްޓެވެ',existential:['އެބަހުރި','އެބަހުއްޓެވެ'],locative:'ހުރީ',english:'stand/be/exist'},
   'އިނުން':{infinitive:'އިންނަން',progressive:'އިންނަނީ',habitual:'އިން',habitualEve:'އިނެވެ',existential:['އެބައިން','އެބައިނެވެ'],locative:'އިނީ',english:'sit/be/exist'},
-  'އޮތުން':{infinitive:'އޮންނަން',progressive:'އޮންނަނީ',habitual:'އޮތް',habitualEve:'އޮތެވެ',existential:['އެބައޮތް','އެބައޮތެވެ'],locative:'އޮތީ',english:'lie/be/exist'}
+  'އޮތުން':{infinitive:'އޮންނަން',progressive:'އޮންނަނީ',habitual:'އޮތް',habitualEve:'އޮތެވެ',existential:['އެބައޮތް','އެބައޮތެވެ'],locative:'އޮތީ',english:'lie/be/exist'},
+  'ތިބުން':{infinitive:'ތިބެން',progressive:'ތިބެނީ',habitual:'ތިބި',habitualEve:'ތިއްބެވެ',existential:['ތިއްބެވެ','އެބަތިއްބެވެ'],locative:'ތިބީ',english:'animate group be/exist'},
+  'އުޅުން':{infinitive:'އުޅެން',progressive:'އުޅެނީ',habitual:'އުޅޭ',habitualEve:'އުޅެއެވެ',existential:['އުޅެވެ','އުޅެއެވެ','އެބައުޅެއެވެ'],locative:'އުޅޭ',english:'live/stay/be'
 };
 
 export const TRADITIONAL_EXISTENTIAL_CLASSES = {
   'ހުރުން':['male human','self-standing object','abstract quality','collection of inanimate objects','plural inanimate noun'],
   'އިނުން':['female human','non-human two-legged animal','creature with more than four legs','fruit or thing still attached to a tree'],
   'އޮތުން':['object unable to stand by itself','four-legged animal','animal without legs','detached fruit or thing']
+};
+
+export const LESSON_19_SOURCE = {
+  date:'2020-07-05',
+  author:'thatmaldivesblog',
+  extensionOf:18,
+  usageNotes:[
+    'ތިބުން is used for groups of animate beings.',
+    'އުޅުން expresses living, staying or being within a general location.',
+    'Fast speech may render އެބަ އުޅޭ approximately as އެބޯޅެ.'
+  ]
 };
 
 export const LESSON_18_SOURCE = {
