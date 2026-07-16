@@ -2,7 +2,25 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.4.0';
+export const KNOWLEDGE_VERSION = '3.4.1';
+
+export const DICTIONARY_SOURCES = [
+  {
+    id:'abdulla-oshea-2005-v1',
+    title:'English–Dhivehi / Dhivehi–English Dictionary: A Guide to the Language of Maldives',
+    authors:['Fareesha Abdulla',"Michael O'Shea"],
+    version:'1.0',
+    publicationDate:'2005-09',
+    pages:157,
+    direction:['English–Dhivehi','Dhivehi–English'],
+    dhivehiRepresentation:'Roman transliteration',
+    rootVerbConvention:'English infinitive paired with Dhivehi gerund',
+    sha256:'1d40634db965885bc13bfe14b2ee4ce0bf04761bb1ee86f0f5f3e96e4d0c048b',
+    storageStatus:'source-file retained; metadata registered',
+    importPolicy:'reference-only; add individually verified entries with attribution; do not reproduce the complete copyrighted dictionary in the public repository',
+    copyright:'© F. Abdulla and M. O’Shea, 2005'
+  }
+];
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
