@@ -107,7 +107,7 @@ export class TranslationBrain{
   analyzeVerbForm(token){
     for(const [infinitive,data] of Object.entries(PAST_TENSE_MEMORY)){
       if(data.past===token)return {token,form:'past',english:data.english,pairedForm:infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.pastTense,verified:true};
-      if(token==='ނު'+data.past)return {token,form:'negative-past',english:'did not '+data.english,pairedForm:data.past,infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.negativePast,verifiedFromPattern:true};
+      if(token==='ނު'+data.past){const base=Object.values(VERB_FORM_MEMORY).find(v=>v.infinitive===infinitive)?.english||data.english;return {token,form:'negative-past',english:'did not '+base,pairedForm:data.past,infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.negativePast,verifiedFromPattern:true};}
     }
     for(const [infinitive,data] of Object.entries(PRESENT_PROGRESSIVE_MEMORY)){
       if(data.progressive===token)return {token,form:'present-progressive',english:data.english,pairedForm:infinitive,irregular:Boolean(data.shortenedLongVowel),rule:GRAMMAR_RULES.presentProgressive,verified:true};
