@@ -123,7 +123,13 @@ assert.equal(quote.focus[0].mode,'quotation');
 assert.match(quote.output,/reportedly/i);
 
 const unknown=brain.translate('Unlearnedword','en-dv');
-assert.match(unknown.output,/⟦unlearnedword⟧/i);
+assert.equal(unknown.output,'');
+assert.deepEqual(unknown.incompleteSentences[0].unknown,['unlearnedword']);
+assert.equal(unknown.tokens[0].known,false);
+assert.match(unknown.warnings[0],/translation withheld/i);
+const mixedCoverage=brain.translate('This is a test. Unlearnedword.','en-dv');
+assert.equal(mixedCoverage.output,'');
+assert.equal(mixedCoverage.incompleteSentences.length,1);
 
 assert.equal(LESSON_REGISTRY.length,19);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-encoded-and-tested');
@@ -480,9 +486,9 @@ assert.equal(mixed.mixed,true);
 assert.deepEqual(mixed.types,['dhivehi','placeholder']);
 
 const contextual=brain.translate('The function belongs to them.','en-dv');
-assert.match(contextual.output,/⟦function⟧/i);
-assert.match(contextual.output,/⟦belongs⟧/i);
-assert.match(contextual.output,/⟦them⟧/i);
+assert.equal(contextual.output,'');
+assert.deepEqual(contextual.incompleteSentences[0].unknown,['function','belongs','them']);
+assert.deepEqual(contextual.tokens.filter(token=>!token.known).map(token=>token.from),['function','belongs','them']);
 
 const overviewHtml=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 for(const section of ['Live translator','AI reasoning instructions','Permanent knowledge base','Translation engine','Regression tests'])assert.match(overviewHtml,new RegExp(section,'i'));
