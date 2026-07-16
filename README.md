@@ -19,6 +19,7 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 - Marks unknown meanings instead of inventing a translation.
 - Detects mixed English, Thaana, placeholder and Arabic-script segments.
 - Treats vocabulary tokens as evidence while complete-sentence meaning remains primary.
+- Splits Dhivehi text into sentences and words using the documented `dhivehi_nlp.tokenizer` behavior.
 - Learns paired lines in the visitor's browser.
 - Imports and exports browser lessons as JSON.
 
@@ -45,6 +46,10 @@ python3 tools/radheef_dictionary.py --check ކާކު ކީއް ކޮބާ
 Radheef definitions are Dhivehi-to-Dhivehi evidence, not verified
 English–Dhivehi translation pairs. The full SQLite database is intentionally
 not copied into this public repository or browser bundle.
+
+The browser engine includes JavaScript equivalents of `sentence_tokenize` and
+`word_tokenize`. It can remove punctuation or retain only Thaana characters and
+ASCII numbers without requiring Python on the deployed website.
 
 ## File structure
 
