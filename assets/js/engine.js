@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -27,6 +27,15 @@ function punctuation(s){const m=s.match(/[.!?؟]+\s*$/);return m?m[0].trim():''}
 function addPunctuation(out,p,toDhivehi){if(!p)return out;return out+(toDhivehi&&p.includes('?')?'؟':!toDhivehi&&p.includes('؟')?'?':p)}
 function splitSentences(s){return s.match(/[^.!?؟\n]+[.!?؟]?/g)||[]}
 function capitalize(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s}
+
+export function derivePresentProgressive(infinitive){
+  if(typeof infinitive!=='string'||!infinitive.endsWith('ން'))return null;
+  let stem=infinitive.slice(0,-2);
+  const shortening=GRAMMAR_RULES.presentProgressive.longVowelShortening;
+  const final=stem.slice(-1);
+  if(shortening[final])stem=stem.slice(0,-1)+shortening[final];
+  return stem+'ނީ';
+}
 
 export class TranslationBrain{
   constructor(userPairs=[]){
@@ -96,6 +105,12 @@ export class TranslationBrain{
   }
 
   analyzeVerbForm(token){
+    for(const [infinitive,data] of Object.entries(PRESENT_PROGRESSIVE_MEMORY)){
+      if(data.progressive===token)return {token,form:'present-progressive',english:data.english,pairedForm:infinitive,irregular:Boolean(data.shortenedLongVowel),rule:GRAMMAR_RULES.presentProgressive,verified:true};
+    }
+    for(const [gerundToken,data] of Object.entries(VERB_FORM_MEMORY)){
+      if(derivePresentProgressive(data.infinitive)===token)return {token,form:'present-progressive',english:data.english,pairedForm:data.infinitive,gerund:gerundToken,irregular:false,rule:GRAMMAR_RULES.presentProgressive,inferred:true};
+    }
     const gerund=VERB_FORM_MEMORY[token];
     if(gerund)return {token,form:'gerund',english:gerund.english,pairedForm:gerund.infinitive,irregular:Boolean(gerund.irregular),rule:GRAMMAR_RULES.gerund};
     for(const [gerundToken,data] of Object.entries(VERB_FORM_MEMORY)){
@@ -106,7 +121,7 @@ export class TranslationBrain{
 
   lookupDhivehi(token){
     const verb=this.analyzeVerbForm(token);
-    if(verb)return verb.form==='gerund'?'the act of '+verb.english:'to '+verb.english;
+    if(verb){if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;return 'to '+verb.english;}
     if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
@@ -126,7 +141,7 @@ export class TranslationBrain{
       stats.tokens.push({from:token,to:translated,known:true,type:focus?'focus':'word'});
       if(['i','you','he','we','they'].includes(value))subject.push(translated);else if(VERBS.has(value))verb.push(translated);else rest.push(translated);
     });
-    stats.reasoning.push('No exact reverse-sentence memory','Focus/quotation suffixes checked','Dhivehi suffixes checked','Gerund and infinitive memory checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
+    stats.reasoning.push('No exact reverse-sentence memory','Focus/quotation suffixes checked','Dhivehi suffixes checked','Gerund, infinitive and present-progressive rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
     if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
     return capitalize(addPunctuation([...subject,...verb,...rest].join(' '),p,false));
