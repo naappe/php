@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm,sentenceTokenize,wordTokenize} from '../assets/js/engine.js';
 import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS,LESSON_15_SOURCE,LESSON_8_SOURCE,NOUN_PREDICATION_MEMORY,DICTIONARY_SOURCES,LESSON_SOURCES,LEXICAL_SOURCES,TOKENIZER_SOURCE,EXTERNAL_LEXICAL_CANDIDATES} from '../assets/js/knowledge-base.js';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 
 assert.equal(EXTERNAL_LEXICAL_CANDIDATES.length,1);
 assert.equal(EXTERNAL_LEXICAL_CANDIDATES[0].word,'ހައްދަނީ');
@@ -52,6 +52,15 @@ assert.equal(LESSON_SOURCES[0].sha256,'c39d97083b370803ac2d70606ad09728aec896000
 assert.equal(LEXICAL_SOURCES[0].softwareLicense,'MIT');
 assert.equal(LEXICAL_SOURCES[0].dictionaryRowsObserved,29824);
 assert.match(LEXICAL_SOURCES[0].limitation,/not be promoted as English translation pairs/i);
+assert.match(LEXICAL_SOURCES[0].browserDataset,/29,824 entries/);
+const dictionaryManifest=JSON.parse(readFileSync(new URL('../assets/dictionary/manifest.json',import.meta.url),'utf8'));
+assert.equal(dictionaryManifest.totalEntries,29824);
+assert.equal(Object.keys(dictionaryManifest.chunks).length,30);
+assert.equal(Object.values(dictionaryManifest.chunks).reduce((sum,chunk)=>sum+chunk.entries,0),29824);
+const kaafuChunk=JSON.parse(readFileSync(new URL('../assets/dictionary/u0786.json',import.meta.url),'utf8'));
+assert.ok(kaafuChunk['ކާކު'].definitions.length);
+assert.equal(kaafuChunk['ކާކު'].partOfSpeech,'އިތުރު');
+assert.equal(readdirSync(new URL('../assets/dictionary/',import.meta.url)).filter(name=>name.endsWith('.json')).length,31);
 assert.equal(LESSON_15_SOURCE.wordOrder.subjectQuestion,'QOV');
 assert.equal(LESSON_15_SOURCE.wordOrder.objectQuestion,'SVQ');
 assert.equal(Object.keys(QUESTION_WORD_MEMORY).length,11);
