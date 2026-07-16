@@ -1,12 +1,12 @@
-import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js?v=3.7.0';
-import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js?v=3.7.0';
+import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js?v=3.8.0';
+import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js?v=3.8.0';
 
 const $=id=>document.getElementById(id);
 let direction='en-dv';
 let userPairs=[];
 try{userPairs=JSON.parse(localStorage.getItem('bas_user_pairs')||'[]')}catch{userPairs=[]}
 let brain=new TranslationBrain(userPairs);
-const DEFAULT_DICTIONARY_API='http://127.0.0.1:8787';
+const dictionaryChunks=new Map();
 
 function save(){localStorage.setItem('bas_user_pairs',JSON.stringify(userPairs))}
 function showWarning(message=''){$('warning').hidden=!message;$('warning').textContent=message}
@@ -53,25 +53,23 @@ function exportBrain(){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dhivehi-translation-brain.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0);
 }
 
-function dictionaryApiUrl(){return (localStorage.getItem('bas_dictionary_api')||DEFAULT_DICTIONARY_API).replace(/\/+$/,'')}
-function loadDictionarySettings(){$('dictionaryApiUrl').value=dictionaryApiUrl()}
-function saveDictionarySettings(){
-  const value=$('dictionaryApiUrl').value.trim().replace(/\/+$/,'');
-  if(!/^https?:\/\//i.test(value)){$('dictionaryStatus').textContent='Enter a complete URL beginning with http:// or https://';$('dictionaryStatus').className='learnmsg low';return}
-  localStorage.setItem('bas_dictionary_api',value);$('dictionaryStatus').textContent='Dictionary API URL saved.';$('dictionaryStatus').className='learnmsg good';
+async function loadDictionaryChunk(initial){
+  if(dictionaryChunks.has(initial))return dictionaryChunks.get(initial);
+  const filename=`u${initial.codePointAt(0).toString(16).padStart(4,'0')}.json`,response=await fetch(`assets/dictionary/${filename}`);
+  if(!response.ok){if(response.status===404)return null;throw new Error(`dictionary chunk failed (${response.status})`)}
+  const chunk=await response.json();dictionaryChunks.set(initial,chunk);return chunk;
 }
 async function searchDictionary(){
   const word=$('dictionaryWord').value.trim(),status=$('dictionaryStatus'),result=$('dictionaryResult');result.hidden=true;
   if(!word||/[^\u0780-\u07B1]/u.test(word)){status.textContent='Enter one exact Thaana headword.';status.className='learnmsg low';return}
   status.textContent='Searching Radheef…';status.className='learnmsg';
   try{
-    const response=await fetch(`${dictionaryApiUrl()}/api/dictionary?word=${encodeURIComponent(word)}`),data=await response.json();
-    if(!response.ok)throw new Error(data.detail||'Lookup failed');
-    result.innerHTML='';const heading=document.createElement('strong');heading.textContent=data.word;result.append(heading);
+    const chunk=await loadDictionaryChunk(word[0]),data=chunk?.[word];if(!data)throw new Error('Exact headword not found');
+    result.innerHTML='';const heading=document.createElement('strong');heading.textContent=word;result.append(heading);
     const list=document.createElement('ol');data.definitions.forEach(definition=>{const item=document.createElement('li');item.textContent=definition.replace(/^\d+\.\s*/,'');list.append(item)});result.append(list);
-    const meta=document.createElement('small');meta.textContent=`${data.partOfSpeech||'ބަހުގެ ބާވަތް ނޭނގޭ'} · ${data.source}`;result.append(meta);result.hidden=false;
+    const meta=document.createElement('small');meta.textContent=`${data.partOfSpeech||'ބަހުގެ ބާވަތް ނޭނގޭ'} · Radheef via dhivehi_nlp`;result.append(meta);result.hidden=false;
     status.textContent='Exact Radheef headword found.';status.className='learnmsg good';
-  }catch(error){status.textContent=`Dictionary unavailable: ${error.message}. Check the API URL and server.`;status.className='learnmsg low'}
+  }catch(error){status.textContent=`Dictionary result: ${error.message}.`;status.className='learnmsg low'}
 }
 
 async function importBrain(file){
@@ -79,7 +77,7 @@ async function importBrain(file){
 }
 
 $('translateBtn').onclick=translate;$('learnBtn').onclick=learn;$('exportBtn').onclick=exportBrain;$('importInput').onchange=e=>e.target.files[0]&&importBrain(e.target.files[0]);
-$('dictionarySearchBtn').onclick=searchDictionary;$('dictionarySaveApiBtn').onclick=saveDictionarySettings;$('dictionaryWord').onkeydown=e=>{if(e.key==='Enter')searchDictionary()};
+$('dictionarySearchBtn').onclick=searchDictionary;$('dictionaryWord').onkeydown=e=>{if(e.key==='Enter')searchDictionary()};
 $('source').oninput=()=>{$('count').textContent=$('source').value.length+' / 5000'};$('source').onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')translate()};
 $('swapBtn').onclick=()=>{const old=$('source').value;$('source').value=$('result').value;$('result').value=old;setDirection(direction==='en-dv'?'dv-en':'en-dv');$('count').textContent=$('source').value.length+' / 5000'};
 $('clearBtn').onclick=()=>{$('source').value='';$('count').textContent='0 / 5000'};$('resetBtn').onclick=()=>{$('source').value='';$('result').value='';$('coverage').textContent='—';$('engineNote').textContent='Ready';$('count').textContent='0 / 5000';$('tokens').innerHTML='';$('reasoning').textContent='Enter text and press Translate.';showWarning()};
@@ -88,4 +86,4 @@ $('copyBtn').onclick=async()=>{if(!$('result').value)return;await navigator.clip
 $('clearBrainBtn').onclick=()=>{if(!confirm('Delete all lessons saved on this browser?'))return;userPairs=[];localStorage.removeItem('bas_user_pairs');brain=new TranslationBrain(userPairs);refreshStats();$('learnMsg').textContent='Browser lessons cleared.'};
 document.querySelectorAll('[data-example]').forEach(button=>button.onclick=()=>{setDirection('en-dv');$('source').value=button.dataset.example;$('count').textContent=$('source').value.length+' / 5000';translate()});
 
-refreshStats();renderOverview();setDirection('en-dv');loadDictionarySettings();
+refreshStats();renderOverview();setDirection('en-dv');
