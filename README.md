@@ -15,6 +15,8 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 - Keeps `އެއް` specific-indefinite and `އަކު` unspecified-indefinite meanings separate.
 - Rejects Arabic/Sindhi/Urdu characters from Dhivehi lessons.
 - Marks unknown meanings instead of inventing a translation.
+- Detects mixed English, Thaana, placeholder and Arabic-script segments.
+- Treats vocabulary tokens as evidence while complete-sentence meaning remains primary.
 - Learns paired lines in the visitor's browser.
 - Imports and exports browser lessons as JSON.
 
