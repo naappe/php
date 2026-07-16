@@ -204,3 +204,43 @@ Stored in `localStorage` under `bas_user_pairs`. It remains on that browser. Use
 - Supplied verified sentences translate exactly.
 - Unknown meanings are visible and are not fabricated.
 - Documentation and checksums match the published files.
+
+
+## AguMagu translation intake — 2026-07-16
+
+```yaml
+request:
+  source: "English passage about the AguMagu app"
+  expected_length: "2 sentences"
+  source_text_received: false
+
+review:
+  draft_translation_received: true
+  candidate_vocabulary_received: true
+  reusable_phrases_proposed: 8
+  unseen_test_sentences_proposed: 4
+  production_regression_tests_added: 0
+
+corrections_identified:
+  - "cheapest cannot be އެންމެ އަގުބޮޑު; that expresses a high/expensive price"
+  - "shop/store cannot be ދައްކަން; use a noun such as ފިހާރަ according to context"
+  - "shops/stores requires a plural noun such as ފިހާރަތައް"
+  - "according to and allows require sentence-level context"
+  - "with no exact English source, the draft cannot be verified for fidelity"
+
+knowledge_state:
+  verified_knowledge: []
+  rule_based_inference:
+    - "candidate SOV restructuring and case selection were discussed"
+  unconfirmed_material:
+    - "draft AguMagu Dhivehi paragraph"
+    - "candidate word mappings"
+    - "proposed reusable phrases"
+    - "proposed test sentences"
+
+status: "Awaiting the exact two English source sentences"
+production_ready: false
+next_action: "Receive the source, verify meaning, correct the Dhivehi, then add pairs, phrases and regression tests"
+```
+
+This entry records the conversation without promoting reviewed-but-unverified material into permanent translation memory.
