@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -8,6 +8,13 @@ export const cleanEnglish=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-
 export const cleanDhivehi=s=>s.replace(/[؟،.!?]/g,'').replace(/\s+/g,' ').trim();
 export const hasThaana=s=>SCRIPT_RANGES.thaana.test(s);
 export const hasArabicScript=s=>SCRIPT_RANGES.arabic.test(s);
+
+export function analyzeScriptSegments(text){
+  const segments=[];const re=/⟦[^⟧]*⟧|[\u0780-\u07BF]+|\p{Script=Arabic}+|[A-Za-z]+|\d+|[^\s]/gu;let match;
+  while((match=re.exec(text))){const value=match[0];let type='punctuation';if(value.startsWith('⟦'))type='placeholder';else if(hasThaana(value))type='dhivehi';else if(hasArabicScript(value))type='arabic';else if(/[A-Za-z]/.test(value))type='english';else if(/^\d+$/.test(value))type='number';segments.push({value,type,index:match.index})}
+  const languageTypes=[...new Set(segments.filter(s=>['dhivehi','english','arabic','placeholder'].includes(s.type)).map(s=>s.type))];
+  return {segments,types:languageTypes,mixed:languageTypes.length>1};
+}
 
 export function validateDhivehi(text){
   if(!text.trim())return {ok:false,message:'Dhivehi lesson is empty.'};
@@ -52,7 +59,8 @@ export class TranslationBrain{
   }
 
   translate(text,direction='en-dv'){
-    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[]};
+    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
+    if(stats.script.mixed)stats.warnings.push(`Mixed input detected: ${stats.script.types.join(', ')}. Complete verified sentence meaning has priority over isolated token lookup.`);
     const fn=direction==='en-dv'?this.toDhivehi.bind(this):this.toEnglish.bind(this);
     const output=splitSentences(text).map(s=>fn(s.trim(),stats)).join(' ');
     if(direction==='en-dv'&&hasArabicScript(output))throw new Error('Safety block: non-Thaana Arabic-script output was detected.');
@@ -61,7 +69,7 @@ export class TranslationBrain{
 
   toDhivehi(sentence,stats){
     const p=punctuation(sentence),key=cleanEnglish(sentence);
-    if(this.memory.has(key)){const value=this.memory.get(key);stats.total+=key.split(' ').length;stats.matched+=key.split(' ').length;stats.reasoning.push('Exact verified sentence memory');return addPunctuation(cleanDhivehi(value),p,true)}
+    if(this.memory.has(key)){const value=this.memory.get(key).replace(/[.!?؟]+\s*$/,'');stats.total+=key.split(' ').length;stats.matched+=key.split(' ').length;stats.reasoning.push('Exact verified sentence memory');return addPunctuation(value,p,true)}
     let working=key,placeholders=[];
     Object.entries(VERIFIED_PHRASES).sort((a,b)=>b[0].length-a[0].length).forEach(([en,dv])=>{const re=new RegExp('(^|\\s)'+en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?=\\s|$)','g');working=working.replace(re,(m,lead)=>{const id=`__phrase${placeholders.length}__`;placeholders.push(dv);return lead+id})});
     const subject=[],object=[],verb=[],unknown=[];
@@ -69,6 +77,7 @@ export class TranslationBrain{
       if(token.startsWith('__phrase')){const value=placeholders[Number(token.match(/\d+/)[0])];object.push(value);stats.matched+=2;stats.total+=2;stats.tokens.push({from:token,to:value,known:true,type:'phrase'});return}
       stats.total++;
       if(ARTICLES.has(token)){stats.matched++;stats.tokens.push({from:token,to:'removed English article',known:true,type:'grammar'});return}
+      if(CONTEXT_SENSITIVE_TERMS[token]){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:`context required — ${CONTEXT_SENSITIVE_TERMS[token].reason}`,known:false,type:'context-sensitive'});return}
       const base=token.replace(/(ing|ed|s)$/,'');const value=this.words[token]||this.words[base];
       if(!value){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;stats.tokens.push({from:token,to:value,known:true,type:'word'});
