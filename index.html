@@ -47,6 +47,22 @@
       </section>
 
       <section class="examples"><h3>Verified tests</h3><div class="chips"><button data-example="What are you doing?">What are you doing?</button><button data-example="This is a test.">This is a test.</button><button data-example="Thank you for your help.">Thank you</button><button data-example="The book is in the house.">Book in the house</button></div></section>
+
+      <section class="engine-overview" aria-labelledby="overviewTitle">
+        <div class="section-heading"><p class="eyebrow">One-page system view</p><h3 id="overviewTitle">How the translation brain works</h3><p>Live translator, reasoning policy, permanent knowledge, engine stages and regression checks in one place.</p></div>
+        <div class="system-grid">
+          <article class="system-card"><span class="card-number">01</span><h4>Live translator</h4><p>Runs above in both directions. Exact verified sentences are checked before phrases and vocabulary.</p><strong class="card-stat">English ↔ ދިވެހި</strong></article>
+          <article class="system-card"><span class="card-number">02</span><h4>AI reasoning instructions</h4><p>Understand the whole sentence, preserve uncertainty, use natural word order and never invent an unknown meaning.</p><strong class="card-stat">Meaning before tokens</strong></article>
+          <article class="system-card"><span class="card-number">03</span><h4>Permanent knowledge base</h4><p>Versioned, reviewed lessons live in code. Browser-taught pairs remain separate until exported and verified.</p><strong id="overviewKnowledge" class="card-stat">Loading…</strong></article>
+          <article class="system-card"><span class="card-number">04</span><h4>Translation engine</h4><p>A deterministic pipeline validates scripts, retrieves memory, applies rules and reports coverage.</p><strong id="overviewStages" class="card-stat">Loading…</strong></article>
+          <article class="system-card"><span class="card-number">05</span><h4>Regression tests</h4><p>Automated checks protect exact translations, Thaana validation, unknown markers and grammar distinctions.</p><strong id="overviewTests" class="card-stat">Loading…</strong></article>
+        </div>
+        <div class="overview-columns">
+          <details class="overview-panel" open><summary>Reasoning pipeline</summary><ol id="pipelineList" class="pipeline-list"></ol></details>
+          <details class="overview-panel"><summary>Permanent lesson registry</summary><div id="lessonList" class="lesson-list"></div></details>
+          <details class="overview-panel"><summary>Safety and quality rules</summary><ul class="rule-list"><li>Accept Thaana (U+0780–U+07BF) for Dhivehi text.</li><li>Reject Arabic, Urdu and Sindhi letters.</li><li>Keep context-sensitive words unresolved until meaning is known.</li><li>Mark unknown translations with <code>⟦…⟧</code>.</li><li>Keep permanent and browser-taught knowledge separate.</li></ul></details>
+        </div>
+      </section>
     </main>
     <footer>Only U+0780–U+07BF is accepted as Thaana. Arabic-script output is blocked.</footer>
   </div>
