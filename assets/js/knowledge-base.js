@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.4.1';
+export const KNOWLEDGE_VERSION = '3.4.2';
 
 export const DICTIONARY_SOURCES = [
   {
@@ -19,6 +19,29 @@ export const DICTIONARY_SOURCES = [
     storageStatus:'source-file retained; metadata registered',
     importPolicy:'reference-only; add individually verified entries with attribution; do not reproduce the complete copyrighted dictionary in the public repository',
     copyright:'© F. Abdulla and M. O’Shea, 2005'
+  }
+];
+
+export const EXTERNAL_LEXICAL_CANDIDATES = [
+  {
+    word:'ހައްދަނީ',
+    lang:'Dhivehi',
+    langCode:'dv',
+    partOfSpeech:'verb',
+    glosses:['to cultivate'],
+    romanization:'haddanī',
+    ipa:{phonemic:'/həd̪.d̪ə.n̪iː/',phonetic:'[həd̪.d̪ə.n̪iː]'},
+    hyphenation:['ހައް','ދަ','ނީ'],
+    etymology:[
+      {form:'ހަދަ',romanization:'hada',meaning:'to make'},
+      {form:'ވަ',meaning:'causative suffix'},
+      {form:'ނީ',meaning:'verb suffix'}
+    ],
+    sourceFile:'ހައްދަނީ.jsonl',
+    sha256:'4d0412590de68139ea23b03ea601df41fed2699c17982de7b60aa4004da2fa02',
+    sourceWarnings:['Dhivehi entry with incorrect language header'],
+    status:'sourced-unconfirmed',
+    activationPolicy:'Do not use as permanent translation memory until independently verified.'
   }
 ];
 
