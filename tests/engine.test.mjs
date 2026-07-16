@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_17_SOURCE} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,12);
+assert.equal(LESSON_REGISTRY.length,13);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
@@ -145,6 +145,41 @@ for(const [english,dhivehi] of [
   ['Are they studying in Sri Lanka?','އެ މީހުން ލަންކާގައި ކިޔަވަނީތަ؟'],
   ['Is this dress nice?','މި ހެދުން ރީތިތަ؟'],
   ['Are the fish swimming in the sea?','މަސްތައް މޫދުގައި ފަތަނީތަ؟']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===17).status,'source-encoded-and-tested');
+assert.equal(LESSON_17_SOURCE.date,'2020-01-20');
+assert.equal(LESSON_17_SOURCE.author,'thatmaldivesblog');
+assert.equal(EXISTENTIAL_VERB_MEMORY['ހުރުން'].locative,'ހުރީ');
+assert.equal(EXISTENTIAL_VERB_MEMORY['އިނުން'].existential[0],'އެބައިން');
+assert.equal(EXISTENTIAL_VERB_MEMORY['އޮތުން'].locative,'އޮތީ');
+assert.ok(TRADITIONAL_EXISTENTIAL_CLASSES['ހުރުން'].includes('plural inanimate noun'));
+
+assert.equal(selectExistentialVerb({maleHuman:true}),'ހުރުން');
+assert.equal(selectExistentialVerb({femaleHuman:true}),'އިނުން');
+assert.equal(selectExistentialVerb({fourLegged:true}),'އޮތުން');
+assert.equal(selectExistentialVerb({attachedToTree:true}),'އިނުން');
+assert.equal(selectExistentialVerb({detachedFromTree:true}),'އޮތުން');
+assert.equal(selectExistentialVerb({pluralInanimate:true}),'ހުރުން');
+assert.equal(selectExistentialVerb({}),null);
+
+const thereToBe=brain.translate('އެބައޮތް','dv-en');
+assert.equal(thereToBe.verbs[0].form,'there-to-be');
+assert.equal(thereToBe.output,'There is/are');
+
+const located=brain.translate('އޮތީ','dv-en');
+assert.equal(located.verbs[0].form,'existential-locative');
+assert.equal(located.output,'Lie/be/exist');
+
+for(const [english,dhivehi] of [
+  ['There is a spoon on the table.','މޭޒުމަތީގައި ސަމުސަލެއް އެބައޮތް.'],
+  ['There are some spoons on the table.','މޭޒުމަތީގައި ސަމުސާތަކެއް އެބަހުއްޓެވެ.'],
+  ['The spoon is on the table.','ސަމުސާ އޮތީ މޭޒުމަތީގައި.'],
+  ['The spoons are on the table.','ސަމުސާތައް ހުރީ މޭޒުމަތީގައި.'],
+  ['There is an apple on the plate.','ތަށީގައި އާފަލެއް އެބައޮތެވެ.'],
+  ['The cat is at the top of the stairs.','ބުޅާ އިނީ ސިޑި މަތީގައެވެ.']
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
