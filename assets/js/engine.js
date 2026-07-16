@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -37,6 +37,19 @@ export function derivePresentProgressive(infinitive){
   return stem+'ނީ';
 }
 
+export function deriveQuestion(statement,suffix='ތަ',focusText=null){
+  if(typeof statement!=='string'||!statement.trim())return null;
+  if(!QUESTION_SUFFIX_MEMORY[suffix])return null;
+  const bare=statement.trim().replace(/[.!?؟]+$/,'').trim();
+  if(!bare)return null;
+  if(focusText){
+    const index=bare.lastIndexOf(focusText);
+    if(index<0)return null;
+    return bare.slice(0,index)+focusText+suffix+bare.slice(index+focusText.length)+'؟';
+  }
+  return bare+suffix+'؟';
+}
+
 export class TranslationBrain{
   constructor(userPairs=[]){
     this.userPairs=userPairs;
@@ -68,7 +81,7 @@ export class TranslationBrain{
   }
 
   translate(text,direction='en-dv'){
-    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[],verbs:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
+    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[],verbs:[],questions:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
     if(stats.script.mixed)stats.warnings.push(`Mixed input detected: ${stats.script.types.join(', ')}. Complete verified sentence meaning has priority over isolated token lookup.`);
     const fn=direction==='en-dv'?this.toDhivehi.bind(this):this.toEnglish.bind(this);
     const output=splitSentences(text).map(s=>fn(s.trim(),stats)).join(' ');
@@ -101,6 +114,18 @@ export class TranslationBrain{
     if(known){stats.focus.push({token,...known,rule:known.mode==='repetition'?GRAMMAR_RULES.repetition:GRAMMAR_RULES.quotation});return known}
     if(token.endsWith('އޭ')){const value={base:token.slice(0,-2),mode:'repetition',inferred:true};stats.focus.push({token,...value,rule:GRAMMAR_RULES.repetition});return value}
     if(token.endsWith('އޯ')){const value={base:token.slice(0,-2),mode:'quotation',inferred:true};stats.focus.push({token,...value,rule:GRAMMAR_RULES.quotation});return value}
+    return null;
+  }
+
+  analyzeQuestionForm(token){
+    for(const suffix of ['ދެއްތޯ','ނޫންތަ','ނޫންތޯ','ތޯ','ދޯ','ހޭ','ހޯ','ތަ','ނު']){
+      if(!token.endsWith(suffix)||token.length<=suffix.length)continue;
+      const data=QUESTION_SUFFIX_MEMORY[suffix]||(
+        suffix==='ދެއްތޯ'?QUESTION_SUFFIX_MEMORY['ދޯ']:
+        suffix==='ނޫންތަ'||suffix==='ނޫންތޯ'?QUESTION_SUFFIX_MEMORY['ނު']:null
+      );
+      if(data)return {token,base:token.slice(0,-suffix.length),suffix,...data};
+    }
     return null;
   }
 
@@ -137,16 +162,18 @@ export class TranslationBrain{
     if(this.reverseMemory.has(key)){const value=this.reverseMemory.get(key);stats.total+=key.split(' ').length;stats.matched+=key.split(' ').length;stats.reasoning.push('Exact verified reverse-sentence memory');return capitalize(addPunctuation(value,p,false))}
     const subject=[],verb=[],rest=[];
     key.split(/\s+/).filter(Boolean).forEach(token=>{
-      stats.total++;const focus=this.analyzeFocus(token,stats),base=focus?focus.base:token,indefinite=INDEFINITE_FORM_MEMORY[base];if(indefinite)stats.indefinite.push({token:base,...indefinite,rule:indefinite.mode==='specific-indefinite'?GRAMMAR_RULES.specificIndefinite:GRAMMAR_RULES.unspecifiedIndefinite});const verbForm=this.analyzeVerbForm(base);if(verbForm)stats.verbs.push(verbForm);const value=this.lookupDhivehi(base);
+      stats.total++;const question=this.analyzeQuestionForm(token);if(question)stats.questions.push(question);const questionBase=question?question.base:token,focus=this.analyzeFocus(questionBase,stats),base=focus?focus.base:questionBase,indefinite=INDEFINITE_FORM_MEMORY[base];if(indefinite)stats.indefinite.push({token:base,...indefinite,rule:indefinite.mode==='specific-indefinite'?GRAMMAR_RULES.specificIndefinite:GRAMMAR_RULES.unspecifiedIndefinite});const verbForm=this.analyzeVerbForm(base);if(verbForm)stats.verbs.push(verbForm);const value=this.lookupDhivehi(base);
       if(!value){rest.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;let translated=value;
       if(focus?.mode==='repetition')translated=`indeed/as previously stated: ${value}`;
       if(focus?.mode==='quotation')translated=`reportedly: ${value}`;
-      stats.tokens.push({from:token,to:translated,known:true,type:focus?'focus':'word'});
+      if(question)translated=`${question.type}: ${translated}`;
+      stats.tokens.push({from:token,to:translated,known:true,type:question?'question':focus?'focus':'word'});
       if(['i','you','he','we','they'].includes(value))subject.push(translated);else if(VERBS.has(value))verb.push(translated);else rest.push(translated);
     });
-    stats.reasoning.push('No exact reverse-sentence memory','Focus/quotation suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive and verified past-form rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
+    stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive and verified past-form rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
+    if(stats.questions.length)stats.reasoning.push('Question suffix scope and speaker certainty interpreted from its attachment position');
     if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
     return capitalize(addPunctuation([...subject,...verb,...rest].join(' '),p,false));
   }
