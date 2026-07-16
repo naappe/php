@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.1.0';
+export const KNOWLEDGE_VERSION = '2.2.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -16,7 +16,8 @@ export const LESSON_REGISTRY = [
   {id:5,topic:'Adjectives',focus:'Position, negative adjectives, good/bad words',status:'summary-received'},
   {id:6,topic:'Demonstratives',focus:'Three-way distinction, determiners, pronouns',status:'summary-received'},
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
-  {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'}
+  {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'},
+  {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'}
 ];
 
 export const VERIFIED_PAIRS = [
@@ -106,7 +107,9 @@ export const GRAMMAR_RULES = {
   repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
   quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'},
   specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-8-summary'},
-  unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'}
+  unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'},
+  gerund:{id:'DV-VERB-GERUND',typicalEnding:'އުން',meaning:'verbal noun; the act of performing an action',declinesAsNoun:true,status:'verified-from-lesson-13'},
+  infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -114,6 +117,46 @@ export const INDEFINITE_FORM_MEMORY = {
   'މީހަކު':{base:'މީހާ',mode:'unspecified-indefinite',english:'some person'},
   'ތަނަކު':{base:'ތަން',mode:'unspecified-indefinite',english:'some place',irregular:true},
   'ތާކު':{base:'ތަން',mode:'unspecified-indefinite',english:'some place',irregular:true}
+};
+
+export const VERB_FORM_MEMORY = {
+  'ކުރުން':{infinitive:'ކުރަން',english:'do',regular:true},
+  'ވުން':{infinitive:'ވާން',english:'be/become/happen',irregular:true},
+  'ހެދުން':{infinitive:'ހަދަން',english:'make',regular:true},
+  'ބެލުން':{infinitive:'ބަލަން',english:'look',regular:true},
+  'ކެއުން':{infinitive:'ކާން',english:'eat',irregular:true},
+  'ފެށުން':{infinitive:'ފަށަން',english:'start',regular:true},
+  'ބުނުން':{infinitive:'ބުނަން',english:'say',regular:true},
+  'ނެގުން':{infinitive:'ނަގަން',english:'take',regular:true},
+  'ހޯދުން':{infinitive:'ހޯދަން',english:'look for',regular:true},
+  'ކިޔުން':{infinitive:'ކިޔަން',english:'read',regular:true},
+  'ލިޔުން':{infinitive:'ލިޔަން',english:'write',regular:true},
+  'ދެއްކުން':{infinitive:'ދައްކަން',english:'show',regular:true},
+  'ހިނގުން':{infinitive:'ހިނގަން',english:'walk',regular:true},
+  'ދުވުން':{infinitive:'ދުވަން',english:'run',regular:true},
+  'ހުއްޓުން':{infinitive:'ހުއްޓަން',english:'stop',regular:true},
+  'މެރުން':{infinitive:'މަރަން',english:'kill',regular:true},
+  'ފެތުން':{infinitive:'ފަތަން',english:'swim',regular:true},
+  'ނެށުން':{infinitive:'ނަށަން',english:'dance',regular:true},
+  'ބެލެހެއްޓުން':{infinitive:'ބަލަހައްޓަން',english:'look after',regular:true},
+  'ހިފެހެއްޓުން':{infinitive:'ހިފަހައްޓަން',english:'hold on to',regular:true},
+  'ކުރެހުން':{infinitive:'ކުރަހަން',english:'draw',regular:true},
+  'އައުން':{infinitive:'އަންނަން',english:'come',irregular:true},
+  'ދިއުން':{infinitive:'ދާން',english:'go',irregular:true},
+  'ދިނުން':{infinitive:'ދޭން',english:'give',irregular:true},
+  'ލުން':{infinitive:'ލާން',english:'put',irregular:true},
+  'ބުއިން':{infinitive:'ބޯން',english:'drink',irregular:true}
+};
+
+export const GERUND_DECLENSION_MEMORY = {
+  'ކުރުން':{
+    nominativeAccusative:'ކުރުން',
+    genitive:'ކުރުމުގެ',
+    dative:'ކުރުމަށް',
+    locative:'ކުރުމުގައި',
+    instrumental:'ކުރުމުން',
+    associative:'ކުރުމާއި'
+  }
 };
 
 export const FOCUS_FORM_MEMORY = {
