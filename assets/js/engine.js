@@ -43,6 +43,7 @@ export function deriveQuestion(statement,suffix='ތަ',focusText=null){
   const bare=statement.trim().replace(/[.!?؟]+$/,'').trim();
   if(!bare)return null;
   if(focusText){
+    if(suffix==='ތަ'&&new Set(['ކިހާ','ކޮން','ކިތައް']).has(focusText))return null;
     const index=bare.lastIndexOf(focusText);
     if(index<0)return null;
     return bare.slice(0,index)+focusText+suffix+bare.slice(index+focusText.length)+'؟';
