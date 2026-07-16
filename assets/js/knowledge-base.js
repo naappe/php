@@ -432,7 +432,7 @@ export const EXISTENTIAL_VERB_MEMORY = {
   'އިނުން':{infinitive:'އިންނަން',progressive:'އިންނަނީ',habitual:'އިން',habitualEve:'އިނެވެ',existential:['އެބައިން','އެބައިނެވެ'],locative:'އިނީ',english:'sit/be/exist'},
   'އޮތުން':{infinitive:'އޮންނަން',progressive:'އޮންނަނީ',habitual:'އޮތް',habitualEve:'އޮތެވެ',existential:['އެބައޮތް','އެބައޮތެވެ'],locative:'އޮތީ',english:'lie/be/exist'},
   'ތިބުން':{infinitive:'ތިބެން',progressive:'ތިބެނީ',habitual:'ތިބި',habitualEve:'ތިއްބެވެ',existential:['ތިއްބެވެ','އެބަތިއްބެވެ'],locative:'ތިބީ',english:'animate group be/exist'},
-  'އުޅުން':{infinitive:'އުޅެން',progressive:'އުޅެނީ',habitual:'އުޅޭ',habitualEve:'އުޅެއެވެ',existential:['އުޅެވެ','އުޅެއެވެ','އެބައުޅެއެވެ'],locative:'އުޅޭ',english:'live/stay/be'
+  'އުޅުން':{infinitive:'އުޅެން',progressive:'އުޅެނީ',habitual:'އުޅޭ',habitualEve:'އުޅެއެވެ',existential:['އުޅެވެ','އުޅެއެވެ','އެބައުޅެއެވެ'],locative:'އުޅޭ',english:'live/stay/be'}
 };
 
 export const TRADITIONAL_EXISTENTIAL_CLASSES = {
