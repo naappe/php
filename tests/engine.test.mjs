@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,13);
+assert.equal(LESSON_REGISTRY.length,14);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
@@ -180,6 +180,40 @@ for(const [english,dhivehi] of [
   ['The spoons are on the table.','ސަމުސާތައް ހުރީ މޭޒުމަތީގައި.'],
   ['There is an apple on the plate.','ތަށީގައި އާފަލެއް އެބައޮތެވެ.'],
   ['The cat is at the top of the stairs.','ބުޅާ އިނީ ސިޑި މަތީގައެވެ.']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===19).status,'source-encoded-and-tested');
+assert.equal(LESSON_19_SOURCE.date,'2020-07-05');
+assert.equal(LESSON_19_SOURCE.extensionOf,18);
+assert.equal(EXISTENTIAL_VERB_MEMORY['ތިބުން'].locative,'ތިބީ');
+assert.equal(EXISTENTIAL_VERB_MEMORY['އުޅުން'].progressive,'އުޅެނީ');
+
+assert.equal(selectExistentialVerb({animateGroup:true}),'ތިބުން');
+assert.equal(selectExistentialVerb({peopleInGeneralLocation:true}),'އުޅުން');
+assert.equal(selectExistentialVerb({livingInLocation:true}),'އުޅުން');
+assert.notEqual(selectExistentialVerb({animateGroup:true}),selectExistentialVerb({pluralInanimate:true}));
+
+assert.equal(applySentenceFinalEve('ކުޅެން'),'ކުޅޭށެވެ');
+assert.equal(applySentenceFinalEve('ބަލަން'),'ބަލާށެވެ');
+assert.equal(applySentenceFinalEve('ދާން'),null);
+
+const animateGroupForm=brain.translate('ތިބީ','dv-en');
+assert.equal(animateGroupForm.verbs[0].form,'existential-locative');
+assert.match(animateGroupForm.output,/animate group be\/exist/i);
+
+const livingForm=brain.translate('އުޅެނީ','dv-en');
+assert.equal(livingForm.verbs[0].form,'existential-progressive');
+assert.match(livingForm.output,/live\/stay\/be/i);
+
+for(const [english,dhivehi] of [
+  ['There are some crows in that tree.','އެގަހުގައި ކާޅުތަކެއް އެބަ ތިއްބެވެ.'],
+  ['The crows are in that tree.','ކާޅުތައް ތިބީ އެގަހުގައެވެ.'],
+  ['There are lots of Maldivians in Sri Lanka.','ލަންކާގައި ވަރަށް ގިނަ ދިވެހިން އެބަ އުޅެއެވެ.'],
+  ['They live on the fifth floor of this building.','އެމީހުން އުޅެނީ މިއިމާރާތުގެ ފަސްވަނަ ބުރީގައެވެ.'],
+  ['There are children on the boat.','ދޯނީގައި ކުދިނަ އެބަ ތިއްބެވެ.'],
+  ['They are eating in the cafe.','އެމީހުން ސައިހޮޓާގައި ކާން އެބަ ތިއްބެވެ.']
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
