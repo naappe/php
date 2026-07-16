@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="A teachable English and Dhivehi translation-memory engine">
   <title>Bas Translate — English ↔ Dhivehi</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=3.4.1">
 </head>
 <body>
   <div class="wrap">
@@ -23,8 +23,8 @@
       <section class="translator">
         <div class="langbar"><strong id="fromLabel">English</strong><button id="swapBtn" class="swap" title="Swap languages">⇄</button><strong id="toLabel">ދިވެހި</strong></div>
         <div class="panes">
-          <div class="pane"><textarea id="source" maxlength="5000" placeholder="Type or paste English text..."></textarea><div class="pane-foot"><span id="count">0 / 5000</span><div><button class="quiet" id="clearBtn">Clear</button><button class="quiet" id="pasteBtn">Paste</button></div></div></div>
-          <div class="pane"><textarea id="result" class="dv" readonly placeholder="ތަރުޖަމާ މިތާ ފެންނާނެ..."></textarea><div class="pane-foot"><span id="engineNote">Ready</span><button class="quiet" id="copyBtn">Copy</button></div></div>
+          <div class="pane"><label class="pane-label" for="source">Enter text below</label><textarea id="source" maxlength="5000" aria-label="Text to translate" placeholder="This box is empty — type or paste English here"></textarea><div class="pane-foot"><span id="count">0 / 5000</span><div><button class="quiet" id="clearBtn">Clear</button><button class="quiet" id="pasteBtn">Paste</button></div></div></div>
+          <div class="pane"><label class="pane-label" for="result">Translation result</label><textarea id="result" class="dv" readonly aria-label="Translation result" placeholder="Press Translate after entering text"></textarea><div class="pane-foot"><span id="engineNote">Ready</span><button class="quiet" id="copyBtn">Copy</button></div></div>
         </div>
         <div id="warning" class="warning" hidden></div>
         <div class="actions"><button class="btn" id="resetBtn">Reset</button><button class="btn primary" id="translateBtn">Translate</button></div>
@@ -66,6 +66,6 @@
     </main>
     <footer>Only U+0780–U+07BF is accepted as Thaana. Arabic-script output is blocked.</footer>
   </div>
-  <script type="module" src="assets/js/app.js"></script>
+  <script type="module" src="assets/js/app.js?v=3.4.1"></script>
 </body>
 </html>
