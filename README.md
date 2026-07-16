@@ -16,7 +16,7 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 - Recognizes learned `އޭ` emphasis and `އޯ` reported-speech forms.
 - Keeps `އެއް` specific-indefinite and `އަކު` unspecified-indefinite meanings separate.
 - Rejects Arabic/Sindhi/Urdu characters from Dhivehi lessons.
-- Marks unknown meanings instead of inventing a translation.
+- Reports unknown meanings in the reasoning panel and blocks mixed-language partial output.
 - Detects mixed English, Thaana, placeholder and Arabic-script segments.
 - Treats vocabulary tokens as evidence while complete-sentence meaning remains primary.
 - Splits Dhivehi text into sentences and words using the documented `dhivehi_nlp.tokenizer` behavior.
@@ -53,6 +53,12 @@ The browser engine includes JavaScript equivalents of `sentence_tokenize` and
 `word_tokenize`. It can remove punctuation or retain only Thaana characters and
 ASCII numbers without requiring Python on the deployed website.
 
+Selected MIT-licensed `dhivehi_nlp` stemmer, stopword and trigram-similarity
+behavior is also ported to `assets/js/dhivehi-nlp.js`. The dictionary uses stems
+only as labeled fallback candidates and uses trigram similarity for “Did you
+mean?” suggestions. Stopwords are available for analysis but are never silently
+removed from translation input.
+
 ## File structure
 
 ```text
@@ -61,6 +67,7 @@ assets/css/styles.css             Visual design and responsive layout
 assets/js/knowledge-base.js       Permanent verified memory
 assets/js/engine.js               Translation, validation and reasoning
 assets/js/app.js                  Browser UI, local learning, import/export
+assets/js/dhivehi-nlp.js          Attributed browser NLP helpers
 AI-BRAIN.md                       Instructions for future AI/developers
 FILE-MAP.md                       Edit-target guide
 SHA256SUMS.txt                    File integrity hashes
