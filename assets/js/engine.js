@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,LESSON_14_MORE_VERBS,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=3.5.0';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,LESSON_14_MORE_VERBS,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=3.6.0';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -8,6 +8,27 @@ export const cleanEnglish=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-
 export const cleanDhivehi=s=>s.replace(/[؟،.!?]/g,'').replace(/\s+/g,' ').trim();
 export const hasThaana=s=>SCRIPT_RANGES.thaana.test(s);
 export const hasArabicScript=s=>SCRIPT_RANGES.arabic.test(s);
+
+const TOKEN_PUNCTUATION=/[.,!?؟،؛:"“”'‘’()\[\]{}…]+/gu;
+
+export function sentenceTokenize(text){
+  if(typeof text!=='string'||!text.trim())return [];
+  return (text.match(/[^.!?؟\n]+(?:[.!?؟]+|$)/g)||[])
+    .map(sentence=>sentence.replace(/[.!?؟]+$/,'').trim())
+    .filter(Boolean);
+}
+
+export function wordTokenize(text,{removePunctuation=false,removeNonDhivehiNumeric=false}={}){
+  const tokens=[];
+  for(const sentence of sentenceTokenize(text)){
+    for(let token of sentence.split(/\s+/u).filter(Boolean)){
+      if(removeNonDhivehiNumeric)token=token.replace(/[^\u0780-\u07B1\d]/gu,'');
+      else if(removePunctuation)token=token.replace(TOKEN_PUNCTUATION,'');
+      if(token)tokens.push(token);
+    }
+  }
+  return tokens;
+}
 
 export function analyzeScriptSegments(text){
   const segments=[];const re=/⟦[^⟧]*⟧|[\u0780-\u07BF]+|\p{Script=Arabic}+|[A-Za-z]+|\d+|[^\s]/gu;let match;
