@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,11);
+assert.equal(LESSON_REGISTRY.length,12);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
@@ -115,6 +115,36 @@ for(const [english,dhivehi] of [
   ['The small child is reading a book.','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ.'],
   ['We are swimming in the sea.','އަހަރެމެން މޫދުގައި ފަތަނީ.'],
   ['Now she is starting to walk.','މިހާރު ހިނގަން ފަށަނީ.']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===16).status,'encoded-and-tested');
+assert.equal(QUESTION_SUFFIX_MEMORY['ތަ'].type,'open-question');
+assert.equal(QUESTION_SUFFIX_MEMORY['ދޯ'].type,'confirmation');
+assert.equal(QUESTION_SUFFIX_MEMORY['ނު'].type,'negative-confirmation');
+assert.equal(QUESTION_ANSWERS.yes,'އާނ');
+assert.equal(UNCONFIRMED_LESSON_16.length,3);
+
+assert.equal(deriveQuestion('އޭނަ ކަނީ.'),'އޭނަ ކަނީތަ؟');
+assert.equal(
+  deriveQuestion('މަސްތައް މޫދުގައި ފަތަނީ','ތަ','މޫދުގައި'),
+  'މަސްތައް މޫދުގައިތަ ފަތަނީ؟'
+);
+assert.equal(deriveQuestion('މިއީ ކިހާ','ތަ','ކިހާ'),null);
+assert.equal(deriveQuestion('މިއީ ކޮން','ތަ','ކޮން'),null);
+assert.equal(deriveQuestion('މިއީ ކިތައް','ތަ','ކިތައް'),null);
+
+const unseenOpenQuestion=brain.translate('ކުރަނީތަ؟','dv-en');
+assert.equal(unseenOpenQuestion.questions[0].type,'open-question');
+assert.equal(unseenOpenQuestion.questions[0].base,'ކުރަނީ');
+assert.match(unseenOpenQuestion.output,/open-question: present progressive: do/i);
+
+for(const [english,dhivehi] of [
+  ['Is she eating?','އޭނަ ކަނީތަ؟'],
+  ['Are they studying in Sri Lanka?','އެ މީހުން ލަންކާގައި ކިޔަވަނީތަ؟'],
+  ['Is this dress nice?','މި ހެދުން ރީތިތަ؟'],
+  ['Are the fish swimming in the sea?','މަސްތައް މޫދުގައި ފަތަނީތަ؟']
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
