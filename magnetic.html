@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071323">
+<title>Magnetic Field Viewer</title>
+<style>
+:root{color-scheme:dark;--bg:#071323;--panel:#091b2d;--line:#274153;--text:#f5f7fb;--muted:#a8b5c8;--cyan:#39d1e8;--warn:#ffba55;--danger:#ff6b72}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.app{width:min(760px,100%);margin:auto;padding:18px 18px 34px;text-align:center}h1{font-size:clamp(30px,7vw,52px);font-weight:400;margin:0 0 8px}.sub{color:var(--muted);font-size:clamp(15px,3.6vw,21px);margin:0 0 28px}.value{font-size:clamp(64px,15vw,112px);line-height:1;color:var(--cyan);font-weight:350;font-variant-numeric:tabular-nums}.axes{font-size:clamp(18px,4.3vw,28px);margin-top:20px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap}.change{color:var(--muted);font-size:clamp(18px,4vw,27px);margin:20px 0}.chart-wrap{height:min(58vh,620px);min-height:390px;background:var(--panel);position:relative;overflow:hidden}.chart-wrap canvas{width:100%;height:100%;display:block}.scale{position:absolute;right:10px;top:10px;color:var(--muted);font-size:13px;background:#071323bb;padding:5px 8px;border-radius:8px}.controls{display:grid;gap:12px;margin-top:24px}button{min-height:66px;border:0;border-radius:5px;font-size:21px;color:white;background:#666;cursor:pointer}button.primary{background:#126b7a}.status{font-size:21px;color:var(--muted);margin:22px 0 8px}.status.warn{color:var(--warn)}.status.danger{color:var(--danger);font-weight:650}.info{color:var(--muted);font-size:15px;line-height:1.45}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}.stat{background:#0c2034;border:1px solid #16344b;padding:12px;border-radius:10px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:22px}.unsupported{padding:20px;background:#2a1d12;border:1px solid #6b4725;border-radius:10px;margin:20px 0;text-align:left;display:none}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>🧲 Magnetic Field Viewer</h1>
+<p class="sub">Real Android magnetometer · values in microtesla (µT)</p>
+<div id="unsupported" class="unsupported">This browser cannot access the magnetometer. Open this page in Chrome on Android over HTTPS. Sensor support also depends on your phone.</div>
+<div class="value"><span id="total">--.-</span> µT</div>
+<div class="axes"><span>X <b id="x">--.-</b></span><span>Y <b id="y">--.-</b></span><span>Z <b id="z">--.-</b></span></div>
+<div class="change">Change from baseline: <b id="delta">--.-</b> µT</div>
+<div class="stats"><div class="stat"><small>Baseline</small><strong id="base">Not set</strong></div><div class="stat"><small>Peak</small><strong id="peak">0.0 µT</strong></div></div>
+<div class="chart-wrap"><canvas id="chart"></canvas><div id="scale" class="scale">Scale 200 µT</div></div>
+<div class="controls"><button id="start" class="primary">START SENSOR</button><button id="calibrate">CALIBRATE BASELINE</button></div>
+<div id="status" class="status">Sensor not started</div>
+<p class="info">When a magnet comes close, readings can rise into hundreds or thousands of µT. That is expected. Move very strong magnets away from the phone to avoid affecting the compass or accessories. A high reading shows a magnetic field; it does not identify copper.</p>
+<p class="info">Privacy: readings remain on this phone. No internet or location permission is used.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id), totalEl=$('total'),xEl=$('x'),yEl=$('y'),zEl=$('z'),deltaEl=$('delta'),baseEl=$('base'),peakEl=$('peak'),statusEl=$('status'),canvas=$('chart'),ctx=canvas.getContext('2d');
+let sensor=null, baseline=null, peak=0, values=[], last=0;
+function resize(){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);draw()}addEventListener('resize',resize);
+function draw(){const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#274153';ctx.lineWidth=1;for(let i=1;i<4;i++){const y=h*i/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}if(values.length<2)return;const max=Math.max(100,Math.ceil(Math.max(...values,baseline||0)/100)*100);$('scale').textContent=`Scale ${max} µT`;ctx.strokeStyle='#39d1e8';ctx.lineWidth=3;ctx.lineJoin='round';ctx.beginPath();values.forEach((v,i)=>{const px=i/(Math.max(values.length-1,1))*w,py=h-(Math.min(v,max)/max)*h;i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke()}
+function updateStatus(delta,total){statusEl.className='status';if(total>=2000){statusEl.textContent='Very strong magnetic field — move the magnet away';statusEl.classList.add('danger')}else if(total>=500||delta>=300){statusEl.textContent='Strong magnetic field detected';statusEl.classList.add('danger')}else if(delta>=40){statusEl.textContent='Strong magnetic change detected';statusEl.classList.add('warn')}else if(delta>=12){statusEl.textContent='Magnetic change detected';statusEl.classList.add('warn')}else{statusEl.textContent='Live sensor active'}}
+function reading(){const x=sensor.x||0,y=sensor.y||0,z=sensor.z||0,total=Math.hypot(x,y,z);last=total;peak=Math.max(peak,total);const delta=baseline==null?0:Math.abs(total-baseline);totalEl.textContent=total.toFixed(1);xEl.textContent=x.toFixed(1);yEl.textContent=y.toFixed(1);zEl.textContent=z.toFixed(1);deltaEl.textContent=delta.toFixed(1);peakEl.textContent=peak.toFixed(1)+' µT';values.push(total);if(values.length>180)values.shift();updateStatus(delta,total);draw()}
+async function start(){if(!('Magnetometer'in window)){ $('unsupported').style.display='block';statusEl.textContent='Magnetometer unavailable';return }try{sensor=new Magnetometer({frequency:20});sensor.addEventListener('reading',reading);sensor.addEventListener('error',e=>{statusEl.textContent='Sensor error: '+e.error.name});sensor.start();$('start').textContent='SENSOR ACTIVE';$('start').disabled=true}catch(e){$('unsupported').style.display='block';statusEl.textContent='Could not start sensor: '+e.message}}
+$('start').addEventListener('click',start);$('calibrate').addEventListener('click',()=>{if(!Number.isFinite(last)||last<=0){statusEl.textContent='Start the sensor first';return}baseline=last;baseEl.textContent=baseline.toFixed(1)+' µT';deltaEl.textContent='0.0';values=[];peak=last;statusEl.className='status';statusEl.textContent='Baseline calibrated — move the object close and away'});resize();
+</script>
+</body>
+</html>
