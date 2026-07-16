@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_17_SOURCE} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -149,9 +149,9 @@ for(const [english,dhivehi] of [
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
 
-assert.equal(LESSON_REGISTRY.find(x=>x.id===17).status,'source-encoded-and-tested');
-assert.equal(LESSON_17_SOURCE.date,'2020-01-20');
-assert.equal(LESSON_17_SOURCE.author,'thatmaldivesblog');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===18).status,'source-encoded-and-tested');
+assert.equal(LESSON_18_SOURCE.date,'2020-01-20');
+assert.equal(LESSON_18_SOURCE.author,'thatmaldivesblog');
 assert.equal(EXISTENTIAL_VERB_MEMORY['ހުރުން'].locative,'ހުރީ');
 assert.equal(EXISTENTIAL_VERB_MEMORY['އިނުން'].existential[0],'އެބައިން');
 assert.equal(EXISTENTIAL_VERB_MEMORY['އޮތުން'].locative,'އޮތީ');
