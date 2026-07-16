@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.5.0';
+export const KNOWLEDGE_VERSION = '3.6.0';
 
 export const DICTIONARY_SOURCES = [
   {
@@ -46,6 +46,17 @@ export const LEXICAL_SOURCES = [
     publicationPolicy:'Do not bundle or republish the complete SQLite database in the static website.'
   }
 ];
+
+export const TOKENIZER_SOURCE = {
+  id:'dhivehi-nlp-tokenizer',
+  repository:'mismaah/dhivehi_nlp',
+  packageVersion:'1.0.13',
+  softwareLicense:'MIT',
+  functions:['sentence_tokenize','word_tokenize'],
+  implementation:'Browser-native JavaScript equivalent; no Python runtime required.',
+  thaanaRange:'U+0780–U+07B1',
+  options:['removePunctuation','removeNonDhivehiNumeric']
+};
 
 export const EXTERNAL_LEXICAL_CANDIDATES = [
   {
