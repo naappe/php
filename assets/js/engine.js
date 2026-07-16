@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -49,6 +49,13 @@ export function deriveQuestion(statement,suffix='ތަ',focusText=null){
     return bare.slice(0,index)+focusText+suffix+bare.slice(index+focusText.length)+'؟';
   }
   return bare+suffix+'؟';
+}
+
+export function selectExistentialVerb(features={}){
+  if(features.collectionOfInanimate||features.pluralInanimate||features.maleHuman||features.selfStanding||features.abstractQuality)return 'ހުރުން';
+  if(features.femaleHuman||features.nonHumanTwoLegged||features.moreThanFourLegs||features.attachedToTree)return 'އިނުން';
+  if(features.cannotStandByItself||features.fourLegged||features.noLegs||features.detachedFromTree)return 'އޮތުން';
+  return null;
 }
 
 export class TranslationBrain{
@@ -130,7 +137,19 @@ export class TranslationBrain{
     return null;
   }
 
+  analyzeExistentialForm(token){
+    for(const [gerund,data] of Object.entries(EXISTENTIAL_VERB_MEMORY)){
+      for(const form of ['infinitive','progressive','habitual','habitualEve','locative']){
+        if(data[form]===token)return {token,form:'existential-'+form,english:data.english,gerund,rule:GRAMMAR_RULES.existentialPredication,verified:true};
+      }
+      if(data.existential.includes(token))return {token,form:'there-to-be',english:'there is/are',gerund,rule:GRAMMAR_RULES.existentialPredication,verified:true};
+      if(gerund===token)return {token,form:'existential-gerund',english:data.english,gerund,rule:GRAMMAR_RULES.existentialPredication,verified:true};
+    }
+    return null;
+  }
+
   analyzeVerbForm(token){
+    const existential=this.analyzeExistentialForm(token);if(existential)return existential;
     for(const [infinitive,data] of Object.entries(PAST_TENSE_MEMORY)){
       if(data.past===token)return {token,form:'past',english:data.english,pairedForm:infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.pastTense,verified:true};
       if(token==='ނު'+data.past){const base=Object.values(VERB_FORM_MEMORY).find(v=>v.infinitive===infinitive)?.english||data.english;return {token,form:'negative-past',english:'did not '+base,pairedForm:data.past,infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.negativePast,verifiedFromPattern:true};}
@@ -151,7 +170,7 @@ export class TranslationBrain{
 
   lookupDhivehi(token){
     const verb=this.analyzeVerbForm(token);
-    if(verb){if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;if(verb.form==='past'||verb.form==='negative-past')return verb.english;return 'to '+verb.english;}
+    if(verb){if(verb.form.startsWith('existential-')||verb.form==='there-to-be')return verb.english;if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;if(verb.form==='past'||verb.form==='negative-past')return verb.english;return 'to '+verb.english;}
     if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
@@ -172,7 +191,7 @@ export class TranslationBrain{
       stats.tokens.push({from:token,to:translated,known:true,type:question?'question':focus?'focus':'word'});
       if(['i','you','he','we','they'].includes(value))subject.push(translated);else if(VERBS.has(value))verb.push(translated);else rest.push(translated);
     });
-    stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive and verified past-form rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
+    stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive, past and existential/location verb rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
     if(stats.questions.length)stats.reasoning.push('Question suffix scope and speaker certainty interpreted from its attachment position');
     if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
