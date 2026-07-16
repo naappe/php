@@ -1,5 +1,5 @@
 import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js';
-import {KNOWLEDGE_VERSION} from './knowledge-base.js';
+import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js';
 
 const $=id=>document.getElementById(id);
 let direction='en-dv';
@@ -10,6 +10,15 @@ let brain=new TranslationBrain(userPairs);
 function save(){localStorage.setItem('bas_user_pairs',JSON.stringify(userPairs))}
 function showWarning(message=''){$('warning').hidden=!message;$('warning').textContent=message}
 function refreshStats(){$('systemCount').textContent=brain.permanentCount;$('learnedCount').textContent=userPairs.length}
+function humanize(value){return value.split('-').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ')}
+function renderOverview(){
+  const testedLessons=LESSON_REGISTRY.filter(lesson=>lesson.status.includes('tested')).length;
+  $('overviewKnowledge').textContent=`v${KNOWLEDGE_VERSION} · ${VERIFIED_PAIRS.length} sentences · ${Object.keys(VERIFIED_WORDS).length} words`;
+  $('overviewStages').textContent=`${TRANSLATION_PIPELINE.length} reasoning stages · ${Object.keys(GRAMMAR_RULES).length} grammar rules`;
+  $('overviewTests').textContent=`Automated suite · ${testedLessons} lesson${testedLessons===1?'':'s'} fully tested`;
+  TRANSLATION_PIPELINE.forEach(stage=>{const li=document.createElement('li');li.textContent=humanize(stage);$('pipelineList').append(li)});
+  LESSON_REGISTRY.forEach(lesson=>{const row=document.createElement('div');row.className='lesson-row';const tested=lesson.status.includes('tested');row.innerHTML=`<span class="lesson-id">${lesson.id}</span><span class="lesson-topic"><strong>${lesson.topic}</strong><span>${lesson.focus}</span></span><span class="lesson-status ${tested?'tested':''}">${humanize(lesson.status)}</span>`;$('lessonList').append(row)});
+}
 function setDirection(next){
   direction=next;const reverse=next==='dv-en';
   $('fromLabel').textContent=reverse?'ދިވެހި':'English';$('toLabel').textContent=reverse?'English':'ދިވެހި';$('direction').textContent=reverse?'Dhivehi → English':'English → Dhivehi';
@@ -54,4 +63,4 @@ $('copyBtn').onclick=async()=>{if(!$('result').value)return;await navigator.clip
 $('clearBrainBtn').onclick=()=>{if(!confirm('Delete all lessons saved on this browser?'))return;userPairs=[];localStorage.removeItem('bas_user_pairs');brain=new TranslationBrain(userPairs);refreshStats();$('learnMsg').textContent='Browser lessons cleared.'};
 document.querySelectorAll('[data-example]').forEach(button=>button.onclick=()=>{setDirection('en-dv');$('source').value=button.dataset.example;$('count').textContent=$('source').value.length+' / 5000';translate()});
 
-refreshStats();setDirection('en-dv');
+refreshStats();renderOverview();setDirection('en-dv');
