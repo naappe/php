@@ -7,6 +7,12 @@ const brain=new TranslationBrain([]);
 
 assert.equal(brain.translate('What are you doing?','en-dv').output,'ތިޔަ ކުރަނީ ކޮބައިތޯ؟');
 assert.equal(brain.translate('This is a test.','en-dv').output,'މިއީ ޓެސްޓެއް.');
+const lesson12Memory="You now have the complete Lesson 12 token structure stored in the system's memory!";
+assert.equal(
+  brain.translate(lesson12Memory,'en-dv').output,
+  'ލެސަން 12ގެ މުޅި ޓޯކަން ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ބަހައްޓައިފި!'
+);
+assert.doesNotMatch(brain.translate(lesson12Memory,'en-dv').output,/⟦|⟧/);
 assert.equal(brain.translate('މިއީ ޓެސްޓެއް.','dv-en').output,'This is a test.');
 assert.equal(validateDhivehi('ج و ميه هڪڙو مټ').ok,false);
 assert.equal(validateDhivehi('މިއީ ދިވެހި').ok,true);
