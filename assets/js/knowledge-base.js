@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.0.0';
+export const KNOWLEDGE_VERSION = '2.1.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -35,6 +35,7 @@ export const VERIFIED_PAIRS = [
   ['where are you going','ތިބާ ކޮންތާކަށް ތިޔަ ދަނީ؟'],
   ['see you later','ފަހުން ދިމާވާނެ'],
   ['this is a test','މިއީ ޓެސްޓެއް'],
+  ['in the last lesson we learned how nouns change when case suffixes are attached and learned the meanings and uses of those suffixes','ފަހުގެ ދަރުހުގައި، ނަންތަކަށް ކޭސް ސަފިކްސްތައް ގުޅާއިރު ނަންތައް ބަދަލުވާ ގޮތާއި، އެ ސަފިކްސްތަކުގެ މާނައާއި ބޭނުން ދަސްކުރީމެވެ'],
   ["this structure is now stored in the system's memory for lesson",'މި ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ލެސަނަށް ބަހައްޓައިފި'],
   ['artificial intelligence can improve writing','މަޞްނޫޢީ ބުއްދިން ލިޔުން ރަނގަޅުކުރެވިދާނެ'],
   ['please check this document and correct the mistakes','މި ލިޔުން ބަލައި ކުށްތައް ރަނގަޅުކޮށްދެއްވާ'],
@@ -54,6 +55,27 @@ export const VERIFIED_WORDS = {
 export const VERIFIED_PHRASES = {
   'artificial intelligence':'މަޞްނޫޢީ ބުއްދި','language tool':'ލޭންގުއޭޖްޓޫލް','translation engine':'ތަރުޖަމާ އެންޖިން','translation memory':'ތަރުޖަމާ މެމޮރީ','personal dictionary':'އަމިއްލަ ޑިކްޝަނަރީ','style guide':'އުސްލޫބުގެ މަގުދެއްކުން','writing assistant':'ލިޔުމުގެ މުއާވަން','natural language':'ޤުދުރަތީ ބަސް','for example':'މިސާލަކަށް','in other words':'އެހެން ބަހަކުން','as a result':'އެގޮތުން','right now':'މިހާރު','every day':'ކޮންމެ ދުވަހަކު'
 };
+
+/**
+ * These English expressions require sentence context. They must never be
+ * promoted to unconditional word-to-word mappings.
+ */
+export const CONTEXT_SENSITIVE_TERMS = {
+  function:{reject:'ވަޒީފާ',reason:'ވަޒީފާ normally means job or duty; function depends on technical/grammatical context.'},
+  demonstrative:{reject:'މިސާލު ދެއްކުން',reason:'The grammatical category needs a contextual grammatical rendering.'},
+  pronouns:{reject:'ވަކި ނަންތައް',reason:'Pronouns are a grammatical class, not simply separate names.'},
+  them:{reject:'އެއިން',reason:'Object/reference form depends on antecedent, number, animacy and syntax.'},
+  belongs:{reject:'ގެ',reason:'Possession normally requires a construction; ގެ alone is not a complete verb equivalent.'}
+};
+
+export const TRANSLATION_PIPELINE = [
+  'identify-complete-sentence-meaning',
+  'detect-dhivehi-english-placeholder-segments',
+  'interpret-english-expressions-in-context',
+  'reconstruct-natural-dhivehi-order',
+  'apply-noun-number-definiteness-case-rules',
+  'verify-meaning-grammar-spelling-fluency'
+];
 
 export const DHIVEHI_SUFFIXES = [
   ['ތަކަށް','to plural'],['ތަކުން','from plural'],['ތަކުގެ','of plural'],['ތައް','plural'],['އަށް','to'],['އިން','from'],['ގައި','in'],['ގެ','of'],['އާއި','and'],['އެއް','specific indefinite'],['އަކު','unspecified indefinite']
