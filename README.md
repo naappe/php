@@ -16,9 +16,10 @@ A static, teachable English ↔ Dhivehi translation-memory website hosted on Git
 - Recognizes learned `އޭ` emphasis and `އޯ` reported-speech forms.
 - Keeps `އެއް` specific-indefinite and `އަކު` unspecified-indefinite meanings separate.
 - Rejects Arabic/Sindhi/Urdu characters from Dhivehi lessons.
-- Marks unknown meanings instead of inventing a translation.
+- Reports unknown meanings in the reasoning panel and blocks mixed-language partial output.
 - Detects mixed English, Thaana, placeholder and Arabic-script segments.
 - Treats vocabulary tokens as evidence while complete-sentence meaning remains primary.
+- Splits Dhivehi text into sentences and words using the documented `dhivehi_nlp.tokenizer` behavior.
 - Learns paired lines in the visitor's browser.
 - Imports and exports browser lessons as JSON.
 
@@ -28,7 +29,35 @@ This is a rule-based translation-memory engine, not a large language model. It b
 
 ## Lesson status
 
-Eight lesson topics are registered. Lessons 4 and the supplied Lesson 8 summary are encoded with regression tests. A lesson summary is catalogued but is not treated as a complete implementation of every rule and example.
+Nineteen lesson topics are registered. The owner-supplied 74-page course PDF is the authoritative source for Lessons 1–16. A lesson summary is catalogued separately from complete source-backed rules and examples.
+
+## Radheef dictionary
+
+The live site loads Radheef directly in the browser from 30 first-letter JSON
+chunks containing 29,824 entries. A search downloads only the matching initial
+letter chunk, which the browser can cache. It requires no server, account or API
+key. Developers can rebuild the chunks from the installed `dhivehi_nlp` package:
+
+```bash
+pip install dhivehi_nlp
+python3 tools/radheef_dictionary.py ތަންވަޅު
+python3 tools/radheef_dictionary.py --check ކާކު ކީއް ކޮބާ
+python3 tools/build_radheef_chunks.py
+```
+
+Radheef definitions are Dhivehi-to-Dhivehi evidence, not verified
+English–Dhivehi translation pairs. Generated chunks retain source attribution;
+confirm the dictionary-content redistribution terms before broad redistribution.
+
+The browser engine includes JavaScript equivalents of `sentence_tokenize` and
+`word_tokenize`. It can remove punctuation or retain only Thaana characters and
+ASCII numbers without requiring Python on the deployed website.
+
+Selected MIT-licensed `dhivehi_nlp` stemmer, stopword and trigram-similarity
+behavior is also ported to `assets/js/dhivehi-nlp.js`. The dictionary uses stems
+only as labeled fallback candidates and uses trigram similarity for “Did you
+mean?” suggestions. Stopwords are available for analysis but are never silently
+removed from translation input.
 
 ## File structure
 
@@ -38,10 +67,14 @@ assets/css/styles.css             Visual design and responsive layout
 assets/js/knowledge-base.js       Permanent verified memory
 assets/js/engine.js               Translation, validation and reasoning
 assets/js/app.js                  Browser UI, local learning, import/export
+assets/js/dhivehi-nlp.js          Attributed browser NLP helpers
 AI-BRAIN.md                       Instructions for future AI/developers
 FILE-MAP.md                       Edit-target guide
 SHA256SUMS.txt                    File integrity hashes
 tests/engine.test.mjs             Core safety and translation tests
+tools/radheef_dictionary.py       Optional safe Radheef headword lookup
+tools/build_radheef_chunks.py     Rebuild browser dictionary chunks
+assets/dictionary/*.json          First-letter client-side Radheef chunks
 README.md                         Project overview
 ```
 

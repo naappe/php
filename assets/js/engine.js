@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=3.4.2';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,LESSON_14_MORE_VERBS,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,PERSONAL_PRONOUN_CASE_MEMORY,NOUN_PREDICATION_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js?v=4.0.0';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -8,6 +8,27 @@ export const cleanEnglish=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-
 export const cleanDhivehi=s=>s.replace(/[؟،.!?]/g,'').replace(/\s+/g,' ').trim();
 export const hasThaana=s=>SCRIPT_RANGES.thaana.test(s);
 export const hasArabicScript=s=>SCRIPT_RANGES.arabic.test(s);
+
+const TOKEN_PUNCTUATION=/[.,!?؟،؛:"“”'‘’()\[\]{}…]+/gu;
+
+export function sentenceTokenize(text){
+  if(typeof text!=='string'||!text.trim())return [];
+  return (text.match(/[^.!?؟\n]+(?:[.!?؟]+|$)/g)||[])
+    .map(sentence=>sentence.replace(/[.!?؟]+$/,'').trim())
+    .filter(Boolean);
+}
+
+export function wordTokenize(text,{removePunctuation=false,removeNonDhivehiNumeric=false}={}){
+  const tokens=[];
+  for(const sentence of sentenceTokenize(text)){
+    for(let token of sentence.split(/\s+/u).filter(Boolean)){
+      if(removeNonDhivehiNumeric)token=token.replace(/[^\u0780-\u07B1\d]/gu,'');
+      else if(removePunctuation)token=token.replace(TOKEN_PUNCTUATION,'');
+      if(token)tokens.push(token);
+    }
+  }
+  return tokens;
+}
 
 export function analyzeScriptSegments(text){
   const segments=[];const re=/⟦[^⟧]*⟧|[\u0780-\u07BF]+|\p{Script=Arabic}+|[A-Za-z]+|\d+|[^\s]/gu;let match;
@@ -106,10 +127,11 @@ export class TranslationBrain{
   }
 
   translate(text,direction='en-dv'){
-    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],focus:[],indefinite:[],verbs:[],questions:[],nounCases:[],predicates:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
+    const stats={matched:0,total:0,tokens:[],reasoning:[],warnings:[],incompleteSentences:[],focus:[],indefinite:[],verbs:[],questions:[],questionWords:[],nounCases:[],predicates:[],script:analyzeScriptSegments(text),pipeline:TRANSLATION_PIPELINE};
     if(stats.script.mixed)stats.warnings.push(`Mixed input detected: ${stats.script.types.join(', ')}. Complete verified sentence meaning has priority over isolated token lookup.`);
     const fn=direction==='en-dv'?this.toDhivehi.bind(this):this.toEnglish.bind(this);
-    const output=splitSentences(text).map(s=>fn(s.trim(),stats)).join(' ');
+    const translatedSentences=splitSentences(text).map(s=>fn(s.trim(),stats)).filter(Boolean);
+    const output=direction==='en-dv'&&stats.incompleteSentences.length?'':translatedSentences.join(' ');
     if(direction==='en-dv'&&hasArabicScript(output))throw new Error('Safety block: non-Thaana Arabic-script output was detected.');
     return {output,coverage:stats.total?Math.round(stats.matched/stats.total*100):0,...stats};
   }
@@ -124,14 +146,15 @@ export class TranslationBrain{
       if(token.startsWith('__phrase')){const value=placeholders[Number(token.match(/\d+/)[0])];object.push(value);stats.matched+=2;stats.total+=2;stats.tokens.push({from:token,to:value,known:true,type:'phrase'});return}
       stats.total++;
       if(ARTICLES.has(token)){stats.matched++;stats.tokens.push({from:token,to:'removed English article',known:true,type:'grammar'});return}
-      if(CONTEXT_SENSITIVE_TERMS[token]){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:`context required — ${CONTEXT_SENSITIVE_TERMS[token].reason}`,known:false,type:'context-sensitive'});return}
+      if(CONTEXT_SENSITIVE_TERMS[token]){unknown.push(token);stats.tokens.push({from:token,to:`context required — ${CONTEXT_SENSITIVE_TERMS[token].reason}`,known:false,type:'context-sensitive'});return}
       const base=token.replace(/(ing|ed|s)$/,'');const value=this.words[token]||this.words[base];
-      if(!value){unknown.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
+      if(!value){unknown.push(token);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;stats.tokens.push({from:token,to:value,known:true,type:'word'});
       if(SUBJECTS.has(token))subject.push(value);else if(VERBS.has(token)||VERBS.has(base))verb.push(value);else object.push(value);
     });
-    stats.reasoning.push('No exact sentence memory','Longest verified phrases applied','Known vocabulary tokens applied',`Default ${GRAMMAR_RULES.defaultWordOrder.pattern.toUpperCase()} order applied`,'Unknown meanings marked, not invented');
-    return addPunctuation([...subject,...object,...unknown,...verb].join(' '),p,true);
+    stats.reasoning.push('No exact sentence memory','Longest verified phrases applied','Known vocabulary tokens applied',`Default ${GRAMMAR_RULES.defaultWordOrder.pattern.toUpperCase()} order applied`,'Unknown meanings reported in analysis; partial mixed-language output blocked');
+    if(unknown.length){stats.incompleteSentences.push({source:sentence,unknown});stats.warnings.push(`Translation withheld: unknown or context-dependent meanings: ${unknown.join(', ')}.`);return ''}
+    return addPunctuation([...subject,...object,...verb].join(' '),p,true);
   }
 
   analyzeFocus(token,stats){
@@ -152,6 +175,11 @@ export class TranslationBrain{
       if(data)return {token,base:token.slice(0,-suffix.length),suffix,...data};
     }
     return null;
+  }
+
+  analyzeQuestionWord(token){
+    const data=QUESTION_WORD_MEMORY[token];
+    return data?{token,...data,rule:GRAMMAR_RULES.inherentQuestion,verified:true}:null;
   }
 
   analyzeHabitualForm(token){
@@ -179,7 +207,8 @@ export class TranslationBrain{
   analyzeNounPredication(token){
     const demonstrative=NOUN_PREDICATION_MEMORY.demonstratives[token];
     if(demonstrative)return {token,type:'demonstrative-copula',...demonstrative,rule:GRAMMAR_RULES.nounNounPredication};
-    if(token.endsWith(NOUN_PREDICATION_MEMORY.suffix)&&token.length>NOUN_PREDICATION_MEMORY.suffix.length){
+    const surfaceEnding=GRAMMAR_RULES.nounNounPredication.surfaceEnding;
+    if((token.endsWith(NOUN_PREDICATION_MEMORY.suffix)||token.endsWith(surfaceEnding))&&token.length>surfaceEnding.length){
       return {token,type:'noun-noun-predication',suffix:NOUN_PREDICATION_MEMORY.suffix,rule:GRAMMAR_RULES.nounNounPredication};
     }
     return null;
@@ -205,6 +234,8 @@ export class TranslationBrain{
     }
     const gerund=VERB_FORM_MEMORY[token];
     if(gerund)return {token,form:'gerund',english:gerund.english,pairedForm:gerund.infinitive,irregular:Boolean(gerund.irregular),rule:GRAMMAR_RULES.gerund};
+    const lesson14Gerund=LESSON_14_MORE_VERBS[token];
+    if(lesson14Gerund)return {token,form:'gerund',english:lesson14Gerund.english,pairedForm:null,conjugationStatus:'not supplied by source',rule:GRAMMAR_RULES.gerund,verified:true};
     for(const [gerundToken,data] of Object.entries(VERB_FORM_MEMORY)){
       if(data.infinitive===token)return {token,form:'infinitive',english:data.english,pairedForm:gerundToken,irregular:Boolean(data.irregular),rule:GRAMMAR_RULES.infinitive};
     }
@@ -218,6 +249,7 @@ export class TranslationBrain{
     if(NOUN_CASE_FORM_MEMORY[token])return NOUN_CASE_FORM_MEMORY[token].english;
     if(DEMONSTRATIVE_PRONOUN_CASE_MEMORY[token])return DEMONSTRATIVE_PRONOUN_CASE_MEMORY[token].english;
     if(PERSONAL_PRONOUN_CASE_MEMORY[token])return PERSONAL_PRONOUN_CASE_MEMORY[token].english;
+    if(QUESTION_WORD_MEMORY[token])return QUESTION_WORD_MEMORY[token].english;
     if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
@@ -229,7 +261,7 @@ export class TranslationBrain{
     if(this.reverseMemory.has(key)){const value=this.reverseMemory.get(key);stats.total+=key.split(' ').length;stats.matched+=key.split(' ').length;stats.reasoning.push('Exact verified reverse-sentence memory');return capitalize(addPunctuation(value,p,false))}
     const subject=[],verb=[],rest=[];
     key.split(/\s+/).filter(Boolean).forEach(token=>{
-      stats.total++;const question=this.analyzeQuestionForm(token);if(question)stats.questions.push(question);const questionBase=question?question.base:token,focus=this.analyzeFocus(questionBase,stats),base=focus?focus.base:questionBase,indefinite=INDEFINITE_FORM_MEMORY[base];if(indefinite)stats.indefinite.push({token:base,...indefinite,rule:indefinite.mode==='specific-indefinite'?GRAMMAR_RULES.specificIndefinite:GRAMMAR_RULES.unspecifiedIndefinite});const predication=this.analyzeNounPredication(base);if(predication)stats.predicates.push(predication);const nounCase=this.analyzeNounCase(base);if(nounCase)stats.nounCases.push(nounCase);const verbForm=this.analyzeVerbForm(base);if(verbForm)stats.verbs.push(verbForm);const value=this.lookupDhivehi(base);
+      stats.total++;const verifiedFocus=FOCUS_FORM_MEMORY[token];const question=verifiedFocus?null:this.analyzeQuestionForm(token);if(question)stats.questions.push(question);const questionBase=question?question.base:token,focus=this.analyzeFocus(questionBase,stats),base=focus?focus.base:questionBase,questionWord=this.analyzeQuestionWord(base);if(questionWord)stats.questionWords.push(questionWord);const indefinite=INDEFINITE_FORM_MEMORY[base];if(indefinite)stats.indefinite.push({token:base,...indefinite,rule:indefinite.mode==='specific-indefinite'?GRAMMAR_RULES.specificIndefinite:GRAMMAR_RULES.unspecifiedIndefinite});const predication=this.analyzeNounPredication(base);if(predication)stats.predicates.push(predication);const nounCase=this.analyzeNounCase(base);if(nounCase)stats.nounCases.push(nounCase);const verbForm=this.analyzeVerbForm(base);if(verbForm)stats.verbs.push(verbForm);const value=this.lookupDhivehi(base);
       if(!value){rest.push(`⟦${token}⟧`);stats.tokens.push({from:token,to:'meaning not learned',known:false,type:'unknown'});return}
       stats.matched++;let translated=value;
       if(focus?.mode==='repetition')translated=`indeed/as previously stated: ${value}`;
@@ -241,6 +273,7 @@ export class TranslationBrain{
     stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Noun–noun predication and demonstrative copulas checked','Verified noun-case forms checked','Gerund, infinitive, progressive, past, habitual and existential/location verb rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
     if(stats.questions.length)stats.reasoning.push('Question suffix scope and speaker certainty interpreted from its attachment position');
+    if(stats.questionWords.length)stats.reasoning.push('Inherent question word identified; its syntactic role controls question-word placement');
     if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
     return capitalize(addPunctuation([...subject,...verb,...rest].join(' '),p,false));
   }

@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.4.2';
+export const KNOWLEDGE_VERSION = '4.0.0';
 
 export const DICTIONARY_SOURCES = [
   {
@@ -21,6 +21,51 @@ export const DICTIONARY_SOURCES = [
     copyright:'© F. Abdulla and M. O’Shea, 2005'
   }
 ];
+
+export const LESSON_SOURCES = [
+  {
+    id:'dhivehi-lessons-correct-2018',
+    title:'Dhivehi Lessons 1–16',
+    author:'Celine Peroni / thatmaldivesblog compilation',
+    created:'2018-07-06',
+    pages:74,
+    sha256:'c39d97083b370803ac2d70606ad09728aec896000f7caf58c754f42ca61b7bf4',
+    status:'owner-supplied-authoritative-course-source'
+  }
+];
+
+export const LEXICAL_SOURCES = [
+  {
+    id:'dhivehi-nlp-radheef',
+    repository:'mismaah/dhivehi_nlp',
+    packageVersion:'1.0.13',
+    softwareLicense:'MIT',
+    dictionaryRowsObserved:29824,
+    use:'development-time Thaana headword validation and Dhivehi definitions',
+    limitation:'Definitions are Dhivehi-to-Dhivehi and must not be promoted as English translation pairs.',
+    browserDataset:'29,824 entries converted into 30 first-letter JSON chunks at owner direction',
+    publicationPolicy:'Generated chunks retain source attribution; verify Radheef content redistribution terms before broad redistribution.'
+  }
+];
+
+export const TOKENIZER_SOURCE = {
+  id:'dhivehi-nlp-tokenizer',
+  repository:'mismaah/dhivehi_nlp',
+  packageVersion:'1.0.13',
+  softwareLicense:'MIT',
+  functions:['sentence_tokenize','word_tokenize'],
+  implementation:'Browser-native JavaScript equivalent; no Python runtime required.',
+  thaanaRange:'U+0780–U+07B1',
+  options:['removePunctuation','removeNonDhivehiNumeric']
+};
+
+export const DHIVEHI_NLP_BROWSER_PORT = {
+  source:'mismaah/dhivehi_nlp 1.0.13',
+  license:'MIT',
+  attribution:'Copyright (c) 2020 Mismaah Abdulla',
+  modules:['tokenizer','stemmer','stopwords','trigram_similarity'],
+  safety:'Stems and similarity results are analysis candidates, never verified translations. Stopwords are not removed from translation input.'
+};
 
 export const EXTERNAL_LEXICAL_CANDIDATES = [
   {
@@ -64,7 +109,7 @@ export const LESSON_REGISTRY = [
   {id:12,topic:'Personal Pronoun Cases',focus:'Nominative/accusative, genitive, dative, ablative construction and associative variants',status:'source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'source-encoded-and-tested'},
-  {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
+  {id:15,topic:'Question Words',focus:'Inherent questions; who, what, where, when, why, which and how forms with flexible question-word order',status:'pdf-source-encoded-and-tested'},
   {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
   {id:17,topic:'Verbs – Habitual/Simple Present',focus:'Modern person split, literary forms, formal އެވެ endings and contextual އެބަ',status:'source-encoded-and-tested'},
   {id:18,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'},
@@ -72,6 +117,10 @@ export const LESSON_REGISTRY = [
 ];
 
 export const VERIFIED_PAIRS = [
+  ["i sleep at nine o'clock every night",'ކޮންމެ ރެއަކު ނުވަ ގަޑީގައި އަހަރެން ނިދަން'],
+  ['you write a book','ތިޔަ ފޮތެއް ލިޔޭ'],
+  ['do you write a book','ތިޔަ ފޮތެއް ލިޔަންތަ'],
+  ['the plane lands every week','ކޮންމެ ހަފުތާއަކު ބޯޓު ފޭބޭ'],
   ['this dress is small','މިހެދުން ކުޑަ'],
   ['the water is very hot','ފެން ވަރަށް ހޫނު'],
   ['i am a maldivian','އަހަންނަކީ ދިވެއްސެއް'],
@@ -195,14 +244,14 @@ export const VERIFIED_PAIRS = [
 
 export const VERIFIED_WORDS = {
   one:'އެކެއް',island:'ރަށް',red:'ރަތް',heart:'ހިތް',then:'ދެން',egg:'ބިސް',father:'ބައްޕަ',mother:'މަންމަ',school:'އިސްކޫލު',mouth:'އަނގަ',stomach:'ބަނޑު',moon:'ހަނދު',mango:'އަނބު',doctor:'ޑޮކްޓަރ',director:'ޑައިރެކްޓަރ',rice:'ބަތް',book:'ފޮތް',house:'ގެ',maldives:'ރާއްޖެ',
-  i:'އަހަރެން',you:'ތިބާ',he:'އޭނާ',she:'އޭނާ',we:'އަހަރުމެން',they:'އެމީހުން',this:'މި',that:'އެ',my:'އަހަރެންގެ',your:'ތިބާގެ',our:'އަހަރުމެންގެ',their:'އެމީހުންގެ',who:'ކާކު',what:'ކޮބައި',where:'ކޮންތާކު',when:'ކޮންއިރަކު',why:'ކީއްވެ',how:'ކިހިނެއް',yes:'އާނ',no:'ނޫން',not:'ނޫން',and:'އަދި',or:'ނުވަތަ',but:'ނަމަވެސް',because:'ސަބަބަކީ',if:'އިދި',with:'އެކު',without:'ނުލައި',in:'ގައި',on:'މަތީގައި',from:'އިން',to:'އަށް',of:'ގެ',
+  i:'އަހަރެން',you:'ތިބާ',he:'އޭނާ',she:'އޭނާ',we:'އަހަރުމެން',they:'އެމީހުން',this:'މި',that:'އެ',my:'އަހަރެންގެ',your:'ތިބާގެ',our:'އަހަރުމެންގެ',their:'އެމީހުންގެ',who:'ކާކު',what:'ކީއް',where:'ކޮބާ',when:'ކޮންއިރަކު',why:'ކީއްވެ',which:'ކޮން',how:'ކިހިނެއް',yes:'އާނ',no:'ނޫން',not:'ނޫން',and:'އަދި',or:'ނުވަތަ',but:'ނަމަވެސް',because:'ސަބަބަކީ',if:'އިދި',with:'އެކު',without:'ނުލައި',in:'ގައި',on:'މަތީގައި',from:'އިން',to:'އަށް',of:'ގެ',
   is:'އަކީ',are:'އަކީ',was:'ވީ',were:'ވީ',be:'ވުން',can:'ކުރެވިދާނެ',will:'ވާނެ',should:'ޖެހޭ',must:'ލާޒިމު',do:'ކުރުން',doing:'ކުރަނީ',make:'ހެދުން',use:'ބޭނުންކުރުން',write:'ލިޔުން',read:'ކިޔުން',check:'ބެލުން',correct:'ރަނގަޅުކުރުން',translate:'ތަރުޖަމާކުރުން',learn:'ދަސްކުރުން',think:'ވިސްނުން',help:'އެހީ',improve:'ރަނގަޅުކުރުން',create:'އުފެއްދުން',give:'ދިނުން',take:'ނެގުން',go:'ދިއުން',come:'އައުން',see:'ފެނުން',know:'އެނގުން',understand:'ދޭހަވުން',
   text:'ލިޔުން',word:'ބަސް',words:'ބަސްތައް',sentence:'ޖުމްލަ',sentences:'ޖުމްލަތައް',language:'ބަސް',english:'އިނގިރޭސި',dhivehi:'ދިވެހި',information:'މަޢުލޫމާތު',document:'ލިޔުން',mistake:'ކުށް',mistakes:'ކުށްތައް',grammar:'ގަވާއިދު',spelling:'އިމްލާ',style:'އުސްލޫބު',tool:'ވަސީލަތް',technology:'ޓެކްނޮލޮޖީ',human:'އިންސާން',intelligence:'ބުއްދި',writing:'ލިޔުން',writer:'ލިޔާ މީހާ',system:'ސިސްޓަމް',memory:'މެމޮރީ',lesson:'ލެސަން',structure:'ސްޓްރަކްޗަރ',test:'ޓެސްޓް',
   good:'ރަނގަޅު',well:'ރަނގަޅު',bad:'ނުބައި',important:'މުހިންމު',easy:'ފަސޭހަ',difficult:'އުނދަގޫ',new:'އާ',old:'ކުރީގެ',big:'ބޮޑު',small:'ކުޑަ',black:'ކަޅު',cat:'ބުޅާ',apple:'އާފަލު',bird:'ދޫނި',birds:'ދޫނިތައް',maldivians:'ދިވެހިން',person:'މީހާ',place:'ތަން',hand:'އަތް',plate:'ތަށި',fast:'އަވަސް',slow:'ލަސް',today:'މިއަދު',tomorrow:'މާދަމާ',yesterday:'އިއްޔެ',day:'ދުވަސް',time:'ވަގުތު',work:'މަސައްކަތް',student:'ދަރިވަރު',teacher:'މުދައްރިސް',food:'ކާނާ',water:'ފެން',name:'ނަން',friend:'ރައްޓެހި',people:'މީހުން',world:'ދުނިޔެ'
 };
 
 export const VERIFIED_PHRASES = {
-  'artificial intelligence':'މަޞްނޫޢީ ބުއްދި','language tool':'ލޭންގުއޭޖްޓޫލް','translation engine':'ތަރުޖަމާ އެންޖިން','translation memory':'ތަރުޖަމާ މެމޮރީ','personal dictionary':'އަމިއްލަ ޑިކްޝަނަރީ','style guide':'އުސްލޫބުގެ މަގުދެއްކުން','writing assistant':'ލިޔުމުގެ މުއާވަން','natural language':'ޤުދުރަތީ ބަސް','for example':'މިސާލަކަށް','in other words':'އެހެން ބަހަކުން','as a result':'އެގޮތުން','right now':'މިހާރު','every day':'ކޮންމެ ދުވަހަކު'
+  'artificial intelligence':'މަޞްނޫޢީ ބުއްދި','language tool':'ލޭންގުއޭޖްޓޫލް','translation engine':'ތަރުޖަމާ އެންޖިން','translation memory':'ތަރުޖަމާ މެމޮރީ','personal dictionary':'އަމިއްލަ ޑިކްޝަނަރީ','style guide':'އުސްލޫބުގެ މަގުދެއްކުން','writing assistant':'ލިޔުމުގެ މުއާވަން','natural language':'ޤުދުރަތީ ބަސް','for example':'މިސާލަކަށް','in other words':'އެހެން ބަހަކުން','as a result':'އެގޮތުން','right now':'މިހާރު','every day':'ކޮންމެ ދުވަހަކު','how much':'ކިހާ','how many':'ކިތައް'
 };
 
 /**
@@ -247,7 +296,7 @@ export const SUKUN = 'ް';
  */
 export const GRAMMAR_RULES = {
   defaultWordOrder:{id:'DV-SOV-001',pattern:'subject-object-verb',status:'verified'},
-  nounNounPredication:{id:'DV-NOUN-COPULA-08',suffix:'އަކީ',composition:'އެއް + އީ',meaning:'noun is noun; general or constant classification',simplePattern:'indefinite subject + indefinite predicate noun',negation:'append ނޫން',prohibition:'never use އަކީ merely to connect a noun to an adjective',status:'verified-from-lesson-8-source'},
+  nounNounPredication:{id:'DV-NOUN-COPULA-08',suffix:'އަކީ',surfaceEnding:'ަކީ',composition:'އެއް + އީ',meaning:'noun is noun; general or constant classification',simplePattern:'indefinite subject + indefinite predicate noun',negation:'append ނޫން',prohibition:'never use އަކީ merely to connect a noun to an adjective',status:'verified-from-lesson-8-source'},
 
   repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
   quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'},
@@ -256,6 +305,7 @@ export const GRAMMAR_RULES = {
   gerund:{id:'DV-VERB-GERUND',typicalEnding:'އުން',meaning:'verbal noun; the act of performing an action',declinesAsNoun:true,status:'verified-from-lesson-13'},
   infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'},
   presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'},
+  inherentQuestion:{id:'DV-Q-INHERENT-15',meaning:'A question whose interrogative force comes from a question word',subjectOrder:'QOV',objectOrder:'SVQ',adjunctOrders:['SQOV','QSOV','SOVQ'],flexibleForEmphasis:true,status:'verified-from-owner-supplied-pdf'},
   pastTense:{id:'DV-VERB-PAST',meaning:'completed past action',formation:'use verified stem-class or lexical past mapping',universalFinalReplacement:false,status:'verified-pairs-only'},
   negativePast:{id:'DV-PAST-NEG',observedPattern:'prefix ނު to the verified past form',conflict:'Lesson prose mentions final ނޫން but supplied examples omit it',status:'examples-verified-general-rule-unconfirmed'},
   pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'},
@@ -362,12 +412,23 @@ export const LESSON_14_SOURCE = {
   title:'Verbs – Present Progressive',
   date:'2017-08-24',
   author:'thatmaldivesblog',
+  sourceUrl:'https://thatmaldivesblog.wordpress.com/2017/08/24/dhivehi-lesson-14-verbs-present-progressive/',
   meaning:'An action progressing at the present moment; English am/are/is + verb-ing.',
   gerundContrast:'The progressive is a verb; the identically shaped English gerund functions as a noun.',
   formation:'Replace final ން of the infinitive with ނީ.',
   longVowelRule:'Shorten a long vowel immediately before ނީ.',
   longVowelWarning:'The corresponding long-vowel form is a different verb form and must not be conflated with the progressive.',
   syntax:{defaultOrder:'subject-object-verb',flexible:true,initialConstituentEmphasis:true,adjectivesBeforeNouns:true,nullSubject:true},
+  verifiedWordOrderExamples:[
+    {form:'އަހަރެމެން ފަތަނީ މޫދުގައި',meaning:'We are swimming in the sea.'},
+    {form:'އަހަރެމެން މޫދުގައި ފަތަނީ',meaning:'We are swimming in the sea.'},
+    {form:'މޫދުގައި އަހަރެމެން ފަތަނީ',meaning:'It is in the sea that we are swimming.',locationFocused:true}
+  ],
+  verifiedNullSubjectExamples:[
+    {form:'މިއަދު އެރަށަށް ދަނީ',meaning:'Today [contextual subject] is going to that island.'},
+    {form:'ބަތް ކަނީ',meaning:'[Contextual subject] is eating rice.'},
+    {form:'މޫދުގައި ފަތަނީ',meaning:'[Contextual subject] is swimming in the sea.'}
+  ],
   complexPattern:'Infinitives can combine with a present-progressive verb.',
   culturalNote:'ސައި ބޯން can refer to having the Maldivian evening meal even when tea itself is not drunk.'
 };
@@ -406,6 +467,29 @@ export const LESSON_14_SENTENCES = [
   ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
   ['now she is starting to walk','މިހާރު ހިނގަން ފަށަނީ']
 ];
+
+export const LESSON_15_SOURCE = {
+  title:'Question Words',
+  sourceId:'dhivehi-lessons-correct-2018',
+  pdfPages:[58,59,60,61,62,63],
+  distinction:{inherent:'question forced by a question word',derived:'statement converted into a question by a suffix'},
+  wordOrder:{subjectQuestion:'QOV',objectQuestion:'SVQ',otherPossible:['SQOV','QSOV','SOVQ'],flexibleForEmphasis:true},
+  caution:'Question words also occur in relative clauses; interrogative interpretation remains context-sensitive.'
+};
+
+export const QUESTION_WORD_MEMORY = {
+  'ކާކު':{english:'who/whom',declinable:true,role:'person'},
+  'ކީއް':{english:'what',declinable:false,answerType:'action or non-specific response'},
+  'ކޮންއެއްޗެއް':{english:'what/which thing',declinable:true,answerType:'noun or physical thing'},
+  'ކޮބާ':{english:'where',declinable:false,motion:false,verbRestriction:'normally no verb in this construction'},
+  'ކޮންތާކު':{english:'where/at which place',declinable:true,locationCaseSensitive:true},
+  'ކޮންއިރަކު':{english:'when',declinable:true,role:'time'},
+  'ކީއްވެ':{english:'why',declinable:false,role:'reason'},
+  'ކޮން':{english:'which',declinable:false,role:'noun modifier'},
+  'ކިހިނެއް':{english:'how',declinable:false,role:'method or manner'},
+  'ކިހާ':{english:'how much/how',declinable:false,role:'uncountable or continuous quality'},
+  'ކިތައް':{english:'how many',declinable:true,role:'countable quantity'}
+};
 
 export const PAST_TENSE_MEMORY = {
   'ކުރަން':{past:'ކުރި',english:'did',class:'verified-stem-change'},
