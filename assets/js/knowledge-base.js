@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.1.0';
+export const KNOWLEDGE_VERSION = '3.2.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -20,6 +20,7 @@ export const LESSON_REGISTRY = [
   {id:9,topic:'Another Indefinite Marker',focus:'Specific އެއް versus unspecified އަކު; suffix stacking and irregular ތާކު',status:'source-encoded-and-tested'},
   {id:10,topic:'Noun Cases',focus:'Eight cases, suffix ordering, stem changes, specific locatives and context-sensitive ން',status:'source-encoded-and-tested'},
   {id:11,topic:'Demonstrative Pronoun Cases',focus:'Dative through associative forms, common variants and ablative/instrumental overlap',status:'source-encoded-and-tested'},
+  {id:12,topic:'Personal Pronoun Cases',focus:'Nominative/accusative, genitive, dative, ablative construction and associative variants',status:'source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
@@ -546,6 +547,74 @@ export const DEMONSTRATIVE_PRONOUN_CASE_MEMORY = {
   'ތިއެއްޗެއްސާ':{distance:'medial',number:'plural',case:'associative',english:'with those/them'},
   'އެއެއްޗެއްސާ':{distance:'distal',number:'plural',case:'associative',english:'with those/them'}
 };
+
+export const LESSON_12_SOURCE = {
+  title:'Personal Pronoun Cases',
+  date:'2017-04-04',
+  author:'thatmaldivesblog',
+  availableCases:['nominative/accusative','genitive','dative','ablative','associative'],
+  unavailableCases:['locative','instrumental'],
+  rationale:'Personal pronouns do not normally express location in/on/at a person or an instrument used as a person.',
+  ablativeConstruction:'genitive personal pronoun + ފަރާތުން',
+  variationNotes:[
+    'ޔ may appear in dative and associative spellings, such as އޭނާޔަށް and ކަލެޔާ.',
+    'Short vowels may reflect actual pronunciation when suffixes attach to އޭނާ and މީނާ.',
+    'Final ނ is not always doubled after forms ending in މެން or މީހުން; doubled and undoubled forms are acceptable.',
+    'Spoken first-person dative and associative commonly use އަހަންނަށް and އަހަންނާ.'
+  ]
+};
+
+export const PERSONAL_PRONOUN_CASE_MEMORY = {
+  'އަހަރެން':{person:1,number:'singular',case:'nominative/accusative',english:'I/me'},
+  'އަހަރެންގެ':{person:1,number:'singular',case:'genitive',english:'my/mine'},
+  'އަހަރެންނަށް':{person:1,number:'singular',case:'dative',english:'to/for me',variant:'table'},
+  'އަހަންނަށް':{person:1,number:'singular',case:'dative',english:'to/for me',variant:'common-spoken'},
+  'އަހަރެންނާ':{person:1,number:'singular',case:'associative',english:'with me',variant:'table'},
+  'އަހަންނާ':{person:1,number:'singular',case:'associative',english:'with me',variant:'common-spoken'},
+  'އަހަރެމެން':{person:1,number:'plural',case:'nominative/accusative',english:'we/us'},
+  'އަހަރެމެންގެ':{person:1,number:'plural',case:'genitive',english:'our/ours'},
+  'އަހަރެމެނަށް':{person:1,number:'plural',case:'dative',english:'to/for us'},
+  'އަހަރެމެނާ':{person:1,number:'plural',case:'associative',english:'with us'},
+  'ތިޔަ':{person:2,number:'singular',case:'nominative/accusative',english:'you'},
+  'ތިޔަގެ':{person:2,number:'singular',case:'genitive',english:'your/yours'},
+  'ތިޔަށް':{person:2,number:'singular',case:'dative',english:'to/for you'},
+  'ތިޔާ':{person:2,number:'singular',case:'associative',english:'with you'},
+  'ތިޔަމެން':{person:2,number:'plural',case:'nominative/accusative',english:'you (plural)'},
+  'ތިޔަމެންގެ':{person:2,number:'plural',case:'genitive',english:'your/yours (plural)'},
+  'ތިޔަމެނަށް':{person:2,number:'plural',case:'dative',english:'to/for you (plural)'},
+  'ތިޔަމެނާ':{person:2,number:'plural',case:'associative',english:'with you (plural)'},
+  'މީނާ':{person:3,number:'singular',distance:'proximal',case:'nominative/accusative',english:'this person'},
+  'މީނާގެ':{person:3,number:'singular',distance:'proximal',case:'genitive',english:'this person’s'},
+  'މީނާއަށް':{person:3,number:'singular',distance:'proximal',case:'dative',english:'to/for this person'},
+  'މީނާއާ':{person:3,number:'singular',distance:'proximal',case:'associative',english:'with this person'},
+  'އޭނާ':{person:3,number:'singular',distance:'distal',case:'nominative/accusative',english:'he/she'},
+  'އޭނާގެ':{person:3,number:'singular',distance:'distal',case:'genitive',english:'his/her'},
+  'އޭނާއަށް':{person:3,number:'singular',distance:'distal',case:'dative',english:'to/for him/her'},
+  'އޭނާޔަށް':{person:3,number:'singular',distance:'distal',case:'dative',english:'to/for him/her',variant:'pronunciation-based'},
+  'އޭނާއާ':{person:3,number:'singular',distance:'distal',case:'associative',english:'with him/her'},
+  'މިމީހުން':{person:3,number:'plural',distance:'proximal',case:'nominative/accusative',english:'these people/they'},
+  'މިމީހުންގެ':{person:3,number:'plural',distance:'proximal',case:'genitive',english:'these people’s/their'},
+  'މިމީހުނަށް':{person:3,number:'plural',distance:'proximal',case:'dative',english:'to/for these people'},
+  'މިމީހުނާ':{person:3,number:'plural',distance:'proximal',case:'associative',english:'with these people'},
+  'އެމީހުން':{person:3,number:'plural',distance:'distal',case:'nominative/accusative',english:'they/them'},
+  'އެމީހުންގެ':{person:3,number:'plural',distance:'distal',case:'genitive',english:'their/theirs'},
+  'އެމީހުނަށް':{person:3,number:'plural',distance:'distal',case:'dative',english:'to/for them'},
+  'އެމީހުނާ':{person:3,number:'plural',distance:'distal',case:'associative',english:'with them'},
+  'ކަލޭ':{person:2,number:'singular',register:'alternate',case:'nominative/accusative',english:'you'},
+  'ކަލޭގެ':{person:2,number:'singular',register:'alternate',case:'genitive',english:'your/yours'},
+  'ކަލޭއަށް':{person:2,number:'singular',register:'alternate',case:'dative',english:'to/for you'},
+  'ކަލޭއާ':{person:2,number:'singular',register:'alternate',case:'associative',english:'with you'},
+  'ކަލެޔާ':{person:2,number:'singular',register:'alternate',case:'associative',english:'with you',variant:'ya-spelling'},
+  'ކަލޭމެން':{person:2,number:'plural',register:'alternate',case:'nominative/accusative',english:'you (plural)'},
+  'ކަލޭމެންގެ':{person:2,number:'plural',register:'alternate',case:'genitive',english:'your/yours (plural)'},
+  'ކަލޭމެނަށް':{person:2,number:'plural',register:'alternate',case:'dative',english:'to/for you (plural)'},
+  'ކަލޭމެނާ':{person:2,number:'plural',register:'alternate',case:'associative',english:'with you (plural)'}
+};
+
+export function personalPronounAblative(genitiveForm){
+  const data=PERSONAL_PRONOUN_CASE_MEMORY[genitiveForm];
+  return data?.case==='genitive'?genitiveForm+' ފަރާތުން':null;
+}
 
 export const GERUND_DECLENSION_MEMORY = {
   'ކުރުން':{
