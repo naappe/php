@@ -13,6 +13,19 @@ assert.equal(
   'ލެސަން 12ގެ މުޅި ޓޯކަން ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ބަހައްޓައިފި!'
 );
 assert.doesNotMatch(brain.translate(lesson12Memory,'en-dv').output,/⟦|⟧/);
+
+const articleLessonSentences=[
+  'What Is an Article in English Grammar?',
+  'Before learning how to apply article rules, it is helpful to understand the basic definition.',
+  'An article in English grammar is a word placed before a noun to show whether the noun is specific or general.',
+  'Articles guide the reader by indicating if the speaker is referring to something known, unknown, unique, or countable.'
+];
+for(const sentence of articleLessonSentences){
+  const translated=brain.translate(sentence,'en-dv');
+  assert.equal(translated.coverage,100);
+  assert.doesNotMatch(translated.output,/⟦|⟧/);
+  assert.equal(hasArabicScript(translated.output),false);
+}
 assert.equal(brain.translate('މިއީ ޓެސްޓެއް.','dv-en').output,'This is a test.');
 assert.equal(validateDhivehi('ج و ميه هڪڙو مټ').ok,false);
 assert.equal(validateDhivehi('މިއީ ދިވެހި').ok,true);
