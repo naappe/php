@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,14);
+assert.equal(LESSON_REGISTRY.length,15);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
@@ -145,6 +145,35 @@ for(const [english,dhivehi] of [
   ['Are they studying in Sri Lanka?','އެ މީހުން ލަންކާގައި ކިޔަވަނީތަ؟'],
   ['Is this dress nice?','މި ހެދުން ރީތިތަ؟'],
   ['Are the fish swimming in the sea?','މަސްތައް މޫދުގައި ފަތަނީތަ؟']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===17).status,'source-encoded-and-tested');
+assert.equal(LESSON_17_SOURCE.date,'2018-12-15');
+assert.equal(LESSON_17_SOURCE.edited,true);
+assert.equal(HABITUAL_VERB_MEMORY['ކުރުން'].secondThird,'ކުރޭ');
+assert.equal(selectHabitualForm('ކުރުން',{person:1}),'ކުރަން');
+assert.equal(selectHabitualForm('ކުރުން',{person:2}),'ކުރޭ');
+assert.equal(selectHabitualForm('ކުރުން',{person:3}),'ކުރޭ');
+assert.equal(selectHabitualForm('ކުރުން',{person:2,question:true}),'ކުރަންތަ');
+assert.equal(selectHabitualForm('ކުރުން',{person:3,question:true}),'ކުރޭތަ');
+assert.equal(selectHabitualForm('ކުރުން',{person:2,literary:true}),'ކުރަމު');
+assert.equal(selectHabitualForm('ކުރުން',{person:1,formalEve:true}),'ކުރަމެވެ');
+assert.equal(selectHabitualForm('ކުރުން',{person:3,formalEve:true}),'ކުރެއެވެ');
+assert.equal(selectHabitualForm('އައުން',{person:3}),'އާދޭ');
+assert.equal(selectHabitualForm('ދިޔުން',{person:3}),'ދޭ');
+assert.equal(selectHabitualForm('ދިނުން',{person:3}),'ދޭ');
+
+const habitual=brain.translate('ކުރޭ','dv-en');
+assert.equal(habitual.verbs[0].form,'habitual');
+assert.match(habitual.output,/habitually/i);
+
+for(const [english,dhivehi] of [
+  ['I sleep at nine o’clock every night.','ކޮންމެ ރެއަކު ނުވަ ގަޑީގައި އަހަރެން ނިދަން.'],
+  ['You write a book.','ތިޔަ ފޮތެއް ލިޔޭ.'],
+  ['Do you write a book?','ތިޔަ ފޮތެއް ލިޔަންތަ؟'],
+  ['The plane lands every week.','ކޮންމެ ހަފުތާއަކު ބޯޓު ފޭބޭ.']
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
