@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.2.0';
+export const KNOWLEDGE_VERSION = '3.3.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -22,7 +22,7 @@ export const LESSON_REGISTRY = [
   {id:11,topic:'Demonstrative Pronoun Cases',focus:'Dative through associative forms, common variants and ablative/instrumental overlap',status:'source-encoded-and-tested'},
   {id:12,topic:'Personal Pronoun Cases',focus:'Nominative/accusative, genitive, dative, ablative construction and associative variants',status:'source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
-  {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
+  {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'source-encoded-and-tested'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
   {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
   {id:17,topic:'Verbs – Habitual/Simple Present',focus:'Modern person split, literary forms, formal އެވެ endings and contextual އެބަ',status:'source-encoded-and-tested'},
@@ -100,6 +100,9 @@ export const VERIFIED_PAIRS = [
   ['did you go','ތިޔަ ދިޔަހޭ'],
   ['did they come','އެމީހުން އައި ހޭ'],
   ['i am going','އަހަރެން ދަނީ'],
+  ['today we are going to mum’s house to have tea','މިއަދު އަހަރެމެން ދަނީ މަންމަމެން ގެއަށް ސައި ބޯން'],
+  ['their friends are coming to watch a scary movie','އެމީހުންގެ ރައްޓެހިން އަންނަނީ ބިރުވެރި ފިލްމެއް ބަލަން'],
+
   ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
   ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
   ['now she is starting to walk','މިހާރު ހިނގަން ފަށަނީ'],
@@ -261,6 +264,32 @@ export const VERB_FORM_MEMORY = {
   'ދިނުން':{infinitive:'ދޭން',english:'give',irregular:true},
   'ލުން':{infinitive:'ލާން',english:'put',irregular:true},
   'ބުއިން':{infinitive:'ބޯން',english:'drink',irregular:true}
+};
+
+export const LESSON_14_SOURCE = {
+  title:'Verbs – Present Progressive',
+  date:'2017-08-24',
+  author:'thatmaldivesblog',
+  meaning:'An action progressing at the present moment; English am/are/is + verb-ing.',
+  gerundContrast:'The progressive is a verb; the identically shaped English gerund functions as a noun.',
+  formation:'Replace final ން of the infinitive with ނީ.',
+  longVowelRule:'Shorten a long vowel immediately before ނީ.',
+  longVowelWarning:'The corresponding long-vowel form is a different verb form and must not be conflated with the progressive.',
+  syntax:{defaultOrder:'subject-object-verb',flexible:true,initialConstituentEmphasis:true,adjectivesBeforeNouns:true,nullSubject:true},
+  complexPattern:'Infinitives can combine with a present-progressive verb.',
+  culturalNote:'ސައި ބޯން can refer to having the Maldivian evening meal even when tea itself is not drunk.'
+};
+
+export const LESSON_14_MORE_VERBS = {
+  'އެހުން':{english:'ask',formsBeyondGerund:'exercise-not-supplied'},
+  'އަޑުއެހުން':{english:'listen',formsBeyondGerund:'exercise-not-supplied'},
+  'ޖެހުން':{english:'hit',formsBeyondGerund:'exercise-not-supplied'},
+  'ދުއްވުން':{english:'drive',formsBeyondGerund:'exercise-not-supplied'},
+  'ކޮށުން':{english:'cut',formsBeyondGerund:'exercise-not-supplied'},
+  'ކެއްކުން':{english:'cook',formsBeyondGerund:'exercise-not-supplied'},
+  'ވެއްދުން':{english:'bring in',formsBeyondGerund:'exercise-not-supplied'},
+  'ފިލުން':{english:'hide',formsBeyondGerund:'exercise-not-supplied'},
+  'ފުރުން':{english:'leave/depart',formsBeyondGerund:'exercise-not-supplied'}
 };
 
 export const PRESENT_PROGRESSIVE_MEMORY = {
