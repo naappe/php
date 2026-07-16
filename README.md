@@ -1,5 +1,7 @@
 # Bas Translate
 
+The homepage is also the system dashboard: it presents the live translator, AI reasoning policy, permanent knowledge base, translation pipeline, lesson registry, safety rules and regression-test status in one responsive page.
+
 A static, teachable English ↔ Dhivehi translation-memory website hosted on GitHub Pages.
 
 ## Live website
