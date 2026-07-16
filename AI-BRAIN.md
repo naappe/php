@@ -16,6 +16,8 @@ Build a trustworthy English ↔ Dhivehi translation-memory engine that learns fr
 6. Do not derive word-to-word meanings from a multiword sentence unless alignment is verified.
 7. Every permanent memory must have a human-verifiable source or be explicitly provided as correct by the project owner.
 8. Preserve the distinction between verified rules and implementation inferences.
+9. Tokens are evidence used during interpretation; they are not the translation itself.
+10. English expressions must be interpreted according to complete-sentence meaning before a Dhivehi surface sentence is constructed.
 
 ## Learning pipeline
 
@@ -47,6 +49,44 @@ Update documentation and SHA256SUMS.txt
 6. Explicit unknown marker
 
 Phonetic transliteration is a separate operation. It must not be presented as semantic translation.
+
+## Meaning-based translation pipeline
+
+Use this sequence for every sentence:
+
+```yaml
+translation_pipeline:
+  - identify the intended meaning of the complete sentence
+  - detect Dhivehi, English, and placeholder segments
+  - translate English expressions according to context
+  - reconstruct the sentence in natural Dhivehi order
+  - apply noun, number, definiteness, and case rules
+  - verify meaning, grammar, spelling, and fluency
+```
+
+Vocabulary lookup can propose candidates, but a candidate must be rejected when it conflicts with the complete sentence.
+
+### Context-sensitive mapping guardrails
+
+- “function” must not automatically become `ވަޒީފާ`; that normally means job/duty.
+- “demonstrative” must not automatically become `މިސާލު ދެއްކުން`.
+- “pronouns” must not automatically become `ވަކި ނަންތައް`.
+- “them” must not automatically become `އެއިން`.
+- “belongs” must not automatically become `ގެ`; possession may require a complete construction.
+
+These items belong in `CONTEXT_SENSITIVE_TERMS`, not `VERIFIED_WORDS`.
+
+## Verified noun-case lesson sentence
+
+English meaning:
+
+> In the last lesson, we learned how nouns change when case suffixes are attached and learned the meanings and uses of those suffixes.
+
+Verified natural Dhivehi:
+
+> ފަހުގެ ދަރުހުގައި، ނަންތަކަށް ކޭސް ސަފިކްސްތައް ގުޅާއިރު ނަންތައް ބަދަލުވާ ގޮތާއި، އެ ސަފިކްސްތަކުގެ މާނައާއި ބޭނުން ދަސްކުރީމެވެ.
+
+Store this as one complete verified memory. Do not infer unconditional mappings for every English word inside it.
 
 ## Script detection
 
