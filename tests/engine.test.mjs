@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,9 +72,40 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,16);
+assert.equal(LESSON_REGISTRY.length,17);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-missing');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===9).status,'source-encoded-and-tested');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===10).status,'source-encoded-and-tested');
+assert.equal(LESSON_10_SOURCE.date,'2016-11-16');
+assert.equal(LESSON_10_SOURCE.author,'thatmaldivesblog');
+assert.match(LESSON_10_SOURCE.caveat,/not mandatory/i);
+assert.equal(NOUN_CASE_SYSTEM.nominative.suffix,null);
+assert.equal(NOUN_CASE_SYSTEM.accusative.suffix,null);
+assert.equal(NOUN_CASE_SYSTEM.genitive.suffix,'ގެ');
+assert.equal(NOUN_CASE_SYSTEM.dative.suffix,'އަށް');
+assert.equal(NOUN_CASE_SYSTEM.locative.suffix,'ގައި');
+assert.equal(NOUN_CASE_SYSTEM.ablative.suffix,NOUN_CASE_SYSTEM.instrumental.suffix);
+assert.equal(NOUN_CASE_SYSTEM.ablative.contextSensitiveWith,'instrumental');
+assert.deepEqual(NOUN_CASE_SYSTEM.associative.suffixes,['އާ','އާއި']);
+assert.match(NOUN_CASE_COMBINATIONS.genitive.plural,/ތަކުގެ/);
+assert.match(NOUN_CASE_COMBINATIONS.dative.somePlural,/ތަކަކު/);
+assert.equal(NOUN_CASE_FORM_MEMORY['މަންމަގެ'].exception,'family word');
+assert.equal(NOUN_CASE_FORM_MEMORY['ތާނގައި'].irregular,true);
+assert.equal(SPECIFIC_LOCATIVE_MEMORY['މޭޒު ދަށުގައި'],'under the table');
+
+for(const [form,caseName,english] of [
+  ['ލޮލުގެ','genitive',"eye's"],
+  ['މީހަކަށް','dative','to/for a person'],
+  ['ފެނުގައި','locative','in the water'],
+  ['ރަށަކުން','ablative','from an island'],
+  ['ވަޅިން','instrumental','with the knife'],
+  ['މަންމައާ','associative','with mum']
+]){
+  const result=brain.translate(form,'dv-en');
+  assert.equal(result.output,english[0].toUpperCase()+english.slice(1));
+  assert.equal(result.nounCases[0].case,caseName);
+}
+
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
 assert.equal(VERB_FORM_MEMORY['ވުން'].infinitive,'ވާން');
