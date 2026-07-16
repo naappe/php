@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.7.0';
+export const KNOWLEDGE_VERSION = '3.8.0';
 
 export const DICTIONARY_SOURCES = [
   {
@@ -43,7 +43,8 @@ export const LEXICAL_SOURCES = [
     dictionaryRowsObserved:29824,
     use:'development-time Thaana headword validation and Dhivehi definitions',
     limitation:'Definitions are Dhivehi-to-Dhivehi and must not be promoted as English translation pairs.',
-    publicationPolicy:'Do not bundle or republish the complete SQLite database in the static website.'
+    browserDataset:'29,824 entries converted into 30 first-letter JSON chunks at owner direction',
+    publicationPolicy:'Generated chunks retain source attribution; verify Radheef content redistribution terms before broad redistribution.'
   }
 ];
 
