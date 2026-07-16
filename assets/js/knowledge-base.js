@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.9.0';
+export const KNOWLEDGE_VERSION = '4.0.0';
 
 export const DICTIONARY_SOURCES = [
   {
