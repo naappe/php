@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.3.0';
+export const KNOWLEDGE_VERSION = '2.4.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -18,10 +18,21 @@ export const LESSON_REGISTRY = [
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
   {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
-  {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'}
+  {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
+  {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ['i went','އަހަރެން ދިޔަ'],
+  ['he ate','އޭނާ ކެއި'],
+  ['she ate','އޭނާ ކެއި'],
+  ['they read a book','އެމީހުން ފޮތް ކިޔައި'],
+  ['we went to the island','އަހަރެމެން ރަށަށް ދިޔަ'],
+  ['i did not go','އަހަރެން ނުދިޔަ'],
+  ['he did not eat','އޭނާ ނުކެއި'],
+  ['she did not eat','އޭނާ ނުކެއި'],
+  ['did you go','ތިޔަ ދިޔަހޭ'],
+  ['did they come','އެމީހުން އައި ހޭ'],
   ['i am going','އަހަރެން ދަނީ'],
   ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
   ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
@@ -115,7 +126,10 @@ export const GRAMMAR_RULES = {
   unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'},
   gerund:{id:'DV-VERB-GERUND',typicalEnding:'އުން',meaning:'verbal noun; the act of performing an action',declinesAsNoun:true,status:'verified-from-lesson-13'},
   infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'},
-  presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'}
+  presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'},
+  pastTense:{id:'DV-VERB-PAST',meaning:'completed past action',formation:'use verified stem-class or lexical past mapping',universalFinalReplacement:false,status:'verified-pairs-only'},
+  negativePast:{id:'DV-PAST-NEG',observedPattern:'prefix ނު to the verified past form',conflict:'Lesson prose mentions final ނޫން but supplied examples omit it',status:'examples-verified-general-rule-unconfirmed'},
+  pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -175,6 +189,30 @@ export const LESSON_14_SENTENCES = [
   ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
   ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
   ['now she is starting to walk','މިހާރު ހިނގަން ފަށަނީ']
+];
+
+export const PAST_TENSE_MEMORY = {
+  'ކުރަން':{past:'ކުރި',english:'did',class:'verified-stem-change'},
+  'ބަލަން':{past:'ބެލި',english:'looked',class:'verified-stem-change'},
+  'ހަދަން':{past:'ހެއްދި',english:'made',class:'verified-stem-change'},
+  'ފަށަން':{past:'ފެށި',english:'started',class:'verified-stem-change'},
+  'ބުނަން':{past:'ބުނި',english:'said',class:'verified-stem-change'},
+  'ނަގަން':{past:'ނެގި',english:'took',class:'verified-stem-change'},
+  'ކިޔަން':{past:'ކިޔައި',english:'read',class:'verified-stem-change'},
+  'ލިޔަން':{past:'ލިޔުން',english:'wrote',class:'verified-stem-change'},
+  'ދާން':{past:'ދިޔަ',english:'went',class:'irregular'},
+  'އަންނަން':{past:'އައި',english:'came',class:'irregular'},
+  'ކާން':{past:'ކެއި',english:'ate',class:'irregular'},
+  'ވާން':{past:'ވި',english:'was/were/happened',class:'irregular'},
+  'ދޭން':{past:'ދިން',english:'gave',class:'irregular'},
+  'ބޯން':{past:'ބިއި',english:'drank',class:'irregular'},
+  'ލާން':{past:'ލި',english:'put',class:'irregular'}
+};
+
+export const UNCONFIRMED_PAST_GENERALIZATIONS = [
+  {claim:'replace final ން with ނި',reason:'does not generate the supplied outputs such as ކުރި or ބެލި'},
+  {claim:'negative past requires final ނޫން',reason:'supplied examples are ނުދިޔަ and ނުކެއި without ނޫން'},
+  {claim:'a single vowel substitution predicts past stems',reason:'supplied forms belong to several stem patterns and include lexical irregulars'}
 ];
 
 export const GERUND_DECLENSION_MEMORY = {
