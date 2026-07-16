@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.9.0';
+export const KNOWLEDGE_VERSION = '3.0.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -18,6 +18,7 @@ export const LESSON_REGISTRY = [
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
   {id:8,topic:'Lesson 8',focus:'Source lesson not yet received',status:'source-missing'},
   {id:9,topic:'Another Indefinite Marker',focus:'Specific އެއް versus unspecified އަކު; suffix stacking and irregular ތާކު',status:'source-encoded-and-tested'},
+  {id:10,topic:'Noun Cases',focus:'Eight cases, suffix ordering, stem changes, specific locatives and context-sensitive ން',status:'source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
@@ -396,6 +397,73 @@ export const LESSON_17_SOURCE = {
     'Without an adverbial, the habitual can sound emphatic.',
     'އެބަ with the simple present is context-sensitive and may signal progressive, continuing habitual relevance or emphasis.'
   ]
+};
+
+export const LESSON_10_SOURCE = {
+  title:'Noun Cases',
+  date:'2016-11-16',
+  author:'thatmaldivesblog',
+  typology:'Case suffixes supply information often expressed by English prepositions.',
+  interpretation:'Nominative and accusative are unmarked; flexible word order means context distinguishes subject from direct object.',
+  ordering:'Plural and indefinite markers precede case suffixes.',
+  modifierRule:'Adjectives and demonstratives do not decline when the noun receives a case suffix.',
+  caveat:'The summary-table indefinite forms are the most common forms, not mandatory in every context.'
+};
+
+export const NOUN_CASE_SYSTEM = {
+  nominative:{suffix:null,meaning:'subject',marked:false},
+  accusative:{suffix:null,meaning:'direct object',marked:false},
+  genitive:{suffix:'ގެ',meaning:"of / ’s",indefiniteCommon:'އެއްގެ'},
+  dative:{suffix:'އަށް',meaning:'to / for; movement toward',indefiniteCommon:'އަކަށް'},
+  locative:{suffix:'ގައި',spoken:'ގަ',meaning:'in / on / at; existence in a location',indefiniteCommon:'އެއްގައި'},
+  ablative:{suffix:'ން',meaning:'from',indefiniteCommon:'އަކުން',contextSensitiveWith:'instrumental'},
+  instrumental:{suffix:'ން',meaning:'with / using / by means of',indefiniteCommon:'އަކުން',contextSensitiveWith:'ablative'},
+  associative:{suffixes:['އާ','އާއި'],spoken:'އާ',meaning:'with / together with; also and',indefiniteCommon:'އަކާ'}
+};
+
+export const NOUN_CASE_COMBINATIONS = {
+  genitive:{plural:'ތައް + ގެ → ތަކުގެ',specificIndefinite:'އެއް + ގެ → އެއްގެ',humanPlural:'ން + ގެ → ންގެ',unspecifiedIndefinite:'އަކުގެ is possible but rare'},
+  dative:{unspecifiedIndefinite:'އަކު + އަށް → އަކަށް',plural:'ތައް + އަށް → ތަކަށް',somePlural:'ތަކެއް → ތަކަކު before އަށް'},
+  locative:{specificIndefinite:'އެއް + ގައި → އެއްގައި',plural:'ތައް + ގައި → ތަކުގައި',unspecifiedIndefinite:'އަކުގައި is rare but used in forms such as ތާކުގައި'},
+  ablative:{plural:'ތައް → ތަކު before ން',indefinite:'Only އަކު is used before ން',humanDefinite:'noun, commonly genitive, + ފަރާތުން'},
+  associative:{indefinite:'Indefinite nouns use އަކު before އާ'}
+};
+
+export const NOUN_CASE_FORM_MEMORY = {
+  'ޑޮކްޓަރުގެ':{base:'ޑޮކްޓަރު',case:'genitive',english:"doctor's"},
+  'ލޮލުގެ':{base:'ލޯ',case:'genitive',english:"eye's"},
+  'ރަށުގެ':{base:'ރަށް',case:'genitive',english:"island's"},
+  'ކާށީގެ':{base:'ކާށި',case:'genitive',english:"coconut's"},
+  'ގޭގެ':{base:'ގެ',case:'genitive',english:"house's"},
+  'ކުލައިގެ':{base:'ކުލަ',case:'genitive',english:"colour's"},
+  'މަންމަގެ':{base:'މަންމަ',case:'genitive',english:"mother's",exception:'family word'},
+  'މީހެއްގެ':{base:'މީހެއް',case:'genitive',english:"a person's"},
+  'ދޫނިތަކުގެ':{base:'ދޫނިތައް',case:'genitive',english:"birds'"},
+  'ގެއަށް':{base:'ގެ',case:'dative',english:'to the house'},
+  'ރަށަށް':{base:'ރަށް',case:'dative',english:'to the island'},
+  'މީހަކަށް':{base:'މީހަކު',case:'dative',english:'to/for a person'},
+  'މީހުންނަށް':{base:'މީހުން',case:'dative',english:'to/for the people'},
+  'ގޭގައި':{base:'ގެ',case:'locative',english:'at the house'},
+  'ރަށުގައި':{base:'ރަށް',case:'locative',english:'on the island'},
+  'ފެނުގައި':{base:'ފެން',case:'locative',english:'in the water'},
+  'ތާނގައި':{base:'ތަން',case:'locative',english:'at the place',irregular:true},
+  'ތާކުގައި':{base:'ތަން',case:'locative',english:'at some place',irregular:true},
+  'މޭޒުން':{base:'މޭޒު',case:'ablative',english:'from the table'},
+  'ގެއިން':{base:'ގެ',case:'ablative',english:'from the house',spoken:'ގޭން'},
+  'ރަށަކުން':{base:'ރަށް',case:'ablative',english:'from an island'},
+  'މީހަކުން':{base:'މީހަކު',case:'ablative',english:'from a person'},
+  'ވަޅިން':{base:'ވަޅި',case:'instrumental',english:'with the knife'},
+  'ގަލަމަކުން':{base:'ގަލަމު',case:'instrumental',english:'with a pen'},
+  'މަންމައާ':{base:'މަންމަ',case:'associative',english:'with mum'},
+  'މީހަކާ':{base:'މީހަކު',case:'associative',english:'with a person'}
+};
+
+export const SPECIFIC_LOCATIVE_MEMORY = {
+  'އެނދު މަތީގައި':'on top of the bed',
+  'އަލަމާރި ތެރޭގައި':'inside the cupboard',
+  'ކަނޑު އަޑީގައި':'at the bottom of the sea',
+  'މިސްކިތް ކައިރީގައި':'near the mosque',
+  'މޭޒު ދަށުގައި':'under the table'
 };
 
 export const GERUND_DECLENSION_MEMORY = {
