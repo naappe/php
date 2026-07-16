@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS,LESSON_15_SOURCE,LESSON_8_SOURCE,NOUN_PREDICATION_MEMORY,DICTIONARY_SOURCES,LESSON_SOURCES,LEXICAL_SOURCES,EXTERNAL_LEXICAL_CANDIDATES} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm,sentenceTokenize,wordTokenize} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_WORD_MEMORY,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS,LESSON_15_SOURCE,LESSON_8_SOURCE,NOUN_PREDICATION_MEMORY,DICTIONARY_SOURCES,LESSON_SOURCES,LEXICAL_SOURCES,TOKENIZER_SOURCE,EXTERNAL_LEXICAL_CANDIDATES} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 assert.equal(EXTERNAL_LEXICAL_CANDIDATES.length,1);
@@ -16,6 +16,12 @@ assert.match(DICTIONARY_SOURCES[0].importPolicy,/do not reproduce the complete c
 assert.equal(DICTIONARY_SOURCES[0].sha256,'1d40634db965885bc13bfe14b2ee4ce0bf04761bb1ee86f0f5f3e96e4d0c048b');
 
 const brain=new TranslationBrain([]);
+
+assert.deepEqual(sentenceTokenize('ބުނެފަ އެވެ. އިތުރަށް ހާމައެއް ނުކުރެ އެވެ'),['ބުނެފަ އެވެ','އިތުރަށް ހާމައެއް ނުކުރެ އެވެ']);
+assert.deepEqual(wordTokenize('ބުނެފަ އެވެ. އިތުރަށް ހާމައެއް ނުކުރެ އެވެ'),['ބުނެފަ','އެވެ','އިތުރަށް','ހާމައެއް','ނުކުރެ','އެވެ']);
+assert.deepEqual(wordTokenize('އިތުlރު ހާމައެއް test 112 ނުކުރެ? އެވެ',{removeNonDhivehiNumeric:true}),['އިތުރު','ހާމައެއް','112','ނުކުރެ','އެވެ']);
+assert.deepEqual(wordTokenize('މާފަ ބުނެފަ އެވެ. އިތުރު 112 ހާމައެއް، ނުކުރެ؟? އެވެ.',{removePunctuation:true}),['މާފަ','ބުނެފަ','އެވެ','އިތުރު','112','ހާމައެއް','ނުކުރެ','އެވެ']);
+assert.equal(TOKENIZER_SOURCE.thaanaRange,'U+0780–U+07B1');
 
 assert.equal(brain.translate('What are you doing?','en-dv').output,'ތިޔަ ކުރަނީ ކޮބައިތޯ؟');
 assert.equal(brain.translate('This is a test.','en-dv').output,'މިއީ ޓެސްޓެއް.');
