@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.8.0';
+export const KNOWLEDGE_VERSION = '2.9.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -16,7 +16,8 @@ export const LESSON_REGISTRY = [
   {id:5,topic:'Adjectives',focus:'Position, negative adjectives, good/bad words',status:'summary-received'},
   {id:6,topic:'Demonstratives',focus:'Three-way distinction, determiners, pronouns',status:'summary-received'},
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
-  {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'},
+  {id:8,topic:'Lesson 8',focus:'Source lesson not yet received',status:'source-missing'},
+  {id:9,topic:'Another Indefinite Marker',focus:'Specific އެއް versus unspecified އަކު; suffix stacking and irregular ތާކު',status:'source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
@@ -184,8 +185,8 @@ export const GRAMMAR_RULES = {
   defaultWordOrder:{id:'DV-SOV-001',pattern:'subject-object-verb',status:'verified'},
   repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
   quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'},
-  specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-8-summary'},
-  unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'},
+  specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-9-source'},
+  unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; similar to singular “some”; normally used as the indefinite base before most additional suffixes',relativeFrequency:'less common than އެއް',usageConstraint:'grammatically attachable to nouns but not used indiscriminately in natural speech',status:'verified-from-lesson-9-source'},
   gerund:{id:'DV-VERB-GERUND',typicalEnding:'އުން',meaning:'verbal noun; the act of performing an action',declinesAsNoun:true,status:'verified-from-lesson-13'},
   infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'},
   presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'},
@@ -202,6 +203,25 @@ export const GRAMMAR_RULES = {
   animateGroupExistence:{id:'DV-EXIST-THIBUN-19',verb:'ތިބުން',meaning:'a group of animate beings exists or is located',actionPattern:'animate group + action infinitive + ތިބުން',status:'verified-from-lesson-19'},
   generalLocationLiving:{id:'DV-EXIST-ULHUN-19',verb:'އުޅުން',meaning:'people exist, stay or live within a general location',status:'verified-from-lesson-19'},
   sentenceFinalEve:{id:'DV-INF-EVE-19',observedChanges:{'ެން':'ޭށެވެ','ަން':'ާށެވެ'},status:'verified-for-demonstrated-vowel-classes'}
+};
+
+export const LESSON_9_SOURCE = {
+  title:'Another Indefinite Marker',
+  date:'2016-11-16',
+  author:'thatmaldivesblog',
+  verifiedContrast:{
+    definite:'މީހާ',
+    specificIndefinite:'މީހެއް',
+    unspecifiedIndefinite:'މީހަކު'
+  },
+  suffixStacking:'When another suffix is attached to an indefinite noun, އަކު is the base in most cases.',
+  morphophonology:'އަކު requires the same appropriate word-ending changes taught for އެއް.',
+  usageWarning:'Do not generate އަކު mechanically for every noun; natural distribution is learned from usage.',
+  irregularPlace:{
+    base:'ތަން',
+    forms:['ތަނަކު','ތާކު'],
+    preferred:'ތާކު'
+  }
 };
 
 export const INDEFINITE_FORM_MEMORY = {
