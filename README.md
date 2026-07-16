@@ -31,40 +31,27 @@ This is a rule-based translation-memory engine, not a large language model. It b
 
 Nineteen lesson topics are registered. The owner-supplied 74-page course PDF is the authoritative source for Lessons 1–16. A lesson summary is catalogued separately from complete source-backed rules and examples.
 
-## Optional Radheef development lookup
+## Radheef dictionary
 
-The live site cannot run Python or SQLite. Developers can nevertheless use the
-MIT-licensed `dhivehi_nlp` package to confirm whether a Thaana headword exists
-and inspect its Dhivehi definition before promoting vocabulary:
+The live site loads Radheef directly in the browser from 30 first-letter JSON
+chunks containing 29,824 entries. A search downloads only the matching initial
+letter chunk, which the browser can cache. It requires no server, account or API
+key. Developers can rebuild the chunks from the installed `dhivehi_nlp` package:
 
 ```bash
 pip install dhivehi_nlp
 python3 tools/radheef_dictionary.py ތަންވަޅު
 python3 tools/radheef_dictionary.py --check ކާކު ކީއް ކޮބާ
+python3 tools/build_radheef_chunks.py
 ```
 
 Radheef definitions are Dhivehi-to-Dhivehi evidence, not verified
-English–Dhivehi translation pairs. The full SQLite database is intentionally
-not copied into this public repository or browser bundle.
+English–Dhivehi translation pairs. Generated chunks retain source attribution;
+confirm the dictionary-content redistribution terms before broad redistribution.
 
 The browser engine includes JavaScript equivalents of `sentence_tokenize` and
 `word_tokenize`. It can remove punctuation or retain only Thaana characters and
 ASCII numbers without requiring Python on the deployed website.
-
-## Radheef web API
-
-Install and start the optional API on a computer or Python host:
-
-```bash
-pip install -r requirements-api.txt
-uvicorn api.main:app --host 127.0.0.1 --port 8787
-```
-
-Serve the website locally on port 8000, then use its Radheef search panel. For
-production, deploy `render.yaml` on Render—or run the same Uvicorn command on
-another Python host—and save its HTTPS URL under **Dictionary API settings**.
-The API performs exact, parameterized, read-only lookups and has no bulk
-database-download endpoint.
 
 ## File structure
 
@@ -79,9 +66,8 @@ FILE-MAP.md                       Edit-target guide
 SHA256SUMS.txt                    File integrity hashes
 tests/engine.test.mjs             Core safety and translation tests
 tools/radheef_dictionary.py       Optional safe Radheef headword lookup
-api/main.py                       Optional Radheef HTTP API
-requirements-api.txt              API dependencies
-render.yaml                       Render deployment blueprint
+tools/build_radheef_chunks.py     Rebuild browser dictionary chunks
+assets/dictionary/*.json          First-letter client-side Radheef chunks
 README.md                         Project overview
 ```
 
@@ -121,7 +107,6 @@ node --check assets/js/knowledge-base.js
 node --check assets/js/engine.js
 node --check assets/js/app.js
 node tests/engine.test.mjs
-python3 -m unittest tests/test_radheef_api.py
 sha256sum -c SHA256SUMS.txt
 ```
 
