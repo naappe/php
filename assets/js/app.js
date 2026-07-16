@@ -1,5 +1,6 @@
-import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js?v=3.8.0';
-import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js?v=3.8.0';
+import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js?v=3.9.0';
+import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js?v=3.9.0';
+import {stemDhivehi,findSimilarWords} from './dhivehi-nlp.js?v=3.9.0';
 
 const $=id=>document.getElementById(id);
 let direction='en-dv';
@@ -64,11 +65,13 @@ async function searchDictionary(){
   if(!word||/[^\u0780-\u07B1]/u.test(word)){status.textContent='Enter one exact Thaana headword.';status.className='learnmsg low';return}
   status.textContent='Searching Radheef…';status.className='learnmsg';
   try{
-    const chunk=await loadDictionaryChunk(word[0]),data=chunk?.[word];if(!data)throw new Error('Exact headword not found');
-    result.innerHTML='';const heading=document.createElement('strong');heading.textContent=word;result.append(heading);
+    const chunk=await loadDictionaryChunk(word[0]);let matchedWord=word,data=chunk?.[word],matchMode='Exact Radheef headword found.';
+    if(!data){const stem=stemDhivehi(word);if(typeof stem==='string'&&stem!==word&&chunk?.[stem]){matchedWord=stem;data=chunk[stem];matchMode=`Stem fallback: ${word} → ${stem}. Verify the intended form.`}}
+    if(!data){result.innerHTML='';const suggestions=findSimilarWords(word,Object.keys(chunk||{}),{limit:5,minimum:.2});if(suggestions.length){const label=document.createElement('strong');label.textContent='Did you mean?';result.append(label);const choices=document.createElement('div');choices.className='dictionary-suggestions';suggestions.forEach(item=>{const button=document.createElement('button');button.type='button';button.textContent=item.word;button.onclick=()=>{$('dictionaryWord').value=item.word;searchDictionary()};choices.append(button)});result.append(choices);result.hidden=false}throw new Error('Exact headword not found')}
+    result.innerHTML='';const heading=document.createElement('strong');heading.textContent=matchedWord;result.append(heading);
     const list=document.createElement('ol');data.definitions.forEach(definition=>{const item=document.createElement('li');item.textContent=definition.replace(/^\d+\.\s*/,'');list.append(item)});result.append(list);
     const meta=document.createElement('small');meta.textContent=`${data.partOfSpeech||'ބަހުގެ ބާވަތް ނޭނގޭ'} · Radheef via dhivehi_nlp`;result.append(meta);result.hidden=false;
-    status.textContent='Exact Radheef headword found.';status.className='learnmsg good';
+    status.textContent=matchMode;status.className=matchMode.startsWith('Exact')?'learnmsg good':'learnmsg medium';
   }catch(error){status.textContent=`Dictionary result: ${error.message}.`;status.className='learnmsg low'}
 }
 
