@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.5.0';
+export const KNOWLEDGE_VERSION = '2.6.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -20,10 +20,30 @@ export const LESSON_REGISTRY = [
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
-  {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'}
+  {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
+  {id:17,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ['there is a bed in that room','އެކޮޓަރީގައި އެނދެއް އެބަހުރި'],
+  ['there is a crow in the nest','ހާލިތެރޭގައި ކާޅެއް އެބައިން'],
+  ['there is a spoon on the table','މޭޒުމަތީގައި ސަމުސަލެއް އެބައޮތް'],
+  ['there are some spoons on the table','މޭޒުމަތީގައި ސަމުސާތަކެއް އެބަހުއްޓެވެ'],
+  ['there is someone inside the house','ކޮންމެވެސް މީހެއް ގޭތެރޭގައި އެބަހުއްޓެވެ'],
+  ['there is a butterfly amongst the flowers','މާތަކުގެތެރެގައި ކޮކާލެއް އެބައިނެވެ'],
+  ['there is a blue book at the bottom of the box','ފޮށީގެ އަޑީގައި ނޫކުލައިގެ ފޮތެއް އެބައޮތެވެ'],
+  ['the bed is in that room','އެނދު ހުރީ އެކޮޓަރީގައި'],
+  ['the crow is in the nest','ކާޅު އިނީ ހާލިތެރޭގައި'],
+  ['the spoon is on the table','ސަމުސާ އޮތީ މޭޒުމަތީގައި'],
+  ['the spoons are on the table','ސަމުސާތައް ހުރީ މޭޒުމަތީގައި'],
+  ['the person is inside the house','މީހާ ހުރީ ގޭތެރޭގައެވެ'],
+  ['the butterfly is amongst the flowers','ކޮކާ އިނީ މާތަކުތެރޭގައެވެ'],
+  ['the blue book is at the bottom of the box','ނޫކުލައިގެ ފޮތް އޮތީ ފޮށީގެ އަޑީގައެވެ'],
+  ['there are some flowers under the chair','ގޮނޑި ދަށުގައި މާތަކެއް އެބަހުއްޓެވެ'],
+  ['the key is on the table','ތަޅުދަނޑި އޮތީ މޭޒުމަތީގައެވެ'],
+  ['there is an apple on the plate','ތަށީގައި އާފަލެއް އެބައޮތެވެ'],
+  ['the cat is at the top of the stairs','ބުޅާ އިނީ ސިޑި މަތީގައެވެ'],
+  ['there is a big mosque in the middle of the island','ރަށުމެދުގައި ބޮޑު މިސްކިތެއް އެބަހުއްޓެވެ'],
   ['is she eating','އޭނަ ކަނީތަ'],
   ['is he eating','އޭނަ ކަނީތަ'],
   ['are they studying in sri lanka','އެ މީހުން ލަންކާގައި ކިޔަވަނީތަ'],
@@ -141,7 +161,8 @@ export const GRAMMAR_RULES = {
   pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'},
   derivedQuestion:{id:'DV-Q-THA',suffix:'ތަ',formalSuffix:'ތޯ',meaning:'open truth-value question',focusByAttachment:true,status:'verified-from-lesson-16'},
   confirmationQuestion:{id:'DV-Q-DHOA',suffix:'ދޯ',formalSuffix:'ދެއްތޯ',meaning:'confirmation sought; speaker suspects proposition is true',status:'verified-from-lesson-16'},
-  negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'}
+  negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'},
+  existentialPredication:{id:'DV-EXIST-17',existentialOrder:'location + indefinite entity + އެބަ verb',locationOrder:'definite entity + locative verb + location',traditionalNounClasses:true,modernUsageFlexible:true,status:'verified-from-2020-source-lesson'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -245,6 +266,30 @@ export const UNCONFIRMED_LESSON_16 = [
   {claim:'ނު can always be appended mechanically',reason:'the supplied examples show phonological and morphological combinations such as އެއްނު and ނީނު'},
   {claim:'all question words accept ތަ',reason:'the lesson explicitly excludes ކިހާ, ކޮން and ކިތައް'}
 ];
+
+export const EXISTENTIAL_VERB_MEMORY = {
+  'ހުރުން':{infinitive:'ހުންނަން',progressive:'ހުންނަނީ',habitual:'ހުރި',habitualEve:'ހުއްޓެވެ',existential:['އެބަހުރި','އެބަހުއްޓެވެ'],locative:'ހުރީ',english:'stand/be/exist'},
+  'އިނުން':{infinitive:'އިންނަން',progressive:'އިންނަނީ',habitual:'އިން',habitualEve:'އިނެވެ',existential:['އެބައިން','އެބައިނެވެ'],locative:'އިނީ',english:'sit/be/exist'},
+  'އޮތުން':{infinitive:'އޮންނަން',progressive:'އޮންނަނީ',habitual:'އޮތް',habitualEve:'އޮތެވެ',existential:['އެބައޮތް','އެބައޮތެވެ'],locative:'އޮތީ',english:'lie/be/exist'}
+};
+
+export const TRADITIONAL_EXISTENTIAL_CLASSES = {
+  'ހުރުން':['male human','self-standing object','abstract quality','collection of inanimate objects','plural inanimate noun'],
+  'އިނުން':['female human','non-human two-legged animal','creature with more than four legs','fruit or thing still attached to a tree'],
+  'އޮތުން':['object unable to stand by itself','four-legged animal','animal without legs','detached fruit or thing']
+};
+
+export const LESSON_17_SOURCE = {
+  date:'2020-01-20',
+  author:'thatmaldivesblog',
+  traditionalGrammarSource:'Muhammad Jameel, 1971',
+  usageNote:'Many modern speakers, especially younger generations, do not strictly maintain the traditional noun-class distinctions.',
+  pronunciation:[
+    'އެބައިން is commonly pronounced އެ-ބައިން',
+    'އެބައޮތް is commonly pronounced approximately އެބޮތް',
+    'އެބައޮތެވެ is commonly pronounced approximately އެބޯތޭ'
+  ]
+};
 
 export const GERUND_DECLENSION_MEMORY = {
   'ކުރުން':{
