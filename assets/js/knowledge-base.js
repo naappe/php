@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.8.0';
+export const KNOWLEDGE_VERSION = '3.9.0';
 
 export const DICTIONARY_SOURCES = [
   {
@@ -57,6 +57,14 @@ export const TOKENIZER_SOURCE = {
   implementation:'Browser-native JavaScript equivalent; no Python runtime required.',
   thaanaRange:'U+0780–U+07B1',
   options:['removePunctuation','removeNonDhivehiNumeric']
+};
+
+export const DHIVEHI_NLP_BROWSER_PORT = {
+  source:'mismaah/dhivehi_nlp 1.0.13',
+  license:'MIT',
+  attribution:'Copyright (c) 2020 Mismaah Abdulla',
+  modules:['tokenizer','stemmer','stopwords','trigram_similarity'],
+  safety:'Stems and similarity results are analysis candidates, never verified translations. Stopwords are not removed from translation input.'
 };
 
 export const EXTERNAL_LEXICAL_CANDIDATES = [
