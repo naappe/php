@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.0.0';
+export const KNOWLEDGE_VERSION = '3.1.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -19,6 +19,7 @@ export const LESSON_REGISTRY = [
   {id:8,topic:'Lesson 8',focus:'Source lesson not yet received',status:'source-missing'},
   {id:9,topic:'Another Indefinite Marker',focus:'Specific އެއް versus unspecified އަކު; suffix stacking and irregular ތާކު',status:'source-encoded-and-tested'},
   {id:10,topic:'Noun Cases',focus:'Eight cases, suffix ordering, stem changes, specific locatives and context-sensitive ން',status:'source-encoded-and-tested'},
+  {id:11,topic:'Demonstrative Pronoun Cases',focus:'Dative through associative forms, common variants and ablative/instrumental overlap',status:'partial-source-encoded-and-tested'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
@@ -464,6 +465,56 @@ export const SPECIFIC_LOCATIVE_MEMORY = {
   'ކަނޑު އަޑީގައި':'at the bottom of the sea',
   'މިސްކިތް ކައިރީގައި':'near the mosque',
   'މޭޒު ދަށުގައި':'under the table'
+};
+
+export const LESSON_11_PARTIAL_SOURCE = {
+  inferredTitle:'Demonstrative Pronoun Cases',
+  suppliedCoverage:['plural dative','locative','ablative','instrumental','associative','summary tables'],
+  missingCoverage:['lesson title and date','introductory prose','nominative/accusative explanation','genitive explanation','singular dative opening'],
+  status:'partial-source',
+  pronunciationNote:'Plural dative forms such as މިއެއްޗެއްސަށް are pronounced approximately މީއްޗިއްސަށް.',
+  usageNotes:[
+    'The short singular ablative forms in އިން are more common than the longer ތީން forms.',
+    'The singular instrumental forms in ގެން are more common than the ތީން forms.',
+    'Ablative and instrumental demonstrative forms overlap and may substitute for one another contextually.',
+    'Singular demonstrative forms may sometimes refer to plural nouns.'
+  ]
+};
+
+export const DEMONSTRATIVE_PRONOUN_CASE_MEMORY = {
+  'މިއެއްޗެއްސަށް':{distance:'proximal',number:'plural',case:'dative',english:'to these/them'},
+  'ތިއެއްޗެއްސަށް':{distance:'medial',number:'plural',case:'dative',english:'to those/them'},
+  'އެއެއްޗެއްސަށް':{distance:'distal',number:'plural',case:'dative',english:'to those/them'},
+  'މީތީގައި':{distance:'proximal',number:'singular',case:'locative',english:'in/at/on this/it',variant:'long'},
+  'ތީތީގައި':{distance:'medial',number:'singular',case:'locative',english:'in/at/on that/it',variant:'long'},
+  'އޭތީގައި':{distance:'distal',number:'singular',case:'locative',english:'in/at/on that/it',variant:'long'},
+  'މީގައި':{distance:'proximal',number:'singular',case:'locative',english:'in/at/on this/it',variant:'short'},
+  'ތީގައި':{distance:'medial',number:'singular',case:'locative',english:'in/at/on that/it',variant:'short'},
+  'އޭގައި':{distance:'distal',number:'singular',case:'locative',english:'in/at/on that/it',variant:'short'},
+  'މިއެއްޗެހީގައި':{distance:'proximal',number:'plural',case:'locative',english:'in/at/on these/them'},
+  'ތިއެއްޗެހީގައި':{distance:'medial',number:'plural',case:'locative',english:'in/at/on those/them'},
+  'އެއެއްޗެހީގައި':{distance:'distal',number:'plural',case:'locative',english:'in/at/on those/them'},
+  'މީތީން':{distance:'proximal',number:'singular',case:'ablative/instrumental',english:'from/with this/it',rare:true},
+  'ތީތީން':{distance:'medial',number:'singular',case:'ablative/instrumental',english:'from/with that/it',rare:true},
+  'އޭތީން':{distance:'distal',number:'singular',case:'ablative/instrumental',english:'from/with that/it',rare:true},
+  'މިއިން':{distance:'proximal',number:'singular',case:'ablative',english:'from this/it',common:true},
+  'ތިއިން':{distance:'medial',number:'singular',case:'ablative',english:'from that/it',common:true},
+  'އެއިން':{distance:'distal',number:'singular',case:'ablative',english:'from that/it',common:true},
+  'މީގެން':{distance:'proximal',number:'singular',case:'instrumental',english:'with this/it',common:true},
+  'ތީގެން':{distance:'medial',number:'singular',case:'instrumental',english:'with that/it',common:true},
+  'އޭގެން':{distance:'distal',number:'singular',case:'instrumental',english:'with that/it',common:true},
+  'މިއެއްޗެހިން':{distance:'proximal',number:'plural',case:'ablative/instrumental',english:'from/with these/them'},
+  'ތިއެއްޗެހިން':{distance:'medial',number:'plural',case:'ablative/instrumental',english:'from/with those/them'},
+  'އެއެއްޗެހިން':{distance:'distal',number:'plural',case:'ablative/instrumental',english:'from/with those/them'},
+  'މީއްޗާ':{distance:'proximal',number:'singular',case:'associative',english:'with this/it',variant:'full'},
+  'ތީއްޗާ':{distance:'medial',number:'singular',case:'associative',english:'with that/it',variant:'full'},
+  'އޭއްޗާ':{distance:'distal',number:'singular',case:'associative',english:'with that/it',variant:'full'},
+  'މިއާ':{distance:'proximal',number:'singular',case:'associative',english:'with this/it',variant:'short'},
+  'ތިއާ':{distance:'medial',number:'singular',case:'associative',english:'with that/it',variant:'short'},
+  'އެއާ':{distance:'distal',number:'singular',case:'associative',english:'with that/it',variant:'short'},
+  'މިއެއްޗެއްސާ':{distance:'proximal',number:'plural',case:'associative',english:'with these/them'},
+  'ތިއެއްޗެއްސާ':{distance:'medial',number:'plural',case:'associative',english:'with those/them'},
+  'އެއެއްޗެއްސާ':{distance:'distal',number:'plural',case:'associative',english:'with those/them'}
 };
 
 export const GERUND_DECLENSION_MEMORY = {
