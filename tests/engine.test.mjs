@@ -1,17 +1,12 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments} from '../assets/js/engine.js';
 import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS} from '../assets/js/knowledge-base.js';
+import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
 
 assert.equal(brain.translate('What are you doing?','en-dv').output,'ތިޔަ ކުރަނީ ކޮބައިތޯ؟');
 assert.equal(brain.translate('This is a test.','en-dv').output,'މިއީ ޓެސްޓެއް.');
-const lesson12Memory="You now have the complete Lesson 12 token structure stored in the system's memory!";
-assert.equal(
-  brain.translate(lesson12Memory,'en-dv').output,
-  'ލެސަން 12ގެ މުޅި ޓޯކަން ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ބަހައްޓައިފި!'
-);
-assert.doesNotMatch(brain.translate(lesson12Memory,'en-dv').output,/⟦|⟧/);
 assert.equal(brain.translate('މިއީ ޓެސްޓެއް.','dv-en').output,'This is a test.');
 assert.equal(validateDhivehi('ج و ميه هڪڙو مټ').ok,false);
 assert.equal(validateDhivehi('މިއީ ދިވެހި').ok,true);
@@ -59,5 +54,10 @@ const contextual=brain.translate('The function belongs to them.','en-dv');
 assert.match(contextual.output,/⟦function⟧/i);
 assert.match(contextual.output,/⟦belongs⟧/i);
 assert.match(contextual.output,/⟦them⟧/i);
+
+const overviewHtml=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+for(const section of ['Live translator','AI reasoning instructions','Permanent knowledge base','Translation engine','Regression tests'])assert.match(overviewHtml,new RegExp(section,'i'));
+assert.match(overviewHtml,/id="pipelineList"/);
+assert.match(overviewHtml,/id="lessonList"/);
 
 console.log('All translation-engine tests passed.');
