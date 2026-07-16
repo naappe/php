@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -26,6 +26,36 @@ for(const sentence of articleLessonSentences){
   assert.doesNotMatch(translated.output,/⟦|⟧/);
   assert.equal(hasArabicScript(translated.output),false);
 }
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===15).status,'verified-pairs-encoded-rule-pending');
+assert.equal(PAST_TENSE_MEMORY['ކުރަން'].past,'ކުރި');
+assert.equal(PAST_TENSE_MEMORY['ނަގަން'].past,'ނެގި');
+assert.equal(PAST_TENSE_MEMORY['ކިޔަން'].past,'ކިޔައި');
+assert.equal(PAST_TENSE_MEMORY['ދާން'].past,'ދިޔަ');
+assert.equal(PAST_TENSE_MEMORY['ދާން'].class,'irregular');
+assert.equal(UNCONFIRMED_PAST_GENERALIZATIONS.length,3);
+
+const verifiedPast=brain.translate('ނެގި','dv-en');
+assert.equal(verifiedPast.verbs[0].form,'past');
+assert.equal(verifiedPast.output,'Took');
+
+const irregularPast=brain.translate('ދިޔަ','dv-en');
+assert.equal(irregularPast.verbs[0].irregular,true);
+assert.equal(irregularPast.output,'Went');
+
+const negativePast=brain.translate('ނުދިޔަ','dv-en');
+assert.equal(negativePast.verbs[0].form,'negative-past');
+assert.equal(negativePast.output,'Did not go');
+
+for(const [english,dhivehi] of [
+  ['I went.','އަހަރެން ދިޔަ.'],
+  ['They read a book.','އެމީހުން ފޮތް ކިޔައި.'],
+  ['We went to the island.','އަހަރެމެން ރަށަށް ދިޔަ.'],
+  ['I did not go.','އަހަރެން ނުދިޔަ.'],
+  ['Did you go?','ތިޔަ ދިޔަހޭ؟']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
 assert.equal(brain.translate('މިއީ ޓެސްޓެއް.','dv-en').output,'This is a test.');
 assert.equal(validateDhivehi('ج و ميه هڪڙو مټ').ok,false);
 assert.equal(validateDhivehi('މިއީ ދިވެހި').ok,true);
@@ -42,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,10);
+assert.equal(LESSON_REGISTRY.length,11);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
