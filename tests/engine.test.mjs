@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,8 +72,9 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,15);
-assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
+assert.equal(LESSON_REGISTRY.length,16);
+assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-missing');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===9).status,'source-encoded-and-tested');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
 assert.equal(VERB_FORM_MEMORY['ވުން'].infinitive,'ވާން');
@@ -246,6 +247,17 @@ for(const [english,dhivehi] of [
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
+assert.equal(LESSON_9_SOURCE.date,'2016-11-16');
+assert.equal(LESSON_9_SOURCE.author,'thatmaldivesblog');
+assert.equal(LESSON_9_SOURCE.verifiedContrast.definite,'މީހާ');
+assert.equal(LESSON_9_SOURCE.verifiedContrast.specificIndefinite,'މީހެއް');
+assert.equal(LESSON_9_SOURCE.verifiedContrast.unspecifiedIndefinite,'މީހަކު');
+assert.deepEqual(LESSON_9_SOURCE.irregularPlace.forms,['ތަނަކު','ތާކު']);
+assert.equal(LESSON_9_SOURCE.irregularPlace.preferred,'ތާކު');
+assert.equal(GRAMMAR_RULES.specificIndefinite.status,'verified-from-lesson-9-source');
+assert.equal(GRAMMAR_RULES.unspecifiedIndefinite.status,'verified-from-lesson-9-source');
+assert.match(GRAMMAR_RULES.unspecifiedIndefinite.usageConstraint,/not used indiscriminately/i);
+
 assert.notEqual(GRAMMAR_RULES.specificIndefinite.meaning,GRAMMAR_RULES.unspecifiedIndefinite.meaning);
 assert.equal(INDEFINITE_FORM_MEMORY['މީހެއް'].mode,'specific-indefinite');
 assert.equal(INDEFINITE_FORM_MEMORY['މީހަކު'].mode,'unspecified-indefinite');
