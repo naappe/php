@@ -32,6 +32,7 @@ function renderReasoning(result){
   if(result.focus.length){result.focus.forEach(f=>{const span=document.createElement('span');span.className='token ok';span.textContent=`${f.token}: ${f.mode} focus (${f.rule.id})`;$('tokens').append(span)})}
   if(result.indefinite.length){result.indefinite.forEach(f=>{const span=document.createElement('span');span.className='token ok';span.textContent=`${f.token}: ${f.mode} (${f.rule.id})`;$('tokens').append(span)})}
   if(result.verbs.length){result.verbs.forEach(v=>{const span=document.createElement('span');span.className='token ok';span.textContent=`${v.token}: ${v.form} → ${v.english} (${v.rule.id}${v.irregular?', irregular':''})`;$('tokens').append(span)})}
+  if(result.questions.length){result.questions.forEach(q=>{const span=document.createElement('span');span.className='token ok';span.textContent=`${q.token}: ${q.type} (${q.suffix}) — ${q.meaning}`;$('tokens').append(span)})}
 }
 
 function translate(){
