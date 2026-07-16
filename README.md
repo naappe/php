@@ -28,7 +28,23 @@ This is a rule-based translation-memory engine, not a large language model. It b
 
 ## Lesson status
 
-Eight lesson topics are registered. Lessons 4 and the supplied Lesson 8 summary are encoded with regression tests. A lesson summary is catalogued but is not treated as a complete implementation of every rule and example.
+Nineteen lesson topics are registered. The owner-supplied 74-page course PDF is the authoritative source for Lessons 1–16. A lesson summary is catalogued separately from complete source-backed rules and examples.
+
+## Optional Radheef development lookup
+
+The live site cannot run Python or SQLite. Developers can nevertheless use the
+MIT-licensed `dhivehi_nlp` package to confirm whether a Thaana headword exists
+and inspect its Dhivehi definition before promoting vocabulary:
+
+```bash
+pip install dhivehi_nlp
+python3 tools/radheef_dictionary.py ތަންވަޅު
+python3 tools/radheef_dictionary.py --check ކާކު ކީއް ކޮބާ
+```
+
+Radheef definitions are Dhivehi-to-Dhivehi evidence, not verified
+English–Dhivehi translation pairs. The full SQLite database is intentionally
+not copied into this public repository or browser bundle.
 
 ## File structure
 
@@ -42,6 +58,7 @@ AI-BRAIN.md                       Instructions for future AI/developers
 FILE-MAP.md                       Edit-target guide
 SHA256SUMS.txt                    File integrity hashes
 tests/engine.test.mjs             Core safety and translation tests
+tools/radheef_dictionary.py       Optional safe Radheef headword lookup
 README.md                         Project overview
 ```
 
