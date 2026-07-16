@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -65,6 +65,14 @@ export function applySentenceFinalEve(infinitive){
   if(infinitive.endsWith('ެން'))return infinitive.slice(0,-2).slice(0,-1)+'ޭށެވެ';
   if(infinitive.endsWith('ަން'))return infinitive.slice(0,-2).slice(0,-1)+'ާށެވެ';
   return null;
+}
+
+export function selectHabitualForm(gerund,{person=3,question=false,formalEve=false,literary=false}={}){
+  const data=HABITUAL_VERB_MEMORY[gerund];if(!data)return null;
+  if(literary&&person===2&&data.literarySecond)return question?data.literarySecond+'ތަ':data.literarySecond;
+  if(question)return (person===1||person===2?data.first:data.secondThird)+'ތަ';
+  if(formalEve)return person===1?(data.firstEve||null):(data.secondThirdEve||null);
+  return person===1?data.first:data.secondThird;
 }
 
 export class TranslationBrain{
@@ -146,6 +154,17 @@ export class TranslationBrain{
     return null;
   }
 
+  analyzeHabitualForm(token){
+    const matches=[];
+    for(const [gerund,data] of Object.entries(HABITUAL_VERB_MEMORY)){
+      for(const field of ['secondThird','firstEve','secondThirdEve','literarySecond']){
+        if(data[field]===token)matches.push({gerund,field,english:data.english});
+      }
+    }
+    if(!matches.length)return null;
+    return {token,form:'habitual',english:matches.map(x=>x.english).join(' / '),matches,ambiguous:matches.length>1,rule:GRAMMAR_RULES.habitualPresent,verified:true};
+  }
+
   analyzeExistentialForm(token){
     for(const [gerund,data] of Object.entries(EXISTENTIAL_VERB_MEMORY)){
       for(const form of ['infinitive','progressive','habitual','habitualEve','locative']){
@@ -159,6 +178,7 @@ export class TranslationBrain{
 
   analyzeVerbForm(token){
     const existential=this.analyzeExistentialForm(token);if(existential)return existential;
+    const habitual=this.analyzeHabitualForm(token);if(habitual)return habitual;
     for(const [infinitive,data] of Object.entries(PAST_TENSE_MEMORY)){
       if(data.past===token)return {token,form:'past',english:data.english,pairedForm:infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.pastTense,verified:true};
       if(token==='ނު'+data.past){const base=Object.values(VERB_FORM_MEMORY).find(v=>v.infinitive===infinitive)?.english||data.english;return {token,form:'negative-past',english:'did not '+base,pairedForm:data.past,infinitive,irregular:data.class==='irregular',rule:GRAMMAR_RULES.negativePast,verifiedFromPattern:true};}
@@ -179,7 +199,7 @@ export class TranslationBrain{
 
   lookupDhivehi(token){
     const verb=this.analyzeVerbForm(token);
-    if(verb){if(verb.form.startsWith('existential-')||verb.form==='there-to-be')return verb.english;if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;if(verb.form==='past'||verb.form==='negative-past')return verb.english;return 'to '+verb.english;}
+    if(verb){if(verb.form.startsWith('existential-')||verb.form==='there-to-be')return verb.english;if(verb.form==='habitual')return 'habitually: '+verb.english;if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;if(verb.form==='past'||verb.form==='negative-past')return verb.english;return 'to '+verb.english;}
     if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
@@ -200,7 +220,7 @@ export class TranslationBrain{
       stats.tokens.push({from:token,to:translated,known:true,type:question?'question':focus?'focus':'word'});
       if(['i','you','he','we','they'].includes(value))subject.push(translated);else if(VERBS.has(value))verb.push(translated);else rest.push(translated);
     });
-    stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive, past and existential/location verb rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
+    stats.reasoning.push('No exact reverse-sentence memory','Focus, quotation and question suffixes checked','Dhivehi suffixes checked','Gerund, infinitive, progressive, past, habitual and existential/location verb rules checked','SOV reordered toward English SVO','Unknown meanings marked, not guessed');
     if(stats.focus.length)stats.reasoning.push('Focused އޭ/އޯ constituent interpreted at the sentence front');
     if(stats.questions.length)stats.reasoning.push('Question suffix scope and speaker certainty interpreted from its attachment position');
     if(stats.indefinite.length)stats.reasoning.push('އެއް specific-indefinite and އަކު unspecified-indefinite meanings kept distinct');
