@@ -52,9 +52,18 @@ export function deriveQuestion(statement,suffix='ތަ',focusText=null){
 }
 
 export function selectExistentialVerb(features={}){
+  if(features.animateGroup)return 'ތިބުން';
+  if(features.peopleInGeneralLocation||features.livingInLocation)return 'އުޅުން';
   if(features.collectionOfInanimate||features.pluralInanimate||features.maleHuman||features.selfStanding||features.abstractQuality)return 'ހުރުން';
   if(features.femaleHuman||features.nonHumanTwoLegged||features.moreThanFourLegs||features.attachedToTree)return 'އިނުން';
   if(features.cannotStandByItself||features.fourLegged||features.noLegs||features.detachedFromTree)return 'އޮތުން';
+  return null;
+}
+
+export function applySentenceFinalEve(infinitive){
+  if(typeof infinitive!=='string')return null;
+  if(infinitive.endsWith('ެން'))return infinitive.slice(0,-2).slice(0,-1)+'ޭށެވެ';
+  if(infinitive.endsWith('ަން'))return infinitive.slice(0,-2).slice(0,-1)+'ާށެވެ';
   return null;
 }
 
