@@ -21,7 +21,7 @@ export const LESSON_REGISTRY = [
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
   {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
-  {id:17,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'}
+  {id:18,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'}
 ];
 
 export const VERIFIED_PAIRS = [
@@ -162,7 +162,7 @@ export const GRAMMAR_RULES = {
   derivedQuestion:{id:'DV-Q-THA',suffix:'ތަ',formalSuffix:'ތޯ',meaning:'open truth-value question',focusByAttachment:true,status:'verified-from-lesson-16'},
   confirmationQuestion:{id:'DV-Q-DHOA',suffix:'ދޯ',formalSuffix:'ދެއްތޯ',meaning:'confirmation sought; speaker suspects proposition is true',status:'verified-from-lesson-16'},
   negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'},
-  existentialPredication:{id:'DV-EXIST-17',existentialOrder:'location + indefinite entity + އެބަ verb',locationOrder:'definite entity + locative verb + location',traditionalNounClasses:true,modernUsageFlexible:true,status:'verified-from-2020-source-lesson'}
+  existentialPredication:{id:'DV-EXIST-18',existentialOrder:'location + indefinite entity + އެބަ verb',locationOrder:'definite entity + locative verb + location',traditionalNounClasses:true,modernUsageFlexible:true,status:'verified-from-2020-source-lesson'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -279,7 +279,7 @@ export const TRADITIONAL_EXISTENTIAL_CLASSES = {
   'އޮތުން':['object unable to stand by itself','four-legged animal','animal without legs','detached fruit or thing']
 };
 
-export const LESSON_17_SOURCE = {
+export const LESSON_18_SOURCE = {
   date:'2020-01-20',
   author:'thatmaldivesblog',
   traditionalGrammarSource:'Muhammad Jameel, 1971',
