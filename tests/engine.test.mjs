@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS} from '../assets/js/knowledge-base.js';
 
 const brain=new TranslationBrain([]);
 
@@ -35,5 +35,23 @@ assert.match(specific.output,/specific person/i);
 assert.match(unspecified.output,/some person/i);
 assert.equal(specific.indefinite[0].rule.id,'DV-INDEF-EH');
 assert.equal(unspecified.indefinite[0].rule.id,'DV-INDEF-AKU');
+
+const nounCaseEnglish='In the last lesson, we learned how nouns change when case suffixes are attached and learned the meanings and uses of those suffixes.';
+const nounCaseDhivehi='ފަހުގެ ދަރުހުގައި، ނަންތަކަށް ކޭސް ސަފިކްސްތައް ގުޅާއިރު ނަންތައް ބަދަލުވާ ގޮތާއި، އެ ސަފިކްސްތަކުގެ މާނައާއި ބޭނުން ދަސްކުރީމެވެ.';
+assert.equal(brain.translate(nounCaseEnglish,'en-dv').output,nounCaseDhivehi);
+assert.equal(TRANSLATION_PIPELINE[0],'identify-complete-sentence-meaning');
+assert.equal(TRANSLATION_PIPELINE.at(-1),'verify-meaning-grammar-spelling-fluency');
+assert.equal(VERIFIED_WORDS.function,undefined);
+assert.equal(CONTEXT_SENSITIVE_TERMS.function.reject,'ވަޒީފާ');
+assert.equal(CONTEXT_SENSITIVE_TERMS.pronouns.reject,'ވަކި ނަންތައް');
+
+const mixed=analyzeScriptSegments('ތިބާ ⟦last lesson⟧ ދަސްކުރީ');
+assert.equal(mixed.mixed,true);
+assert.deepEqual(mixed.types,['dhivehi','placeholder']);
+
+const contextual=brain.translate('The function belongs to them.','en-dv');
+assert.match(contextual.output,/⟦function⟧/i);
+assert.match(contextual.output,/⟦belongs⟧/i);
+assert.match(contextual.output,/⟦them⟧/i);
 
 console.log('All translation-engine tests passed.');
