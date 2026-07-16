@@ -2,7 +2,7 @@
  * Browser ports of selected MIT-licensed mismaah/dhivehi_nlp 1.0.13 helpers.
  * Copyright (c) 2020 Mismaah Abdulla; adapted for this JavaScript project.
  */
-import {wordTokenize} from './engine.js?v=3.9.0';
+import {wordTokenize} from './engine.js?v=4.0.0';
 
 export const STEM_RULES=Object.freeze([
   ['ކަމަކީ',''],['ތަކުގެ',''],['ތަކަށް',''],['ހަކަށް',''],['ކަމުން',''],['ކަމަށް',''],['ކަމެއް','ކަން'],
