@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.4.0';
+export const KNOWLEDGE_VERSION = '2.5.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -19,10 +19,19 @@ export const LESSON_REGISTRY = [
   {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'},
   {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
-  {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'}
+  {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
+  {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ['is she eating','އޭނަ ކަނީތަ'],
+  ['is he eating','އޭނަ ކަނީތަ'],
+  ['are they studying in sri lanka','އެ މީހުން ލަންކާގައި ކިޔަވަނީތަ'],
+  ['is this dress nice','މި ހެދުން ރީތިތަ'],
+  ['are the fish swimming in the sea','މަސްތައް މޫދުގައި ފަތަނީތަ'],
+  ["she's a relative of yours right",'އެއީ ތިމާގެ މީހެއް ދޯ'],
+  ["he's cleaning his room right",'އޭނަ ކޮޓަރި ސާފުކުރަނީ ދޯ'],
+  ["this is rice isn't it",'މިއީ ބަތެއްނު'],
   ['i went','އަހަރެން ދިޔަ'],
   ['he ate','އޭނާ ކެއި'],
   ['she ate','އޭނާ ކެއި'],
@@ -129,7 +138,10 @@ export const GRAMMAR_RULES = {
   presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'},
   pastTense:{id:'DV-VERB-PAST',meaning:'completed past action',formation:'use verified stem-class or lexical past mapping',universalFinalReplacement:false,status:'verified-pairs-only'},
   negativePast:{id:'DV-PAST-NEG',observedPattern:'prefix ނު to the verified past form',conflict:'Lesson prose mentions final ނޫން but supplied examples omit it',status:'examples-verified-general-rule-unconfirmed'},
-  pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'}
+  pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'},
+  derivedQuestion:{id:'DV-Q-THA',suffix:'ތަ',formalSuffix:'ތޯ',meaning:'open truth-value question',focusByAttachment:true,status:'verified-from-lesson-16'},
+  confirmationQuestion:{id:'DV-Q-DHOA',suffix:'ދޯ',formalSuffix:'ދެއްތޯ',meaning:'confirmation sought; speaker suspects proposition is true',status:'verified-from-lesson-16'},
+  negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -213,6 +225,25 @@ export const UNCONFIRMED_PAST_GENERALIZATIONS = [
   {claim:'replace final ން with ނި',reason:'does not generate the supplied outputs such as ކުރި or ބެލި'},
   {claim:'negative past requires final ނޫން',reason:'supplied examples are ނުދިޔަ and ނުކެއި without ނޫން'},
   {claim:'a single vowel substitution predicts past stems',reason:'supplied forms belong to several stem patterns and include lexical irregulars'}
+];
+
+export const QUESTION_SUFFIX_MEMORY = {
+  'ތަ':{type:'open-question',meaning:'speaker does not know the truth value',formal:'ތޯ',ruleId:'DV-Q-THA'},
+  'ތޯ':{type:'open-question-formal',meaning:'formal open truth-value question',ruleId:'DV-Q-THA'},
+  'ދޯ':{type:'confirmation',meaning:'speaker suspects the proposition is true',formal:'ދެއްތޯ',ruleId:'DV-Q-DHOA'},
+  'ނު':{type:'negative-confirmation',meaning:'speaker believes the proposition is true',formal:'ނޫންތަ / ނޫންތޯ',ruleId:'DV-Q-NU'},
+  'ހޭ':{type:'repeated-question',meaning:'repeated or emphasized question',ruleId:'DV-FOCUS-EY'},
+  'ހޯ':{type:'quoted-question',meaning:'question attributed to another speaker',ruleId:'DV-FOCUS-OA'}
+};
+
+export const QUESTION_ANSWERS = {
+  yes:'އާނ',no:'ނޫން',emphasizedYes:'އާނއެކޭ',emphasizedNo:['ނޫނެކޭ','ނޫނޭ'],casualYes:'ހޫނ',casualNo:'އުހުނ'
+};
+
+export const UNCONFIRMED_LESSON_16 = [
+  {claim:'with/without labels in the question-word examples',reason:'the field named with contains the unsuffixed form, while without contains the suffixed ތަ form'},
+  {claim:'ނު can always be appended mechanically',reason:'the supplied examples show phonological and morphological combinations such as އެއްނު and ނީނު'},
+  {claim:'all question words accept ތަ',reason:'the lesson explicitly excludes ކިހާ, ކޮން and ކިތައް'}
 ];
 
 export const GERUND_DECLENSION_MEMORY = {
