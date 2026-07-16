@@ -35,6 +35,7 @@ export const VERIFIED_PAIRS = [
   ['where are you going','ތިބާ ކޮންތާކަށް ތިޔަ ދަނީ؟'],
   ['see you later','ފަހުން ދިމާވާނެ'],
   ['this is a test','މިއީ ޓެސްޓެއް'],
+  ["you now have the complete lesson 12 token structure stored in the system's memory",'ލެސަން 12ގެ މުޅި ޓޯކަން ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ބަހައްޓައިފި'],
   ['in the last lesson we learned how nouns change when case suffixes are attached and learned the meanings and uses of those suffixes','ފަހުގެ ދަރުހުގައި، ނަންތަކަށް ކޭސް ސަފިކްސްތައް ގުޅާއިރު ނަންތައް ބަދަލުވާ ގޮތާއި، އެ ސަފިކްސްތަކުގެ މާނައާއި ބޭނުން ދަސްކުރީމެވެ'],
   ["this structure is now stored in the system's memory for lesson",'މި ސްޓްރަކްޗަރ މިހާރު ސިސްޓަމްގެ މެމޮރީގައި ލެސަނަށް ބަހައްޓައިފި'],
   ['artificial intelligence can improve writing','މަޞްނޫޢީ ބުއްދިން ލިޔުން ރަނގަޅުކުރެވިދާނެ'],
