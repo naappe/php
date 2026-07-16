@@ -1,5 +1,5 @@
-import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js';
-import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,hasThaana} from './engine.js?v=3.4.2';
+import {KNOWLEDGE_VERSION,LESSON_REGISTRY,TRANSLATION_PIPELINE,VERIFIED_PAIRS,VERIFIED_WORDS,GRAMMAR_RULES} from './knowledge-base.js?v=3.4.2';
 
 const $=id=>document.getElementById(id);
 let direction='en-dv';
