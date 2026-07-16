@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="A teachable English and Dhivehi translation-memory engine">
   <title>Bas Translate — English ↔ Dhivehi</title>
-  <link rel="stylesheet" href="assets/css/styles.css?v=3.7.0">
+  <link rel="stylesheet" href="assets/css/styles.css?v=3.8.0">
 </head>
 <body>
   <div class="wrap">
@@ -42,8 +42,7 @@
       <section class="dictionary" aria-labelledby="dictionaryTitle">
         <div class="teacher-head"><div><h3 id="dictionaryTitle">Radheef dictionary lookup</h3><p>Search an exact Dhivehi headword. Definitions are in Dhivehi and are not English translation pairs.</p></div></div>
         <div class="dictionary-grid"><input id="dictionaryWord" class="dv dictionary-input" dir="rtl" maxlength="80" placeholder="ދިވެހި ބަހެއް"><button class="btn primary" id="dictionarySearchBtn">Search Radheef</button></div>
-        <details class="api-settings"><summary>Dictionary API settings</summary><label for="dictionaryApiUrl">API URL</label><div class="dictionary-grid"><input id="dictionaryApiUrl" type="url" placeholder="http://127.0.0.1:8787"><button class="btn" id="dictionarySaveApiBtn">Save URL</button></div></details>
-        <p class="learnmsg" id="dictionaryStatus">Start the API locally or configure its deployed URL.</p>
+        <p class="learnmsg" id="dictionaryStatus">The matching dictionary chunk loads in your browser when you search.</p>
         <div id="dictionaryResult" class="dictionary-result dv" dir="rtl" hidden></div>
       </section>
 
@@ -74,6 +73,6 @@
     </main>
     <footer>Only U+0780–U+07BF is accepted as Thaana. Arabic-script output is blocked.</footer>
   </div>
-  <script type="module" src="assets/js/app.js?v=3.7.0"></script>
+  <script type="module" src="assets/js/app.js?v=3.8.0"></script>
 </body>
 </html>
