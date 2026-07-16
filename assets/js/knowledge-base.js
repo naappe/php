@@ -34,6 +34,19 @@ export const LESSON_SOURCES = [
   }
 ];
 
+export const LEXICAL_SOURCES = [
+  {
+    id:'dhivehi-nlp-radheef',
+    repository:'mismaah/dhivehi_nlp',
+    packageVersion:'1.0.13',
+    softwareLicense:'MIT',
+    dictionaryRowsObserved:29824,
+    use:'development-time Thaana headword validation and Dhivehi definitions',
+    limitation:'Definitions are Dhivehi-to-Dhivehi and must not be promoted as English translation pairs.',
+    publicationPolicy:'Do not bundle or republish the complete SQLite database in the static website.'
+  }
+];
+
 export const EXTERNAL_LEXICAL_CANDIDATES = [
   {
     word:'ހައްދަނީ',
