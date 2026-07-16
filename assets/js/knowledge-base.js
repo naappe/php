@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '3.3.0';
+export const KNOWLEDGE_VERSION = '3.4.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -16,7 +16,7 @@ export const LESSON_REGISTRY = [
   {id:5,topic:'Adjectives',focus:'Position, negative adjectives, good/bad words',status:'summary-received'},
   {id:6,topic:'Demonstratives',focus:'Three-way distinction, determiners, pronouns',status:'summary-received'},
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
-  {id:8,topic:'Lesson 8',focus:'Source lesson not yet received',status:'source-missing'},
+  {id:8,topic:'Noun-Noun Sentences',focus:'އަކީ predication, negation, demonstrative copulas and the noun–adjective boundary',status:'source-encoded-and-tested'},
   {id:9,topic:'Another Indefinite Marker',focus:'Specific އެއް versus unspecified އަކު; suffix stacking and irregular ތާކު',status:'source-encoded-and-tested'},
   {id:10,topic:'Noun Cases',focus:'Eight cases, suffix ordering, stem changes, specific locatives and context-sensitive ން',status:'source-encoded-and-tested'},
   {id:11,topic:'Demonstrative Pronoun Cases',focus:'Dative through associative forms, common variants and ablative/instrumental overlap',status:'source-encoded-and-tested'},
@@ -31,6 +31,23 @@ export const LESSON_REGISTRY = [
 ];
 
 export const VERIFIED_PAIRS = [
+  ['this dress is small','މިހެދުން ކުޑަ'],
+  ['the water is very hot','ފެން ވަރަށް ހޫނު'],
+  ['i am a maldivian','އަހަންނަކީ ދިވެއްސެއް'],
+  ['a cat is an animal','ބުޅަލަކީ ޖަނަވާރެއް'],
+  ['cats are animals','ބުޅަލަކީ ޖަނަވާރެއް'],
+  ['a mango is not a coconut','އަނބަކީ ކާއްޓެއް ނޫން'],
+  ['mangoes are not coconuts','އަނބަކީ ކާއްޓެއް ނޫން'],
+  ['this is an apple','މިއީ އާފަލެއް'],
+  ['that is not a table','ތިއީ މޭޒެއް ނޫން'],
+  ['that is an island','އެއީ ރަށެއް'],
+  ['he is a doctor','އެއީ ޑޮކްޓަރެއް'],
+  ['she is a doctor','އެއީ ޑޮކްޓަރެއް'],
+  ['you are a fisherman','ތީ މަސްވެރިއެއް'],
+  ['i am that person','އަހަންނަކީ އެމީހާ'],
+  ['that cat is an animal','އެބުޅަލަކީ ޖަނަވާރެއް'],
+  ['that bird is a red bird','އެދޫންޏަކީ ރަތް ދޫންޏެއް'],
+  ['i am a rich person','އަހަންނަކީ މުއްސަނދި މީހެއް'],
   ['before going to sleep i read a book','ނިދުމުގެ ކުރިން، އަހަރެން ފޮތެއް ކިޔަމެވެ'],
   ['we study at school','އަހަރެމެން ސްކޫލުގައި ކިޔަވަމެމެ'],
   ['you write letters to your friends','ކަލޭ ރަހުމަތްތެރިންނަށް ސިޓީ ލިޔެއެވެ'],
@@ -189,6 +206,8 @@ export const SUKUN = 'ް';
  */
 export const GRAMMAR_RULES = {
   defaultWordOrder:{id:'DV-SOV-001',pattern:'subject-object-verb',status:'verified'},
+  nounNounPredication:{id:'DV-NOUN-COPULA-08',suffix:'އަކީ',composition:'އެއް + އީ',meaning:'noun is noun; general or constant classification',simplePattern:'indefinite subject + indefinite predicate noun',negation:'append ނޫން',prohibition:'never use އަކީ merely to connect a noun to an adjective',status:'verified-from-lesson-8-source'},
+
   repetition:{id:'DV-FOCUS-EY',suffix:'އޭ',meaning:'speaker emphasis or repetition of previously stated information',frontFocusedConstituent:true,status:'verified'},
   quotation:{id:'DV-FOCUS-OA',suffix:'އޯ',meaning:'reported or quoted information attributed to another source',frontFocusedConstituent:true,status:'verified'},
   specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-9-source'},
@@ -209,6 +228,38 @@ export const GRAMMAR_RULES = {
   animateGroupExistence:{id:'DV-EXIST-THIBUN-19',verb:'ތިބުން',meaning:'a group of animate beings exists or is located',actionPattern:'animate group + action infinitive + ތިބުން',status:'verified-from-lesson-19'},
   generalLocationLiving:{id:'DV-EXIST-ULHUN-19',verb:'އުޅުން',meaning:'people exist, stay or live within a general location',status:'verified-from-lesson-19'},
   sentenceFinalEve:{id:'DV-INF-EVE-19',observedChanges:{'ެން':'ޭށެވެ','ަން':'ާށެވެ'},status:'verified-for-demonstrated-vowel-classes'}
+};
+
+export const LESSON_8_SOURCE = {
+  title:'Noun-Noun Sentences',
+  date:'2016-10-18',
+  author:'thatmaldivesblog',
+  contrast:{
+    nounAdjective:'noun + adjective; no އަކީ',
+    nounNoun:'first noun + އަކީ + predicate noun',
+    negativeNounNoun:'noun-noun sentence + ނޫން'
+  },
+  genericReference:'Dhivehi normally uses indefinite singular nouns for general class statements even when English uses plurals.',
+  pluralWarning:'Plural marking can change a generic statement into reference to a specific group.',
+  modification:'A noun in a noun-noun sentence may be modified by a demonstrative, adjective or relative clause.',
+  adjectiveBoundaryExamples:{
+    incorrect:['އެދޫންޏަކީ ރަތް','އަހަންނަކީ މުއްސަނދި'],
+    correct:['އެދޫނި ރަތް','އަހަރެން މުއްސަނދި']
+  }
+};
+
+export const NOUN_PREDICATION_MEMORY = {
+  suffix:'އަކީ',
+  negative:'ނޫން',
+  demonstratives:{
+    'މިއީ':{distance:'proximal',english:'this is',spoken:'މީ'},
+    'މީ':{distance:'proximal',english:'this is',variant:'spoken/written-short'},
+    'ތިއީ':{distance:'medial',english:'that is',spoken:'ތީ',usage:'attested in writing; standard disputed'},
+    'ތީ':{distance:'medial',english:'that is',variant:'spoken/written-short'},
+    'ތިޔައީ':{distance:'medial',english:'that is',register:'formal/literary'},
+    'އެއީ':{distance:'distal',english:'that is',pronunciation:'one syllable'}
+  },
+  literaryPronounForms:['އޭނާއީ','އެމީހުންނީ']
 };
 
 export const LESSON_9_SOURCE = {
