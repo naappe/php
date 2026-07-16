@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS,LESSON_8_SOURCE,NOUN_PREDICATION_MEMORY} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -73,7 +73,34 @@ const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
 assert.equal(LESSON_REGISTRY.length,19);
-assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-missing');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-encoded-and-tested');
+assert.equal(LESSON_8_SOURCE.date,'2016-10-18');
+assert.equal(LESSON_8_SOURCE.author,'thatmaldivesblog');
+assert.match(LESSON_8_SOURCE.contrast.nounAdjective,/no އަކީ/);
+assert.equal(NOUN_PREDICATION_MEMORY.suffix,'އަކީ');
+assert.equal(NOUN_PREDICATION_MEMORY.negative,'ނޫން');
+assert.equal(NOUN_PREDICATION_MEMORY.demonstratives['މިއީ'].spoken,'މީ');
+assert.equal(NOUN_PREDICATION_MEMORY.demonstratives['ތިޔައީ'].register,'formal/literary');
+assert.ok(LESSON_8_SOURCE.adjectiveBoundaryExamples.incorrect.includes('އެދޫންޏަކީ ރަތް'));
+assert.ok(LESSON_8_SOURCE.adjectiveBoundaryExamples.correct.includes('އެދޫނި ރަތް'));
+for(const [english,dhivehi] of [
+  ['I am a Maldivian.','އަހަންނަކީ ދިވެއްސެއް.'],
+  ['Cats are animals.','ބުޅަލަކީ ޖަނަވާރެއް.'],
+  ['Mangoes are not coconuts.','އަނބަކީ ކާއްޓެއް ނޫން.'],
+  ['This is an apple.','މިއީ އާފަލެއް.'],
+  ['That is not a table.','ތިއީ މޭޒެއް ނޫން.'],
+  ['That bird is a red bird.','އެދޫންޏަކީ ރަތް ދޫންޏެއް.']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
+const nounPredicate=brain.translate('ބުޅަލަކީ','dv-en');
+assert.equal(nounPredicate.predicates[0].type,'noun-noun-predication');
+const demonstrativeCopula=brain.translate('މިއީ','dv-en');
+assert.equal(demonstrativeCopula.predicates[0].type,'demonstrative-copula');
+assert.match(demonstrativeCopula.output,/this is/i);
+assert.equal(brain.translate('This dress is small.','en-dv').output,'މިހެދުން ކުޑަ.');
+assert.doesNotMatch(brain.translate('This dress is small.','en-dv').output,/އަކީ/);
+
 assert.equal(LESSON_REGISTRY.find(x=>x.id===9).status,'source-encoded-and-tested');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===10).status,'source-encoded-and-tested');
 assert.equal(LESSON_10_SOURCE.date,'2016-11-16');
