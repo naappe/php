@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY} from '../assets/js/knowledge-base.js';
+import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive} from '../assets/js/engine.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -42,7 +42,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,9);
+assert.equal(LESSON_REGISTRY.length,10);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
@@ -64,6 +64,30 @@ assert.match(infinitiveResult.output,/to do/i);
 const irregularInfinitive=brain.translate('ކާން','dv-en');
 assert.equal(irregularInfinitive.verbs[0].irregular,true);
 assert.match(irregularInfinitive.output,/to eat/i);
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===14).status,'encoded-from-owner-lesson');
+assert.equal(derivePresentProgressive('ކުރަން'),'ކުރަނީ');
+assert.equal(derivePresentProgressive('ދާން'),'ދަނީ');
+assert.equal(derivePresentProgressive('ދޭން'),'ދެނީ');
+assert.equal(derivePresentProgressive('ބޯން'),'ބޮނީ');
+assert.equal(derivePresentProgressive('not-a-dhivehi-infinitive'),null);
+assert.equal(PRESENT_PROGRESSIVE_MEMORY['ކާން'].progressive,'ކަނީ');
+
+const unseenProgressive=derivePresentProgressive(VERB_FORM_MEMORY['ހޯދުން'].infinitive);
+assert.equal(unseenProgressive,'ހޯދަނީ');
+const generalizedProgressive=brain.translate(unseenProgressive,'dv-en');
+assert.equal(generalizedProgressive.verbs[0].form,'present-progressive');
+assert.equal(generalizedProgressive.verbs[0].inferred,true);
+assert.match(generalizedProgressive.output,/present progressive: look for/i);
+
+for(const [english,dhivehi] of [
+  ['I am going.','އަހަރެން ދަނީ.'],
+  ['The small child is reading a book.','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ.'],
+  ['We are swimming in the sea.','އަހަރެމެން މޫދުގައި ފަތަނީ.'],
+  ['Now she is starting to walk.','މިހާރު ހިނގަން ފަށަނީ.']
+]){
+  assert.equal(brain.translate(english,'en-dv').output,dhivehi);
+}
 assert.notEqual(GRAMMAR_RULES.specificIndefinite.meaning,GRAMMAR_RULES.unspecifiedIndefinite.meaning);
 assert.equal(INDEFINITE_FORM_MEMORY['މީހެއް'].mode,'specific-indefinite');
 assert.equal(INDEFINITE_FORM_MEMORY['މީހަކު'].mode,'unspecified-indefinite');
