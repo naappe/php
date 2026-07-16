@@ -27,7 +27,7 @@ function renderReasoning(result){
 function translate(){
   const text=$('source').value.trim();if(!text){$('source').focus();return}showWarning();
   if(direction==='dv-en'){const check=validateDhivehi(text);if(!check.ok){showWarning(check.message);return}}
-  try{const result=brain.translate(text,direction);$('result').value=result.output;$('coverage').textContent=result.coverage+'%';$('coverage').className=result.coverage>=75?'good':result.coverage>=40?'medium':'low';$('engineNote').textContent=result.coverage>=75?'High memory coverage':result.coverage>=40?'Review recommended':'Not enough learned meaning';renderReasoning(result)}catch(error){showWarning(error.message);$('result').value=''}
+  try{const result=brain.translate(text,direction);$('result').value=result.output;$('coverage').textContent=result.coverage+'%';$('coverage').className=result.coverage>=75?'good':result.coverage>=40?'medium':'low';$('engineNote').textContent=result.coverage>=75?'High memory coverage':result.coverage>=40?'Review recommended':'Not enough learned meaning';if(result.warnings.length)showWarning(result.warnings.join(' '));renderReasoning(result)}catch(error){showWarning(error.message);$('result').value=''}
 }
 
 function learn(){
