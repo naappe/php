@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -42,8 +42,28 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,8);
+assert.equal(LESSON_REGISTRY.length,9);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'encoded-from-current-summary');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
+assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
+assert.equal(VERB_FORM_MEMORY['ވުން'].infinitive,'ވާން');
+assert.equal(VERB_FORM_MEMORY['ވުން'].irregular,true);
+assert.equal(VERB_FORM_MEMORY['ކެއުން'].infinitive,'ކާން');
+assert.equal(GERUND_DECLENSION_MEMORY['ކުރުން'].genitive,'ކުރުމުގެ');
+
+const gerundResult=brain.translate('ކުރުން','dv-en');
+assert.equal(gerundResult.verbs[0].form,'gerund');
+assert.equal(gerundResult.verbs[0].pairedForm,'ކުރަން');
+assert.match(gerundResult.output,/act of do/i);
+
+const infinitiveResult=brain.translate('ކުރަން','dv-en');
+assert.equal(infinitiveResult.verbs[0].form,'infinitive');
+assert.equal(infinitiveResult.verbs[0].pairedForm,'ކުރުން');
+assert.match(infinitiveResult.output,/to do/i);
+
+const irregularInfinitive=brain.translate('ކާން','dv-en');
+assert.equal(irregularInfinitive.verbs[0].irregular,true);
+assert.match(irregularInfinitive.output,/to eat/i);
 assert.notEqual(GRAMMAR_RULES.specificIndefinite.meaning,GRAMMAR_RULES.unspecifiedIndefinite.meaning);
 assert.equal(INDEFINITE_FORM_MEMORY['މީހެއް'].mode,'specific-indefinite');
 assert.equal(INDEFINITE_FORM_MEMORY['މީހަކު'].mode,'unspecified-indefinite');
