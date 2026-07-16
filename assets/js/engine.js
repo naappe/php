@@ -1,4 +1,4 @@
-import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
+import {VERIFIED_PAIRS,VERIFIED_WORDS,VERIFIED_PHRASES,DHIVEHI_SUFFIXES,SCRIPT_RANGES,GRAMMAR_RULES,FOCUS_FORM_MEMORY,INDEFINITE_FORM_MEMORY,VERB_FORM_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,QUESTION_SUFFIX_MEMORY,EXISTENTIAL_VERB_MEMORY,HABITUAL_VERB_MEMORY,NOUN_CASE_FORM_MEMORY,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE} from './knowledge-base.js';
 
 const ARTICLES=new Set(['a','an','the']);
 const SUBJECTS=new Set(['i','you','he','she','we','they']);
@@ -177,7 +177,7 @@ export class TranslationBrain{
   }
 
   analyzeNounCase(token){
-    const known=NOUN_CASE_FORM_MEMORY[token];
+    const known=NOUN_CASE_FORM_MEMORY[token]||DEMONSTRATIVE_PRONOUN_CASE_MEMORY[token];
     return known?{token,...known,rule:'verified Lesson 10 noun-case form'}:null;
   }
 
@@ -206,6 +206,7 @@ export class TranslationBrain{
     const verb=this.analyzeVerbForm(token);
     if(verb){if(verb.form.startsWith('existential-')||verb.form==='there-to-be')return verb.english;if(verb.form==='habitual')return 'habitually: '+verb.english;if(verb.form==='gerund')return 'the act of '+verb.english;if(verb.form==='present-progressive')return 'present progressive: '+verb.english;if(verb.form==='past'||verb.form==='negative-past')return verb.english;return 'to '+verb.english;}
     if(NOUN_CASE_FORM_MEMORY[token])return NOUN_CASE_FORM_MEMORY[token].english;
+    if(DEMONSTRATIVE_PRONOUN_CASE_MEMORY[token])return DEMONSTRATIVE_PRONOUN_CASE_MEMORY[token].english;
     if(INDEFINITE_FORM_MEMORY[token])return INDEFINITE_FORM_MEMORY[token].english;
     if(this.reverseWords[token])return this.reverseWords[token];
     for(const [suffix,meaning] of DHIVEHI_SUFFIXES){if(token.endsWith(suffix)&&token.length>suffix.length){const stem=token.slice(0,-suffix.length);if(this.reverseWords[stem])return `${meaning} ${this.reverseWords[stem]}`}}
