@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="A teachable English and Dhivehi translation-memory engine">
   <title>Bas Translate — English ↔ Dhivehi</title>
-  <link rel="stylesheet" href="assets/css/styles.css?v=3.9.0">
+  <link rel="stylesheet" href="assets/css/styles.css?v=4.0.0">
 </head>
 <body>
   <div class="wrap">
@@ -16,7 +16,7 @@
 
     <section class="hero">
       <h2>Translate, teach and remember</h2>
-      <p>Verified sentence memory first, vocabulary tokens second, grammar reasoning third. Unknown meanings are marked instead of invented.</p>
+      <p>Verified sentence memory first, vocabulary tokens second, grammar reasoning third. Incomplete mixed-language output is blocked instead of invented.</p>
     </section>
 
     <main>
@@ -67,12 +67,12 @@
         <div class="overview-columns">
           <details class="overview-panel" open><summary>Reasoning pipeline</summary><ol id="pipelineList" class="pipeline-list"></ol></details>
           <details class="overview-panel"><summary>Permanent lesson registry</summary><div id="lessonList" class="lesson-list"></div></details>
-          <details class="overview-panel"><summary>Safety and quality rules</summary><ul class="rule-list"><li>Accept Thaana (U+0780–U+07BF) for Dhivehi text.</li><li>Reject Arabic, Urdu and Sindhi letters.</li><li>Keep context-sensitive words unresolved until meaning is known.</li><li>Mark unknown translations with <code>⟦…⟧</code>.</li><li>Keep permanent and browser-taught knowledge separate.</li></ul></details>
+          <details class="overview-panel"><summary>Safety and quality rules</summary><ul class="rule-list"><li>Accept Thaana (U+0780–U+07BF) for Dhivehi text.</li><li>Reject Arabic, Urdu and Sindhi letters.</li><li>Keep context-sensitive words unresolved until meaning is known.</li><li>Show unknown meanings in analysis and block incomplete mixed-language output.</li><li>Keep permanent and browser-taught knowledge separate.</li></ul></details>
         </div>
       </section>
     </main>
     <footer>Only U+0780–U+07BF is accepted as Thaana. Arabic-script output is blocked.</footer>
   </div>
-  <script type="module" src="assets/js/app.js?v=3.9.0"></script>
+  <script type="module" src="assets/js/app.js?v=4.0.0"></script>
 </body>
 </html>
