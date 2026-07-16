@@ -100,7 +100,7 @@ export const VERIFIED_PAIRS = [
   ['did you go','ތިޔަ ދިޔަހޭ'],
   ['did they come','އެމީހުން އައި ހޭ'],
   ['i am going','އަހަރެން ދަނީ'],
-  ['today we are going to mum’s house to have tea','މިއަދު އަހަރެމެން ދަނީ މަންމަމެން ގެއަށް ސައި ބޯން'],
+  ["today we are going to mum's house to have tea",'މިއަދު އަހަރެމެން ދަނީ މަންމަމެން ގެއަށް ސައި ބޯން'],
   ['their friends are coming to watch a scary movie','އެމީހުންގެ ރައްޓެހިން އަންނަނީ ބިރުވެރި ފިލްމެއް ބަލަން'],
 
   ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
