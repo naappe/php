@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.2.0';
+export const KNOWLEDGE_VERSION = '2.3.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -17,10 +17,12 @@ export const LESSON_REGISTRY = [
   {id:6,topic:'Demonstratives',focus:'Three-way distinction, determiners, pronouns',status:'summary-received'},
   {id:7,topic:'Pronouns',focus:'Person and formality registers',status:'summary-received'},
   {id:8,topic:'Indefinite Suffixes',focus:'އެއް versus އަކު',status:'encoded-from-current-summary'},
-  {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'}
+  {id:13,topic:'Verbs – Gerunds and Infinitives',focus:'Verbal nouns, infinitives, declension and explicit irregular forms',status:'encoded-from-owner-lesson'},
+  {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ...LESSON_14_SENTENCES,
   ['how are you','ތިބާ ކިހިނެއް؟'],
   ['what are you doing','ތިޔަ ކުރަނީ ކޮބައިތޯ؟'],
   ['thank you','ޝުކުރިއްޔާ'],
@@ -109,7 +111,8 @@ export const GRAMMAR_RULES = {
   specificIndefinite:{id:'DV-INDEF-EH',suffix:'އެއް',meaning:'a specific but unidentified thing or person',status:'verified-from-lesson-8-summary'},
   unspecifiedIndefinite:{id:'DV-INDEF-AKU',suffix:'އަކު',meaning:'an unspecified or vague thing or person; also used before additional suffixes',status:'verified-from-lesson-8-summary'},
   gerund:{id:'DV-VERB-GERUND',typicalEnding:'އުން',meaning:'verbal noun; the act of performing an action',declinesAsNoun:true,status:'verified-from-lesson-13'},
-  infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'}
+  infinitive:{id:'DV-VERB-INFINITIVE',typicalEnding:'އަން',meaning:'to perform an action',irregularFormsMustBeMemorized:true,status:'verified-from-lesson-13'},
+  presentProgressive:{id:'DV-VERB-PROGRESSIVE',formation:'replace final ން of the infinitive with ނީ',longVowelShortening:{'ާ':'ަ','ޭ':'ެ','ޯ':'ޮ'},meaning:'action progressing at the present moment',nullSubjectAllowed:true,status:'verified-from-lesson-14'}
 };
 
 export const INDEFINITE_FORM_MEMORY = {
@@ -147,6 +150,29 @@ export const VERB_FORM_MEMORY = {
   'ލުން':{infinitive:'ލާން',english:'put',irregular:true},
   'ބުއިން':{infinitive:'ބޯން',english:'drink',irregular:true}
 };
+
+export const PRESENT_PROGRESSIVE_MEMORY = {
+  'ކުރަން':{progressive:'ކުރަނީ',english:'doing'},
+  'ހަދަން':{progressive:'ހަދަނީ',english:'making'},
+  'ބަލަން':{progressive:'ބަލަނީ',english:'looking'},
+  'ފަށަން':{progressive:'ފަށަނީ',english:'starting'},
+  'އަންނަން':{progressive:'އަންނަނީ',english:'coming'},
+  'ބުނަން':{progressive:'ބުނަނީ',english:'saying'},
+  'ނަގަން':{progressive:'ނަގަނީ',english:'taking'},
+  'ކިޔަން':{progressive:'ކިޔަނީ',english:'reading'},
+  'ދާން':{progressive:'ދަނީ',english:'going',shortenedLongVowel:true},
+  'ވާން':{progressive:'ވަނީ',english:'being/becoming/happening',shortenedLongVowel:true},
+  'ދޭން':{progressive:'ދެނީ',english:'giving',shortenedLongVowel:true},
+  'ބޯން':{progressive:'ބޮނީ',english:'drinking',shortenedLongVowel:true},
+  'ކާން':{progressive:'ކަނީ',english:'eating',shortenedLongVowel:true}
+};
+
+export const LESSON_14_SENTENCES = [
+  ['i am going','އަހަރެން ދަނީ'],
+  ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
+  ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
+  ['now she is starting to walk','މިހާރު ހިނގަން ފަށަނީ']
+];
 
 export const GERUND_DECLENSION_MEMORY = {
   'ކުރުން':{
