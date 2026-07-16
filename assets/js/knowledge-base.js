@@ -2,7 +2,7 @@
  * Permanent verified knowledge only.
  * Never add guessed translations here. See AI-BRAIN.md.
  */
-export const KNOWLEDGE_VERSION = '2.7.0';
+export const KNOWLEDGE_VERSION = '2.8.0';
 
 /**
  * Lesson catalog tracks what has been received separately from what has been
@@ -21,11 +21,24 @@ export const LESSON_REGISTRY = [
   {id:14,topic:'Verbs – Present Progressive',focus:'Current actions, progressive formation, long-vowel shortening and null subjects',status:'encoded-from-owner-lesson'},
   {id:15,topic:'Verbs – Past Tense',focus:'Verified past forms, negative prefix and question particle; conflicting universal rules quarantined',status:'verified-pairs-encoded-rule-pending'},
   {id:16,topic:'Questions from Statements',focus:'Question, confirmation and negative-confirmation suffixes with constituent focus',status:'encoded-and-tested'},
+  {id:17,topic:'Verbs – Habitual/Simple Present',focus:'Modern person split, literary forms, formal އެވެ endings and contextual އެބަ',status:'source-encoded-and-tested'},
   {id:18,topic:'Verbs – To Be and There To Be',focus:'Three existential/location verb paradigms and traditional noun-class selection',status:'source-encoded-and-tested'},
   {id:19,topic:'Verbs – To Be Continued',focus:'Animate groups with ތިބުން and people/living in general locations with އުޅުން',status:'source-encoded-and-tested'}
 ];
 
 export const VERIFIED_PAIRS = [
+  ['before going to sleep i read a book','ނިދުމުގެ ކުރިން، އަހަރެން ފޮތެއް ކިޔަމެވެ'],
+  ['we study at school','އަހަރެމެން ސްކޫލުގައި ކިޔަވަމެމެ'],
+  ['you write letters to your friends','ކަލޭ ރަހުމަތްތެރިންނަށް ސިޓީ ލިޔެއެވެ'],
+  ['do you write letters to your friends','ކަލޭ ރަހުމަތްތެރިންނަށް ސިޓީ ލިޔަންތަ'],
+  ['a plane lands here every week','ކޮންމެ ހަފުތާއަކު މިތަނަށް ބޯޓެއް ޖައްސައެވެ'],
+  ['my friends come to my house each night','އަހަރެންގެ ރައްޓެހިން ކޮންމެ ރެއަކު އަހަރެންގެ ގެއަށް އާދެއެވެ'],
+  ['i eat an apple every day','ކޮންމެ ދުވަހަކު އަހަރެން އާފަލެއް ކަމެވެ'],
+  ['those kids write in their books','އެކުދިން ފޮތުގައި ލިޔެއެވެ'],
+  ['the cat climbs the tree','ބުޅާ ގަހަށް އަރައެވެ'],
+  ['a small rat is running around the house','ކުޑަ މީދަލެއް ގޭތެރޭގައި އެބަ ދުވައެވެ'],
+  ['i swim with my older sister every night','ކޮންމެ ރެއަކު އަހަރެން ދައްތައާއި އެއްކޮށް ފަތަމެވެ'],
+  ["they go to their grandfather's island each year",'އެމީހުން ކޮންމެ އަހަރަކު ކާފަގެ ރަށަށް ދެއެވެ'],
   ['there are some crows in that tree','އެގަހުގައި ކާޅުތަކެއް އެބަ ތިއްބެވެ'],
   ['there are kids playing outside','ކުދިން ބޭރުގައި ކުޅެން އެބަ ތިއްބެވެ'],
   ['there are people watching the match on the steps','ސިޑިބަރިމަތީ މެޗު ބަލަން މީހުން އެބަ ތިއްބެވެ'],
@@ -179,6 +192,9 @@ export const GRAMMAR_RULES = {
   pastTense:{id:'DV-VERB-PAST',meaning:'completed past action',formation:'use verified stem-class or lexical past mapping',universalFinalReplacement:false,status:'verified-pairs-only'},
   negativePast:{id:'DV-PAST-NEG',observedPattern:'prefix ނު to the verified past form',conflict:'Lesson prose mentions final ނޫން but supplied examples omit it',status:'examples-verified-general-rule-unconfirmed'},
   pastQuestion:{id:'DV-PAST-Q',particle:'ހޭ',position:'after the past verb or clause',status:'verified-from-examples'},
+  habitualPresent:{id:'DV-VERB-HABITUAL-17',meaning:'regular or simple-present action',modernSplit:'1st person versus 2nd/3rd statement',secondPersonQuestionUsesFirstForm:true,literaryFormsSeparate:true,status:'verified-from-edited-lesson-17'},
+  formalSentenceEve:{id:'DV-EVE-17',suffix:'އެވެ',spokenReading:'އޭ',quotedSentenceException:true,status:'verified-from-lesson-17'},
+  ebaHabitual:{id:'DV-EBA-HAB-17',particle:'އެބަ',meanings:['present progressive','present perfect continuous implication','emphasis that an action occurs'],contextRequired:true,status:'verified-from-lesson-17'},
   derivedQuestion:{id:'DV-Q-THA',suffix:'ތަ',formalSuffix:'ތޯ',meaning:'open truth-value question',focusByAttachment:true,status:'verified-from-lesson-16'},
   confirmationQuestion:{id:'DV-Q-DHOA',suffix:'ދޯ',formalSuffix:'ދެއްތޯ',meaning:'confirmation sought; speaker suspects proposition is true',status:'verified-from-lesson-16'},
   negativeConfirmation:{id:'DV-Q-NU',suffix:'ނު',fullForm:'އެއްނު',formalForms:['ނޫންތަ','ނޫންތޯ'],meaning:'speaker previously believes proposition is true',status:'verified-from-lesson-16'},
@@ -324,6 +340,41 @@ export const LESSON_18_SOURCE = {
     'އެބައިން is commonly pronounced އެ-ބައިން',
     'އެބައޮތް is commonly pronounced approximately އެބޮތް',
     'އެބައޮތެވެ is commonly pronounced approximately އެބޯތޭ'
+  ]
+};
+
+export const HABITUAL_VERB_MEMORY = {
+  'ކުރުން':{infinitive:'ކުރަން',first:'ކުރަން',secondThird:'ކުރޭ',firstEve:'ކުރަމެވެ',secondThirdEve:'ކުރެއެވެ',literarySecond:'ކުރަމު',english:'do'},
+  'ބެލުން':{infinitive:'ބަލަން',first:'ބަލަން',secondThird:'ބަލާ',firstEve:'ބަލަމެވެ',secondThirdEve:'ބަލައެވެ',english:'watch/look'},
+  'ނެށުން':{infinitive:'ނަށަން',first:'ނަށަން',secondThird:'ނަށާ',english:'dance'},
+  'ހެދުން':{infinitive:'ހަދަން',first:'ހަދަން',secondThird:'ހަދާ',firstEve:'ހަދަމެވެ',secondThirdEve:'ހަދައެވެ',english:'make'},
+  'ޖެހުން':{infinitive:'ޖަހަން',first:'ޖަހަން',secondThird:'ޖަހާ',english:'hit'},
+  'ކިޔުން':{infinitive:'ކިޔަން',first:'ކިޔަން',secondThird:'ކިޔާ',english:'read'},
+  'ލިޔުން':{infinitive:'ލިޔަން',first:'ލިޔަން',secondThird:'ލިޔޭ',english:'write'},
+  'ވުން':{infinitive:'ވާން',first:'ވަން',secondThird:'ވޭ',firstEve:'ވަމެވެ',secondThirdEve:'ވެއެވެ',english:'be/become'},
+  'ލުން':{infinitive:'ލާން',first:'ލަން',secondThird:'ލައި',english:'put'},
+  'ކެއުން':{infinitive:'ކާން',first:'ކަން',secondThird:'ކައި',firstEve:'ކަމެވެ',secondThirdEve:'ކައެވެ',english:'eat'},
+  'ބުއިން':{infinitive:'ބޯން',first:'ބޯން',secondThird:'ބޮއެ',english:'drink'},
+  'ދިޔުން':{infinitive:'ދާން',first:'ދަން',secondThird:'ދޭ',firstEve:'ދަމެވެ',secondThirdEve:'ދެއެވެ',english:'go'},
+  'ދިނުން':{infinitive:'ދޭން',first:'ދެން',secondThird:'ދޭ',english:'give'},
+  'ހުނުން':{infinitive:'ހޭން',first:'ހެން',secondThird:'ހޭ',english:'laugh'},
+  'އައުން':{infinitive:'އަންނަން',first:'އަންނަން',secondThird:'އާދޭ',firstEve:'އަންނަމެވެ',secondThirdEve:'އާދެއެވެ',english:'come'},
+  'ފެތުން':{infinitive:'ފަތަން',first:'ފަތަން',secondThird:'ފަތާ',firstEve:'ފަތަމެވެ',secondThirdEve:'ފަތައެވެ',english:'swim'},
+  'އެޅުން':{infinitive:'އަޅަން',first:'އަޅަން',secondThird:'އަޅާ',firstEve:'އަޅަމެވެ',secondThirdEve:'އަޅައެވެ',english:'pour'},
+  'ދެމުން':{infinitive:'ދަމަން',first:'ދަމަން',secondThird:'ދަމާ',firstEve:'ދަމަމެވެ',secondThirdEve:'ދަމައެވެ',english:'pull'},
+  'ވެއްދުން':{infinitive:'ވައްދަން',first:'ވައްދަން',secondThird:'ވައްދާ',firstEve:'ވައްދަމެވެ',secondThirdEve:'ވައްދައެވެ',english:'bring in/insert'},
+  'ހިއްލުން':{infinitive:'ހިއްލަން',first:'ހިއްލަން',secondThird:'ހިއްލާ',firstEve:'ހިއްލަމެވެ',secondThirdEve:'ހިއްލައެވެ',english:'lift'}
+};
+
+export const LESSON_17_SOURCE = {
+  date:'2018-12-15',
+  author:'thatmaldivesblog',
+  edited:true,
+  correction:'Second-person statements use the modern 2nd/3rd form; second-person questions use the 1st-person-shaped form.',
+  usageNotes:[
+    'Habitual clauses usually include a time or place adverbial for natural context.',
+    'Without an adverbial, the habitual can sound emphatic.',
+    'އެބަ with the simple present is context-sensitive and may signal progressive, continuing habitual relevance or emphasis.'
   ]
 };
 
