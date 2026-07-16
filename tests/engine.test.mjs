@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -72,7 +72,7 @@ assert.match(quote.output,/reportedly/i);
 const unknown=brain.translate('Unlearnedword','en-dv');
 assert.match(unknown.output,/⟦unlearnedword⟧/i);
 
-assert.equal(LESSON_REGISTRY.length,18);
+assert.equal(LESSON_REGISTRY.length,19);
 assert.equal(LESSON_REGISTRY.find(x=>x.id===8).status,'source-missing');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===9).status,'source-encoded-and-tested');
 assert.equal(LESSON_REGISTRY.find(x=>x.id===10).status,'source-encoded-and-tested');
@@ -130,6 +130,32 @@ for(const [form,caseName] of [
   assert.equal(result.nounCases[0].case,caseName);
   assert.doesNotMatch(result.output,/⟦|⟧/);
 }
+
+assert.equal(LESSON_REGISTRY.find(x=>x.id===12).status,'source-encoded-and-tested');
+assert.equal(LESSON_12_SOURCE.date,'2017-04-04');
+assert.equal(LESSON_12_SOURCE.author,'thatmaldivesblog');
+assert.deepEqual(LESSON_12_SOURCE.unavailableCases,['locative','instrumental']);
+assert.match(LESSON_12_SOURCE.ablativeConstruction,/ފަރާތުން/);
+assert.equal(PERSONAL_PRONOUN_CASE_MEMORY['އަހަންނަށް'].variant,'common-spoken');
+assert.equal(PERSONAL_PRONOUN_CASE_MEMORY['އޭނާޔަށް'].variant,'pronunciation-based');
+assert.equal(PERSONAL_PRONOUN_CASE_MEMORY['ކަލެޔާ'].variant,'ya-spelling');
+assert.equal(PERSONAL_PRONOUN_CASE_MEMORY['އެމީހުނަށް'].case,'dative');
+assert.equal(personalPronounAblative('އޭނާގެ'),'އޭނާގެ ފަރާތުން');
+assert.equal(personalPronounAblative('އޭނާ'),null);
+
+for(const [form,caseName] of [
+  ['އަހަރެންގެ','genitive'],
+  ['އަހަންނަށް','dative'],
+  ['އަހަންނާ','associative'],
+  ['އޭނާޔަށް','dative'],
+  ['ކަލެޔާ','associative']
+]){
+  const result=brain.translate(form,'dv-en');
+  assert.equal(result.nounCases[0].case,caseName);
+  assert.doesNotMatch(result.output,/⟦|⟧/);
+}
+assert.equal(Object.values(PERSONAL_PRONOUN_CASE_MEMORY).some(x=>x.case==='locative'),false);
+assert.equal(Object.values(PERSONAL_PRONOUN_CASE_MEMORY).some(x=>x.case==='instrumental'),false);
 
 assert.equal(LESSON_REGISTRY.find(x=>x.id===13).status,'encoded-from-owner-lesson');
 assert.equal(VERB_FORM_MEMORY['ކުރުން'].infinitive,'ކުރަން');
