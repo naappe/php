@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {TranslationBrain,validateDhivehi,hasArabicScript,analyzeScriptSegments,derivePresentProgressive,deriveQuestion,selectExistentialVerb,applySentenceFinalEve,selectHabitualForm} from '../assets/js/engine.js';
-import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative} from '../assets/js/knowledge-base.js';
+import {LESSON_REGISTRY,GRAMMAR_RULES,INDEFINITE_FORM_MEMORY,CONTEXT_SENSITIVE_TERMS,TRANSLATION_PIPELINE,VERIFIED_WORDS,VERB_FORM_MEMORY,GERUND_DECLENSION_MEMORY,PRESENT_PROGRESSIVE_MEMORY,PAST_TENSE_MEMORY,UNCONFIRMED_PAST_GENERALIZATIONS,QUESTION_SUFFIX_MEMORY,QUESTION_ANSWERS,UNCONFIRMED_LESSON_16,EXISTENTIAL_VERB_MEMORY,TRADITIONAL_EXISTENTIAL_CLASSES,LESSON_18_SOURCE,LESSON_19_SOURCE,HABITUAL_VERB_MEMORY,LESSON_17_SOURCE,LESSON_9_SOURCE,LESSON_10_SOURCE,NOUN_CASE_SYSTEM,NOUN_CASE_COMBINATIONS,NOUN_CASE_FORM_MEMORY,SPECIFIC_LOCATIVE_MEMORY,LESSON_11_SOURCE,DEMONSTRATIVE_PRONOUN_BASES,DEMONSTRATIVE_PRONOUN_CASE_MEMORY,LESSON_12_SOURCE,PERSONAL_PRONOUN_CASE_MEMORY,personalPronounAblative,LESSON_14_SOURCE,LESSON_14_MORE_VERBS} from '../assets/js/knowledge-base.js';
 import {readFileSync} from 'node:fs';
 
 const brain=new TranslationBrain([]);
@@ -178,7 +178,16 @@ const irregularInfinitive=brain.translate('ކާން','dv-en');
 assert.equal(irregularInfinitive.verbs[0].irregular,true);
 assert.match(irregularInfinitive.output,/to eat/i);
 
-assert.equal(LESSON_REGISTRY.find(x=>x.id===14).status,'encoded-from-owner-lesson');
+assert.equal(LESSON_REGISTRY.find(x=>x.id===14).status,'source-encoded-and-tested');
+assert.equal(LESSON_14_SOURCE.date,'2017-08-24');
+assert.equal(LESSON_14_SOURCE.author,'thatmaldivesblog');
+assert.equal(LESSON_14_SOURCE.syntax.defaultOrder,'subject-object-verb');
+assert.equal(LESSON_14_SOURCE.syntax.nullSubject,true);
+assert.match(LESSON_14_SOURCE.longVowelWarning,/different verb form/i);
+assert.equal(Object.keys(LESSON_14_MORE_VERBS).length,9);
+assert.equal(LESSON_14_MORE_VERBS['އެހުން'].english,'ask');
+assert.equal(LESSON_14_MORE_VERBS['ފުރުން'].english,'leave/depart');
+assert.equal(LESSON_14_MORE_VERBS['ކެއްކުން'].formsBeyondGerund,'exercise-not-supplied');
 assert.equal(derivePresentProgressive('ކުރަން'),'ކުރަނީ');
 assert.equal(derivePresentProgressive('ދާން'),'ދަނީ');
 assert.equal(derivePresentProgressive('ދޭން'),'ދެނީ');
@@ -197,7 +206,9 @@ for(const [english,dhivehi] of [
   ['I am going.','އަހަރެން ދަނީ.'],
   ['The small child is reading a book.','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ.'],
   ['We are swimming in the sea.','އަހަރެމެން މޫދުގައި ފަތަނީ.'],
-  ['Now she is starting to walk.','މިހާރު ހިނގަން ފަށަނީ.']
+  ['Now she is starting to walk.','މިހާރު ހިނގަން ފަށަނީ.'],
+  ['Today we are going to Mum’s house to have tea.','މިއަދު އަހަރެމެން ދަނީ މަންމަމެން ގެއަށް ސައި ބޯން.'],
+  ['Their friends are coming to watch a scary movie.','އެމީހުންގެ ރައްޓެހިން އަންނަނީ ބިރުވެރި ފިލްމެއް ބަލަން.']
 ]){
   assert.equal(brain.translate(english,'en-dv').output,dhivehi);
 }
