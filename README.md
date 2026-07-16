@@ -51,6 +51,21 @@ The browser engine includes JavaScript equivalents of `sentence_tokenize` and
 `word_tokenize`. It can remove punctuation or retain only Thaana characters and
 ASCII numbers without requiring Python on the deployed website.
 
+## Radheef web API
+
+Install and start the optional API on a computer or Python host:
+
+```bash
+pip install -r requirements-api.txt
+uvicorn api.main:app --host 127.0.0.1 --port 8787
+```
+
+Serve the website locally on port 8000, then use its Radheef search panel. For
+production, deploy `render.yaml` on Render—or run the same Uvicorn command on
+another Python host—and save its HTTPS URL under **Dictionary API settings**.
+The API performs exact, parameterized, read-only lookups and has no bulk
+database-download endpoint.
+
 ## File structure
 
 ```text
@@ -64,6 +79,9 @@ FILE-MAP.md                       Edit-target guide
 SHA256SUMS.txt                    File integrity hashes
 tests/engine.test.mjs             Core safety and translation tests
 tools/radheef_dictionary.py       Optional safe Radheef headword lookup
+api/main.py                       Optional Radheef HTTP API
+requirements-api.txt              API dependencies
+render.yaml                       Render deployment blueprint
 README.md                         Project overview
 ```
 
@@ -103,6 +121,7 @@ node --check assets/js/knowledge-base.js
 node --check assets/js/engine.js
 node --check assets/js/app.js
 node tests/engine.test.mjs
+python3 -m unittest tests/test_radheef_api.py
 sha256sum -c SHA256SUMS.txt
 ```
 
