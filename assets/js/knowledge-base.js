@@ -22,7 +22,10 @@ export const LESSON_REGISTRY = [
 ];
 
 export const VERIFIED_PAIRS = [
-  ...LESSON_14_SENTENCES,
+  ['i am going','އަހަރެން ދަނީ'],
+  ['the small child is reading a book','ކުޑަ ކުއްޖާ ފޮތެއް ކިޔަނީ'],
+  ['we are swimming in the sea','އަހަރެމެން މޫދުގައި ފަތަނީ'],
+  ['now she is starting to walk','މިހާރު ހިނގަން ފަށަނީ'],
   ['how are you','ތިބާ ކިހިނެއް؟'],
   ['what are you doing','ތިޔަ ކުރަނީ ކޮބައިތޯ؟'],
   ['thank you','ޝުކުރިއްޔާ'],
