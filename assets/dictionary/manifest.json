@@ -1,0 +1,129 @@
+{
+  "source": "Radheef via dhivehi_nlp 1.0.13",
+  "language": "dv",
+  "definitionLanguage": "dv",
+  "translationStatus": "Dhivehi definitions only; not English translation pairs",
+  "totalEntries": 29824,
+  "chunks": {
+    "ހ": {
+      "file": "u0780.json",
+      "entries": 2749
+    },
+    "ނ": {
+      "file": "u0782.json",
+      "entries": 1034
+    },
+    "ރ": {
+      "file": "u0783.json",
+      "entries": 1435
+    },
+    "ބ": {
+      "file": "u0784.json",
+      "entries": 2617
+    },
+    "ޅ": {
+      "file": "u0785.json",
+      "entries": 95
+    },
+    "ކ": {
+      "file": "u0786.json",
+      "entries": 2738
+    },
+    "އ": {
+      "file": "u0787.json",
+      "entries": 2645
+    },
+    "ވ": {
+      "file": "u0788.json",
+      "entries": 1673
+    },
+    "މ": {
+      "file": "u0789.json",
+      "entries": 2716
+    },
+    "ފ": {
+      "file": "u078a.json",
+      "entries": 3525
+    },
+    "ދ": {
+      "file": "u078b.json",
+      "entries": 2239
+    },
+    "ތ": {
+      "file": "u078c.json",
+      "entries": 1855
+    },
+    "ލ": {
+      "file": "u078d.json",
+      "entries": 1040
+    },
+    "ގ": {
+      "file": "u078e.json",
+      "entries": 1758
+    },
+    "ޏ": {
+      "file": "u078f.json",
+      "entries": 6
+    },
+    "ސ": {
+      "file": "u0790.json",
+      "entries": 962
+    },
+    "ޑ": {
+      "file": "u0791.json",
+      "entries": 86
+    },
+    "ޒ": {
+      "file": "u0792.json",
+      "entries": 131
+    },
+    "ޓ": {
+      "file": "u0793.json",
+      "entries": 94
+    },
+    "ޔ": {
+      "file": "u0794.json",
+      "entries": 31
+    },
+    "ޕ": {
+      "file": "u0795.json",
+      "entries": 60
+    },
+    "ޖ": {
+      "file": "u0796.json",
+      "entries": 119
+    },
+    "ޗ": {
+      "file": "u0797.json",
+      "entries": 70
+    },
+    "ޙ": {
+      "file": "u0799.json",
+      "entries": 45
+    },
+    "ޝ": {
+      "file": "u079d.json",
+      "entries": 1
+    },
+    "ޞ": {
+      "file": "u079e.json",
+      "entries": 22
+    },
+    "ޟ": {
+      "file": "u079f.json",
+      "entries": 1
+    },
+    "ޠ": {
+      "file": "u07a0.json",
+      "entries": 10
+    },
+    "ޢ": {
+      "file": "u07a2.json",
+      "entries": 13
+    },
+    "ޤ": {
+      "file": "u07a4.json",
+      "entries": 54
+    }
+  }
+}

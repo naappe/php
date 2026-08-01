@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="A teachable English and Dhivehi translation-memory engine">
   <title>Bas Translate — English ↔ Dhivehi</title>
-  <link rel="stylesheet" href="assets/css/styles.css?v=3.4.2">
+  <link rel="stylesheet" href="assets/css/styles.css?v=4.0.0">
 </head>
 <body>
   <div class="wrap">
     <header class="top">
       <div class="brand"><span class="logo">Aހ</span><div><h1>Bas Translate</h1><p>English ↔ Dhivehi learning engine</p></div></div>
-      <span class="offline">● Offline & private</span>
+      <span class="offline">● Local translator</span>
     </header>
 
     <section class="hero">
       <h2>Translate, teach and remember</h2>
-      <p>Verified sentence memory first, vocabulary tokens second, grammar reasoning third. Unknown meanings are marked instead of invented.</p>
+      <p>Verified sentence memory first, vocabulary tokens second, grammar reasoning third. Incomplete mixed-language output is blocked instead of invented.</p>
     </section>
 
     <main>
@@ -39,6 +39,13 @@
 
       <details class="details"><summary>Translation reasoning and tokens</summary><div class="explain"><p id="reasoning">Enter text and press Translate.</p><div class="tokens" id="tokens"></div></div></details>
 
+      <section class="dictionary" aria-labelledby="dictionaryTitle">
+        <div class="teacher-head"><div><h3 id="dictionaryTitle">Radheef dictionary lookup</h3><p>Search an exact Dhivehi headword. Definitions are in Dhivehi and are not English translation pairs.</p></div></div>
+        <div class="dictionary-grid"><input id="dictionaryWord" class="dv dictionary-input" dir="rtl" maxlength="80" placeholder="ދިވެހި ބަހެއް"><button class="btn primary" id="dictionarySearchBtn">Search Radheef</button></div>
+        <p class="learnmsg" id="dictionaryStatus">The matching dictionary chunk loads in your browser when you search.</p>
+        <div id="dictionaryResult" class="dictionary-result dv" dir="rtl" hidden></div>
+      </section>
+
       <section class="teacher">
         <div class="teacher-head"><div><h3>Teach the translation brain</h3><p>Enter matching English and Dhivehi sentences line by line. Lessons containing Arabic/Sindhi/Urdu characters are rejected.</p></div></div>
         <div class="teach-grid"><textarea id="teachEn" placeholder="English — one verified sentence per line"></textarea><textarea id="teachDv" class="dv" placeholder="ދިވެހި — ކޮންމެ ޖުމްލައެއް ވަކި ރޮނގަކަށް"></textarea></div>
@@ -60,12 +67,12 @@
         <div class="overview-columns">
           <details class="overview-panel" open><summary>Reasoning pipeline</summary><ol id="pipelineList" class="pipeline-list"></ol></details>
           <details class="overview-panel"><summary>Permanent lesson registry</summary><div id="lessonList" class="lesson-list"></div></details>
-          <details class="overview-panel"><summary>Safety and quality rules</summary><ul class="rule-list"><li>Accept Thaana (U+0780–U+07BF) for Dhivehi text.</li><li>Reject Arabic, Urdu and Sindhi letters.</li><li>Keep context-sensitive words unresolved until meaning is known.</li><li>Mark unknown translations with <code>⟦…⟧</code>.</li><li>Keep permanent and browser-taught knowledge separate.</li></ul></details>
+          <details class="overview-panel"><summary>Safety and quality rules</summary><ul class="rule-list"><li>Accept Thaana (U+0780–U+07BF) for Dhivehi text.</li><li>Reject Arabic, Urdu and Sindhi letters.</li><li>Keep context-sensitive words unresolved until meaning is known.</li><li>Show unknown meanings in analysis and block incomplete mixed-language output.</li><li>Keep permanent and browser-taught knowledge separate.</li></ul></details>
         </div>
       </section>
     </main>
     <footer>Only U+0780–U+07BF is accepted as Thaana. Arabic-script output is blocked.</footer>
   </div>
-  <script type="module" src="assets/js/app.js?v=3.4.2"></script>
+  <script type="module" src="assets/js/app.js?v=4.0.0"></script>
 </body>
 </html>
