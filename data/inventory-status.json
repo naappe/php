@@ -1,7 +1,34 @@
 {
-  "sourceWorkbook":"GULHIFALHU..xlsx",
-  "totalInventoryLines":657,
-  "engineRelatedCandidateLines":286,
-  "status":"Source workbook identified; full part-to-engine compatibility mapping is not yet verified.",
-  "rule":"Inventory quantity and description are source data. Engine compatibility, component location, service limits and failure logic require separate engineering evidence."
+  "phase": 3,
+  "sourceWorkbook": "GULHIFALHU..xlsx",
+  "totalInventoryLines": 657,
+  "engineInventoryLinesIncluded": 231,
+  "compatibilityCounts": {
+    "VERIFIED": 0,
+    "FAMILY MATCH": 59,
+    "CANDIDATE": 6,
+    "UNVERIFIED": 166,
+    "NOT COMPATIBLE": 0
+  },
+  "systemCounts": {
+    "Fuel System": 14,
+    "Crank Mechanism": 16,
+    "Valve Train": 55,
+    "Service & Sealing": 75,
+    "Cooling System": 28,
+    "Air Intake & Exhaust": 9,
+    "Lubrication System": 7,
+    "Starting & Charging": 2,
+    "Cylinder & Combustion": 13,
+    "Control & Protection": 10,
+    "Unclassified": 2
+  },
+  "generatorMappedCounts": {
+    "gen1": 11,
+    "gen2": 16,
+    "gen3": 3,
+    "gen4": 41
+  },
+  "status": "Phase 3 mapping active. Strict diesel-engine candidates are classified by system and module. Generator compatibility remains evidence-controlled.",
+  "rule": "No mapping is promoted to VERIFIED until the installed engine nameplate, CPL/specification, serial-specific OEM data, or equivalent exact evidence confirms it. FAMILY MATCH is deliberately used when family/model evidence exists but installed configuration is not yet confirmed."
 }
