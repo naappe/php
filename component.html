@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Gulhifalhu diesel engine component technical workspace">
 <title>Component Workspace · Gulhifalhu Engine Technical Console</title>
-<link rel="stylesheet" href="assets/component.css?v=2">
+<link rel="stylesheet" href="assets/component.css?v=3">
 </head>
 <body>
 <div class="component-shell">
@@ -35,7 +35,7 @@
           <span><i class="line-swatch"></i>SYSTEM PATH</span>
           <span><i class="selected-swatch"></i>SELECTED COMPONENT / MODULE</span>
           <span><i class="callout-swatch">01</i>CLICKABLE CALLOUT</span>
-          <span>FUNCTIONAL SCHEMATIC · NOT OEM GEOMETRY</span>
+          <span id="visualModeLabel">FUNCTIONAL SCHEMATIC · NOT OEM GEOMETRY</span>
         </div>
       </div>
 
@@ -58,9 +58,16 @@
         </div>
 
         <div class="evidence-panel">
-          <div class="section-label">EVIDENCE STATUS</div>
+          <div class="section-label">COMPATIBILITY EVIDENCE</div>
           <div id="evidenceMessage" class="evidence-message">Loading evidence state…</div>
           <div class="evidence-actions"><a id="viewEvidence" href="index.html#evidence">VIEW EVIDENCE</a><a id="viewSpares" href="index.html#parts">SYSTEM SPARES</a></div>
+        </div>
+
+        <div class="oem-visual-panel" id="oemVisualPanel">
+          <div class="oem-source-head"><span class="section-label">OEM ILLUSTRATION SOURCE</span><span id="oemVisualStatus" class="oem-source-status">CHECKING SOURCE…</span></div>
+          <div class="oem-source-block"><span>IDENTITY REQUIRED</span><p id="oemVisualIdentity">Checking installed-engine identity requirements…</p></div>
+          <div class="oem-source-block"><span>INTEGRATION RULE</span><p id="oemVisualRule">Loading visual-source rule…</p></div>
+          <div id="oemSourceLinks" class="oem-source-links"></div>
         </div>
 
         <div class="quick-actions">
@@ -99,5 +106,6 @@
 <script src="assets/diagram.js?v=6"></script>
 <script src="assets/component.js?v=2"></script>
 <script src="assets/component-interactions.js?v=1"></script>
+<script src="assets/oem-visual.js?v=1"></script>
 </body>
 </html>
