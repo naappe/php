@@ -1,0 +1,54 @@
+[
+  {
+    "sourceId": "inventory-gulhifalhu-xlsx",
+    "type": "INVENTORY SOURCE",
+    "title": "GULHIFALHU..xlsx",
+    "scope": "Store item number, description, category, unit and stock quantity. Does not prove engine compatibility."
+  },
+  {
+    "sourceId": "volvo-47713970",
+    "type": "OEM OPERATOR MANUAL",
+    "manufacturer": "Volvo Penta",
+    "documentNumber": "47713970",
+    "revision": "08-2024",
+    "title": "Volvo Penta 13L Operator's Manual",
+    "models": ["TAD1345GE-B"],
+    "engineLink": ["gen1"],
+    "confidence": "FAMILY MATCH",
+    "note": "Gulhifalhu SCADA identifies Gen 1 as TAD1345GE. Exact suffix and serial remain pending physical nameplate verification."
+  },
+  {
+    "sourceId": "stelco-kta50-spares",
+    "type": "STELCO PROCUREMENT EVIDENCE",
+    "title": "Spares Required for Cummins KTA50-G3",
+    "url": "https://storage.googleapis.com/gazette.gov.mv/docs/gazette/132.pdf",
+    "engineLink": ["gen4"],
+    "confidence": "FAMILY MATCH",
+    "note": "Supports model-to-part relationships; installed Gen 4 serial/CPL still requires nameplate confirmation."
+  },
+  {
+    "sourceId": "kta50-critical-spares",
+    "type": "TECHNICAL PROCUREMENT CROSS-REFERENCE",
+    "title": "Supply of Critical Spares for Cummins KTA50-G3",
+    "url": "https://www.ppa.org.fj/wp-content/uploads/2022/03/210322EFL-RFT-Tender-Specs-MR-73-2022.pdf",
+    "engineLink": ["gen4"],
+    "confidence": "FAMILY MATCH"
+  },
+  {
+    "sourceId": "kta50-parts-catalog",
+    "type": "PARTS CATALOG CROSS-REFERENCE",
+    "title": "Cummins KTA50 Series Parts Catalog",
+    "url": "https://www.aaronequipment.com/equipmentattachments/44092002_cummins_dflc_kta_50_parts_catalog.pdf",
+    "engineLink": ["gen4"],
+    "confidence": "FAMILY MATCH"
+  },
+  {
+    "sourceId": "stelco-lta10-spares",
+    "type": "STELCO PROCUREMENT EVIDENCE",
+    "title": "Cummins LTA10-G3 spares / CPL 1443 reference",
+    "url": "https://storage.googleapis.com/gazette.gov.mv/docs/gazette/146.pdf",
+    "engineLink": ["gen2"],
+    "confidence": "FAMILY MATCH",
+    "note": "The procurement record identifies an LTA10-G3 with a specific serial/CPL. Gulhifalhu Gen 2 serial/CPL is not yet physically confirmed."
+  }
+]
