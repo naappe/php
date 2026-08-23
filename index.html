@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Evidence-first Gulhifalhu diesel engine technical learning system">
 <title>Gulhifalhu Engine Technical Console</title>
-<link rel="stylesheet" href="assets/app.css?v=5">
+<link rel="stylesheet" href="assets/app.css?v=6">
 </head>
 <body>
 <div class="app">
@@ -21,7 +21,7 @@
       <button data-page="maintenance"><span>06</span> Maintenance</button>
       <button data-page="evidence"><span>07</span> Evidence</button>
     </div>
-    <div class="sidefoot"><b>ENGINEERING STATUS</b><br>Training schematics show relationships, not exact OEM geometry. Exact fit, torque, clearance and service values remain source-controlled.</div>
+    <div class="sidefoot"><b>EVIDENCE BOUNDARY</b><br>Training schematics show functional relationships. Exact installation geometry, fit, torque and clearances remain OEM-source controlled.</div>
   </aside>
 
   <main class="main">
@@ -38,75 +38,87 @@
 
     <div class="content">
       <section class="page active" id="page-home">
-        <div class="console-head">
-          <div><div class="eyebrow">INTERACTIVE ENGINE TRAINER</div><h2 id="machineTitle">Installed engine overview</h2><p class="lead" id="machineSub">Select a generator above. Then enter the engine through one of its ten systems.</p></div>
-          <div class="console-status"><span>TRAINING MODE</span><b>System → Module → Component → Spare</b></div>
-        </div>
-
-        <div class="machine-console">
-          <div class="machine-topline">
-            <div><span class="tech-label">ENGINE MODEL</span><b id="machineModel">—</b></div>
-            <div><span class="tech-label">RATED OUTPUT</span><b id="machineRating">—</b></div>
-            <div><span class="tech-label">IDENTITY</span><b id="machineIdentity">—</b></div>
-            <div><span class="tech-label">EVIDENCE</span><b id="machineEvidence">—</b></div>
-          </div>
-          <div class="machine-body">
-            <div class="system-index" id="machineSystemLeft"></div>
-            <div class="machine-figure">
-              <div class="figure-caption"><span>ENGINE SYSTEM ORIENTATION</span><small>Functional schematic · select a numbered system</small></div>
-              <div id="machineFigure"></div>
-              <div class="figure-axis"><span>FRONT / ACCESSORY END</span><span>FLYWHEEL / GENERATOR END</span></div>
+        <div class="technical-workspace">
+          <div class="context-bar">
+            <div class="context-engine"><span class="context-kicker">ENGINE CONTEXT</span><b id="contextModel">—</b><small id="contextGen">—</small></div>
+            <div class="context-states">
+              <span class="mode-state"><i></i> MODE: TRAINING</span>
+              <span class="scada-state">SCADA: NOT CONNECTED</span>
             </div>
-            <div class="system-index" id="machineSystemRight"></div>
           </div>
-          <div class="machine-footer">
-            <p id="machineNote">—</p>
-            <div class="machine-actions"><button class="primary" id="openAllSystems">Open system plates</button><button class="secondary" id="openMachineParts">Mapped spare parts</button></div>
-          </div>
-        </div>
 
-        <div class="principle-strip">
-          <div><span>01</span><b>Locate</b><small>Where is the system/module?</small></div>
-          <div><span>02</span><b>Understand</b><small>What flows, moves or carries load?</small></div>
-          <div><span>03</span><b>Diagnose</b><small>What changes when it fails?</small></div>
-          <div><span>04</span><b>Identify</b><small>Which spare and evidence apply?</small></div>
+          <div class="technical-canvas">
+            <section class="engine-plate-main">
+              <div class="plate-toolbar">
+                <div><span>PLATE 00</span><b>ENGINE SYSTEM ORIENTATION</b></div>
+                <div class="plate-meta"><span id="overviewRating">—</span><span id="overviewIdentity">—</span></div>
+              </div>
+              <div class="blueprint-grid" id="overviewCanvas"></div>
+              <div class="plate-axis"><span>FRONT / ACCESSORY END</span><span>FUNCTIONAL SCHEMATIC · NOT OEM GEOMETRY</span><span>FLYWHEEL / GENERATOR END</span></div>
+            </section>
+
+            <aside class="system-panel" id="systemPanel">
+              <div class="panel-overline">SELECTED SYSTEM</div>
+              <div class="panel-title-row"><div><span id="panelSystemNo">02</span><h2 id="panelSystemTitle">Fuel System</h2></div><span id="panelEvidence" class="evidence-badge">—</span></div>
+              <div class="panel-partref" id="panelPartRef">P/N —</div>
+              <p class="panel-purpose" id="panelPurpose">Select a numbered callout on the engine.</p>
+
+              <div class="panel-section">
+                <span class="panel-label">SYSTEM FLOW</span>
+                <div class="flowline" id="panelFlow"></div>
+              </div>
+
+              <div class="panel-section panel-table-section">
+                <div class="panel-table-head"><span class="panel-label">COMPONENT RELATIONSHIP</span><button id="openSelectedPlate" class="text-action">OPEN PLATE →</button></div>
+                <div class="component-table" id="panelComponents"></div>
+              </div>
+
+              <div class="panel-section evidence-section">
+                <span class="panel-label">EVIDENCE STATUS</span>
+                <div class="evidence-line"><span id="panelEvidenceDetail">—</span></div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="overview-foot">
+            <div><span class="tech-label">ENGINEERING NOTE</span><p id="overviewNote">—</p></div>
+            <div class="overview-actions"><button class="primary" id="openAllSystems">SYSTEM PLATES</button><button class="secondary" id="openMachineParts">SPARE PARTS</button></div>
+          </div>
         </div>
       </section>
 
       <section class="page" id="page-generators">
-        <div class="page-heading"><div><div class="eyebrow">INSTALLED FLEET</div><h2>Generator Fleet</h2><p class="lead">Four installed generator sets. Engine identity stays separated so Volvo and Cummins knowledge is never merged by assumption.</p></div></div>
+        <div class="page-heading"><div><div class="eyebrow">INSTALLED FLEET</div><h2>Generator Fleet</h2><p class="lead">Four installed generator sets. Engine identities stay separate so Volvo and Cummins knowledge is never merged by assumption.</p></div></div>
         <div class="fleet-grid" id="generatorGrid"></div>
         <div class="section details"><div class="panel"><span class="section-kicker">SELECTED MACHINE</span><h3 id="selectedGenTitle">Select a generator</h3><p id="selectedGenText">Choose a generator above.</p><div id="genActions" class="path"></div><div id="genSystemPath" class="path system-links"></div></div><div class="panel"><span class="section-kicker">EVIDENCE RULE</span><h3>Compatibility confidence</h3><div class="confidence-key"><p><b>VERIFIED</b> exact installed-engine/OEM evidence</p><p><b>FAMILY MATCH</b> same family/model evidence</p><p><b>CANDIDATE</b> plausible, incomplete evidence</p><p><b>UNVERIFIED</b> insufficient evidence</p></div></div></div>
       </section>
 
       <section class="page" id="page-systems">
-        <div class="page-heading"><div><div class="eyebrow">SERVICE-TRAINING VIEW</div><h2>System Technical Plates</h2><p class="lead">Full-width engineering plates combine system orientation, numbered callouts, purpose, failure clues and modules. They are designed to read more like service-training material than dashboard cards.</p></div></div>
+        <div class="page-heading"><div><div class="eyebrow">SERVICE-TRAINING VIEW</div><h2>System Technical Plates</h2><p class="lead">Full-width engineering plates combine orientation, numbered callouts, purpose, failure clues and modules. They are schematic training references, not replacement OEM drawings.</p></div></div>
         <div class="scopebar"><div><span class="section-kicker">MODEL CONTEXT</span><b id="scopeTitle">Common diesel architecture</b><small id="scopeNote">Select an installed engine to keep the training context visible.</small></div><div class="scope-buttons" id="scopeButtons"></div></div>
         <div class="warningline"><b>SCHEMATIC TRAINING PLATES</b><span>Do not use for exact installation position, fastener identification, torque, clearance, timing or part fit.</span></div>
         <div class="section plate-board" id="infographicBoard"></div>
       </section>
 
       <section class="page" id="page-parts">
-        <div class="page-heading"><div><div class="eyebrow">PART IDENTIFICATION</div><h2>Spare Parts</h2><p class="lead">Search engine-related store records without stock quantity. The interface keeps part identity, engine application and engineering evidence visually separate.</p></div></div>
+        <div class="page-heading"><div><div class="eyebrow">PART IDENTIFICATION</div><h2>Spare Parts</h2><p class="lead">Search engine-related store records without stock quantity. Part identity, engine application and engineering evidence remain visually separate.</p></div></div>
         <div class="toolbar"><div class="filter"><label>SEARCH</label><input id="partSearch" placeholder="Store item, description or part no."></div><div class="filter"><label>GENERATOR</label><select id="genFilter"></select></div><div class="filter"><label>SYSTEM</label><select id="systemFilter"></select></div><div class="filter"><label>CONFIDENCE</label><select id="confidenceFilter"><option value="all">All confidence</option><option>VERIFIED</option><option>FAMILY MATCH</option><option>CANDIDATE</option><option>UNVERIFIED</option><option>NOT COMPATIBLE</option></select></div></div>
         <div class="parts-meta"><span><b id="invTotal">—</b> records</span><span><b id="invFamily">—</b> family match</span><span><b id="invCandidate">—</b> candidate</span><span><b id="invUnverified">—</b> unverified</span></div>
         <div class="resultbar"><span id="resultText"></span><button class="ghost" id="resetFilters">Reset filters</button></div>
         <div class="parts-table"><div class="part-head"><div>Store item</div><div>Description / Part No.</div><div>System / Module</div><div>Confidence</div><div>Generator</div></div><div id="partRows"></div></div>
       </section>
 
-      <section class="page" id="page-diagnostics"><div class="page-heading"><div><div class="eyebrow">FAULT ISOLATION</div><h2>Diagnostics</h2><p class="lead">Start from an operating parameter and follow the sensor → mechanical source → affected modules → component path before selecting a spare.</p></div></div><div class="diag-grid" id="diagGrid"></div></section>
-
+      <section class="page" id="page-diagnostics"><div class="page-heading"><div><div class="eyebrow">FAULT ISOLATION</div><h2>Diagnostics</h2><p class="lead">Start from an operating parameter and follow sensor → mechanical source → affected modules → component path before selecting a spare.</p></div></div><div class="diag-grid" id="diagGrid"></div></section>
       <section class="page" id="page-maintenance"><div class="page-heading"><div><div class="eyebrow">SERVICE LOGIC</div><h2>Maintenance Relationships</h2><p class="lead">Maintenance is grouped by the system being protected, not presented as a disconnected checklist.</p></div></div><div class="maint-grid" id="maintGrid"></div></section>
-
-      <section class="page" id="page-evidence"><div class="page-heading"><div><div class="eyebrow">SOURCE CONTROL</div><h2>OEM Evidence</h2><p class="lead">Technical limits and compatibility claims remain traceable to their source, applicability and operating condition.</p></div></div><div id="evidenceList" class="section evidence-list"></div></section>
+      <section class="page" id="page-evidence"><div class="page-heading"><div><div class="eyebrow">SOURCE CONTROL</div><h2>OEM Evidence</h2><p class="lead">Technical limits and compatibility claims remain traceable to source, applicability and operating condition.</p></div></div><div id="evidenceList" class="section evidence-list"></div></section>
 
       <div class="footer">Gulhifalhu Engine Technical Console · Evidence-first diesel service training.</div>
     </div>
   </main>
 </div>
 <div class="drawerback" id="drawerback"></div><aside class="drawer" id="drawer"><div class="drawerinner"><button class="close" id="closeDrawer">✕</button><div id="drawerBody"></div></div></aside>
-<script src="assets/data-model.js?v=5"></script>
-<script src="assets/diagram.js?v=5"></script>
-<script src="assets/app-core.js?v=5"></script>
+<script src="assets/data-model.js?v=6"></script>
+<script src="assets/diagram.js?v=6"></script>
+<script src="assets/app-core.js?v=6"></script>
 </body>
 </html>
