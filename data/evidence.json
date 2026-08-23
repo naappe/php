@@ -1,0 +1,28 @@
+{
+  "confidenceLevels":[
+    {"id":"VERIFIED","meaning":"Exact model / OEM evidence confirms the fact or part relationship."},
+    {"id":"FAMILY MATCH","meaning":"OEM evidence covers the same engine family, but the exact installed variant is not yet confirmed."},
+    {"id":"CANDIDATE","meaning":"Part number, description or context suggests the relationship but evidence is incomplete."},
+    {"id":"UNVERIFIED","meaning":"No sufficient evidence has been linked yet."},
+    {"id":"NOT COMPATIBLE","meaning":"Available evidence excludes the relationship."}
+  ],
+  "sources":[
+    {
+      "sourceId":"volvo-47713970",
+      "manufacturer":"Volvo Penta",
+      "documentNumber":"47713970",
+      "documentType":"Operator's Manual",
+      "revision":"08-2024",
+      "applicability":"Volvo 13L industrial engine family including TAD1345GE-B",
+      "confidence":"FAMILY MATCH",
+      "facts":[
+        {"topic":"Engine architecture","value":"Inline six-cylinder, direct-injection industrial diesel; EMS, turbocharger, charge-air cooler, thermostatically controlled cooling and electronic speed control.","page":18},
+        {"topic":"Engine data","value":"DCU can display engine speed, charge pressure, coolant temperature, charge-air temperature, oil pressure, oil temperature, engine hours, battery voltage and fuel consumption.","page":21},
+        {"topic":"Oil pressure","value":"260–560 kPa for hot engine at 1900 rpm.","condition":"Do not use as a Gen 1 alarm threshold until exact installed model/speed limits are verified.","page":84},
+        {"topic":"Diagnostics","value":"SPN 99 oil-filter differential pressure; SPN 100 engine oil pressure; SPN 102 boost pressure; SPN 110 coolant temperature; SPN 111 coolant level; SPN 636 camshaft sensor; SPN 637 crankshaft sensor; SPN 651–656 cylinder injectors.","pages":"52–56"},
+        {"topic":"Cooling fault tracing","value":"Excessive coolant temperature investigation includes coolant level, air in coolant system, circulating pump and thermostat.","page":53},
+        {"topic":"Identification","value":"Engine labels are on the valve cover and include serial identification; exact installed variant must be confirmed from the engine label.","page":89}
+      ]
+    }
+  ]
+}
