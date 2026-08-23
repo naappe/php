@@ -5,26 +5,38 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Gulhifalhu diesel engine component technical workspace">
 <title>Component Workspace · Gulhifalhu Engine Technical Console</title>
-<link rel="stylesheet" href="assets/component.css?v=1">
+<link rel="stylesheet" href="assets/component.css?v=2">
 </head>
 <body>
 <div class="component-shell">
   <header class="component-header">
     <div class="machine-context">
-      <a id="backEngineTop" href="index.html#parts" class="brand-mark">GF</a>
+      <a id="backEngineTop" href="index.html#home" class="brand-mark">GF</a>
       <div><span>ACTIVE MACHINE</span><b id="headerMachine">Loading…</b></div>
     </div>
-    <div class="component-context"><span id="headerSystem">SYSTEM: —</span><i></i><span id="headerPn">P/N —</span></div>
+    <div class="component-context">
+      <span id="headerSystem">SYSTEM: —</span><i></i>
+      <span id="headerStore">STORE: —</span><i></i>
+      <span id="headerPn">P/N —</span>
+    </div>
   </header>
 
   <main class="component-main">
-    <div class="breadcrumb"><a id="backSystem" href="index.html#systems">← BACK TO SYSTEM</a><span>/</span><b>COMPONENT WORKSPACE</b></div>
+    <div class="breadcrumb"><a id="backSystem" href="index.html#systems">← BACK TO SYSTEM</a><span>/</span><b>COMPONENT WORKSPACE</b><span>/</span><span id="breadcrumbModule">MODULE —</span></div>
 
     <section class="component-grid">
       <div class="technical-illustration">
-        <div class="illustration-head"><div><span>TECHNICAL PLATE</span><b id="plateSystem">—</b></div><div><span>SELECTED MODULE</span><b id="plateModule">—</b></div></div>
+        <div class="illustration-head">
+          <div><span>TECHNICAL PLATE</span><b id="plateSystem">—</b></div>
+          <div class="plate-context"><span>SELECTED MODULE</span><b id="plateModule">—</b></div>
+        </div>
         <div class="illustration-stage" id="componentIllustration"></div>
-        <div class="illustration-legend"><span><i class="line-swatch"></i>SYSTEM PATH</span><span><i class="selected-swatch"></i>SELECTED MODULE / RELATIONSHIP</span><span>SCHEMATIC · NOT OEM GEOMETRY</span></div>
+        <div class="illustration-legend">
+          <span><i class="line-swatch"></i>SYSTEM PATH</span>
+          <span><i class="selected-swatch"></i>SELECTED COMPONENT / MODULE</span>
+          <span><i class="callout-swatch">01</i>CLICKABLE CALLOUT</span>
+          <span>FUNCTIONAL SCHEMATIC · NOT OEM GEOMETRY</span>
+        </div>
       </div>
 
       <aside class="component-info">
@@ -33,11 +45,16 @@
           <span id="partStatus" class="status-badge">UNVERIFIED</span>
         </div>
 
+        <div class="component-identity-strip">
+          <div><span>STORE ITEM</span><b id="storeItem">—</b></div>
+          <div><span>MODULE</span><b id="partModule">—</b></div>
+        </div>
+
         <div class="meta-grid">
           <div><span>ENGINE APPLICATION</span><b id="partFamily">—</b></div>
-          <div><span>MODULE</span><b id="partModule">—</b></div>
-          <div><span>STORE ITEM</span><b id="storeItem">—</b></div>
           <div><span>EVIDENCE STATE</span><b id="evidenceState">—</b></div>
+          <div><span>SELECTED CALLOUT</span><b id="selectedCallout">—</b></div>
+          <div><span>SCADA STATUS</span><b>NOT CONNECTED</b></div>
         </div>
 
         <div class="evidence-panel">
@@ -60,19 +77,26 @@
       <div class="functional-table"><span class="section-label">FUNCTIONAL RELATIONSHIP</span><div id="functionRows"></div></div>
     </section>
 
-    <section class="failure-panel">
-      <div><span class="section-label">FAILURE MODES / CLUES</span><div id="failureRows" class="failure-rows"></div></div>
-      <div><span class="section-label">COMPATIBILITY INTERPRETATION</span><p id="compatibilityMeaning"></p></div>
+    <section class="fault-workspace">
+      <div class="fault-tree-panel">
+        <div class="fault-head"><div><span class="section-label">FAILURE TREE</span><h2 id="faultTitle">SYSTEM FAULT PATH</h2></div><small>Click a branch to continue the diagnostic path.</small></div>
+        <div id="faultTree" class="fault-tree"></div>
+      </div>
+      <div class="fault-side">
+        <span class="section-label">COMPATIBILITY INTERPRETATION</span>
+        <p id="compatibilityMeaning"></p>
+        <div class="fault-side-actions"><a id="faultDiagnostics" href="index.html#diagnostics">OPEN DIAGNOSTICS →</a><a id="faultMaintenance" href="index.html#maintenance">OPEN MAINTENANCE →</a></div>
+      </div>
     </section>
 
     <section class="related-section">
-      <div class="related-head"><div><span class="section-label">RELATED PARTS</span><p>Real records from the same engine system/module. No placeholder part numbers are generated.</p></div><a id="allRelated" href="index.html#parts">VIEW SYSTEM LIBRARY →</a></div>
+      <div class="related-head"><div><span class="section-label">RELATED PARTS</span><h2>System / module records</h2><p>Real records only. Same-module items are prioritized; no placeholder part numbers are generated.</p></div><a id="allRelated" href="index.html#parts">VIEW SYSTEM LIBRARY →</a></div>
       <div id="relatedParts" class="related-grid"></div>
     </section>
   </main>
 </div>
 <script src="assets/data-model.js?v=6"></script>
 <script src="assets/diagram.js?v=6"></script>
-<script src="assets/component.js?v=1"></script>
+<script src="assets/component.js?v=2"></script>
 </body>
 </html>
