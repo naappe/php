@@ -1,0 +1,42 @@
+[
+  {
+    "id":"gen1",
+    "name":"Gen 1",
+    "manufacturer":"Volvo Penta",
+    "model":"TAD1345GE",
+    "ratingKw":360,
+    "identityStatus":"SCADA confirmed",
+    "oemEvidenceStatus":"FAMILY MATCH",
+    "note":"Uploaded Volvo manual 47713970 covers TAD1345GE-B. Exact suffix and serial remain pending engine nameplate verification."
+  },
+  {
+    "id":"gen2",
+    "name":"Gen 2",
+    "manufacturer":"Cummins",
+    "model":"LTA10-G3",
+    "ratingKw":200,
+    "identityStatus":"SCADA confirmed",
+    "oemEvidenceStatus":"UNVERIFIED",
+    "note":"Awaiting exact OEM parts/service literature and engine nameplate details."
+  },
+  {
+    "id":"gen3",
+    "name":"Gen 3",
+    "manufacturer":"Volvo Penta",
+    "model":"TWD1416GE",
+    "ratingKw":500,
+    "identityStatus":"SCADA confirmed",
+    "oemEvidenceStatus":"UNVERIFIED",
+    "note":"Telemetry-ready architecture only; no live SCADA/API connection is implemented yet."
+  },
+  {
+    "id":"gen4",
+    "name":"Gen 4",
+    "manufacturer":"Cummins",
+    "model":"KTA50-G3",
+    "ratingKw":1000,
+    "identityStatus":"SCADA confirmed",
+    "oemEvidenceStatus":"PARTIAL",
+    "note":"Some workbook part numbers and CPL context suggest KTA50-G3 relationships, but exact compatibility remains evidence-controlled."
+  }
+]
