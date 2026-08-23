@@ -1,0 +1,12 @@
+[
+  {"id":"air","name":"Air Intake & Exhaust","modules":["Air cleaner","Restriction indicator","Turbocharger","Charge air cooler","Intake manifold","Exhaust manifold","Exhaust piping / silencer"]},
+  {"id":"fuel","name":"Fuel System","modules":["Primary fuel filter / water separator","Secondary fuel filter","Fuel transfer pump","Injection / high-pressure pump","Fuel lines / rail","Fuel injectors"]},
+  {"id":"lube","name":"Lubrication System","modules":["Oil sump / pan","Lube oil pump","Oil cooler","Full-flow filters","Bypass valve","Oil galleries","Pressure regulating valve"]},
+  {"id":"cooling","name":"Cooling System","modules":["Jacket water pump","Thermostat housing / elements","Radiator / heat exchanger","Expansion tank","Coolant filter","Fan drive"]},
+  {"id":"combustion","name":"Cylinder & Combustion","modules":["Cylinder block","Cylinder head","Cylinder liners","Pistons","Piston rings","Piston pins"]},
+  {"id":"crank","name":"Crank Mechanism","modules":["Crankshaft","Main bearings","Thrust washers","Connecting rods","Big-end bearings","Vibration damper","Flywheel"]},
+  {"id":"valve","name":"Valve Train","modules":["Camshaft","Cam followers / tappets","Pushrods","Rocker arms","Intake / exhaust valves","Valve springs","Valve guides","Rotocaps"]},
+  {"id":"start","name":"Starting & Charging","modules":["Starter motor","Charging alternator","Batteries","Master disconnect","Heavy-duty cabling"]},
+  {"id":"control","name":"Control & Protection","modules":["ECU / controller","Speed pickup","Oil pressure sender","Coolant temperature sensor","Shutdown solenoids","CAN / diagnostics"]},
+  {"id":"service","name":"Service & Sealing","modules":["Gasket kits","O-rings","Oil seals","Expansion plugs","Hoses","Clamps"]}
+]
