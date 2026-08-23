@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "purpose": "Authoritative visual-source registry for model-specific engine illustrations. This registry does not itself assert exact installed-engine applicability.",
+  "generators": {
+    "gen1": {
+      "engine": "Volvo Penta TAD1345GE",
+      "state": "SOURCE IDENTIFIED · EXACT INSTALLED VARIANT PENDING",
+      "confidence": "FAMILY MATCH",
+      "requiredIdentity": "Confirm engine nameplate serial number and exact suffix (current operator-manual family evidence includes TAD1345GE-B).",
+      "integrationRule": "Keep the functional schematic until an exact engine-specific OEM workshop/parts illustration is obtained and its use is authorized. Do not relabel the schematic as OEM geometry.",
+      "sources": [
+        {
+          "label": "Volvo Penta Support & Manuals",
+          "type": "OFFICIAL SUPPORT",
+          "url": "https://www.volvopenta.com/support/",
+          "note": "Search by serial number, product number or designation. Volvo states workshop manuals may be available as printed professional-technician manuals."
+        },
+        {
+          "label": "Volvo Penta D13 Power Generation",
+          "type": "OFFICIAL PRODUCT",
+          "url": "https://www.volvopenta.com/industrial/power-generation-engines/power-generation-engine-range/d13-eu-stage-ii-epa-tier-2/",
+          "note": "Official D13 product-family page includes TAD1345GE/TAD1345GE-B family information and manual download entry points."
+        },
+        {
+          "label": "Volvo Penta Reman Catalogue",
+          "type": "OFFICIAL CATALOGUE",
+          "url": "https://www.volvopenta.com/-/media/volvopenta/parts/documents/volvo-penta-reman-catalogue.pdf",
+          "note": "Official family-level reman reference includes TAD1344GE/TAD1345GE and selected major assemblies."
+        }
+      ]
+    },
+    "gen2": {
+      "engine": "Cummins LTA10-G3",
+      "state": "OEM SOURCE PATH IDENTIFIED · SERIAL/CPL REQUIRED",
+      "confidence": "UNVERIFIED",
+      "requiredIdentity": "Capture the installed Cummins engine serial number and CPL from the dataplate before assigning exact exploded views or parts applicability.",
+      "integrationRule": "Use Cummins engine-specific catalog/service content only after serial/CPL context is confirmed.",
+      "sources": [
+        {
+          "label": "Cummins QuickServe Online",
+          "type": "OFFICIAL SERVICE",
+          "url": "https://quickserve.cummins.com/",
+          "note": "Cummins engine-specific parts and service information by engine serial number/family."
+        },
+        {
+          "label": "Cummins Parts Catalog",
+          "type": "OFFICIAL PARTS",
+          "url": "https://parts.cummins.com/",
+          "note": "Official Cummins online parts catalog with engine/system/sub-system and individual part graphics where available."
+        }
+      ]
+    },
+    "gen3": {
+      "engine": "Volvo Penta TWD1416GE",
+      "state": "OEM SOURCE PATH IDENTIFIED · SERIAL REQUIRED",
+      "confidence": "UNVERIFIED",
+      "requiredIdentity": "Capture the installed engine serial/product number before assigning model-specific workshop or parts illustrations.",
+      "integrationRule": "Use Volvo Penta serial/product-specific documentation; keep current technical plates schematic until exact source applicability is confirmed.",
+      "sources": [
+        {
+          "label": "Volvo Penta Support & Manuals",
+          "type": "OFFICIAL SUPPORT",
+          "url": "https://www.volvopenta.com/support/",
+          "note": "Official Volvo Penta support search by serial number, product number or designation."
+        }
+      ]
+    },
+    "gen4": {
+      "engine": "Cummins KTA50-G3",
+      "state": "SOURCE IDENTIFIED · ENGINE SERIAL/CPL REQUIRED",
+      "confidence": "FAMILY MATCH",
+      "requiredIdentity": "Capture the installed KTA50-G3 engine serial number and CPL before treating any exploded view or part number as exact installed-engine evidence.",
+      "integrationRule": "Prefer engine-serial-specific Cummins catalog graphics. Preserve the current schematic when exact CPL/serial applicability is unresolved.",
+      "sources": [
+        {
+          "label": "Cummins QuickServe Online",
+          "type": "OFFICIAL SERVICE",
+          "url": "https://quickserve.cummins.com/",
+          "note": "Cummins states QuickServe provides engine-specific parts catalogs, service manuals, wiring diagrams and dataplate information."
+        },
+        {
+          "label": "Cummins Parts Catalog",
+          "type": "OFFICIAL PARTS",
+          "url": "https://parts.cummins.com/",
+          "note": "Cummins documents engine/system/sub-system graphics, individual part graphics, part-number search and power-generation content."
+        },
+        {
+          "label": "KTA50 G3 Performance Rebuild Reference",
+          "type": "OFFICIAL FAMILY DOCUMENT",
+          "url": "https://quickserve.cummins.com/protected/files/qsol/cms/kta50_final_brochure.pdf",
+          "note": "Official KTA50 G3 family reference; useful as family evidence, not a substitute for the installed engine serial/CPL parts catalog."
+        }
+      ]
+    }
+  }
+}
