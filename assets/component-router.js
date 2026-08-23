@@ -5,7 +5,7 @@
       location.href=`component.html?id=${encodeURIComponent(id)}${gen?`&gen=${encodeURIComponent(gen)}`:''}`;
     };
   }
-  window.addEventListener('load',()=>{
+  const restoreContext=()=>{
     const params=new URLSearchParams(location.search),gen=params.get('gen'),system=params.get('system'),hash=(location.hash||'').replace('#','');
     if(gen&&typeof selectMachine==='function')selectMachine(gen);
     if(system&&typeof state!=='undefined'&&state.systems?.some(s=>s.id===system))state.selectedSystem=system;
@@ -16,5 +16,6 @@
       if(hash==='systems'&&system&&typeof openSystemPage==='function')setTimeout(()=>openSystemPage(system),60);
       if(hash==='home'&&typeof renderOverview==='function')renderOverview();
     }
-  });
+  };
+  if(document.readyState==='complete')restoreContext();else window.addEventListener('load',restoreContext,{once:true});
 })();
