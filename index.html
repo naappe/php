@@ -3,84 +3,110 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Evidence-first Gulhifalhu diesel engine service-training workspace">
-<title>Gulhifalhu Diesel Engine Learning Hub</title>
-<link rel="stylesheet" href="assets/app.css?v=4">
-<style>@media(min-width:1261px){.plate-board{grid-template-columns:1fr}.plate-body{grid-template-columns:minmax(0,1.7fr) minmax(310px,.65fr)}}</style>
+<meta name="description" content="Evidence-first Gulhifalhu diesel engine technical learning system">
+<title>Gulhifalhu Engine Technical Console</title>
+<link rel="stylesheet" href="assets/app.css?v=5">
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><div class="logo">GF</div><div><b>Diesel Learning Hub</b><small>Gulhifalhu Powerhouse</small></div></div>
+    <div class="brand"><div class="logo">GF</div><div><b>Engine Technical Console</b><small>STELCO · Gulhifalhu</small></div></div>
+    <div class="side-label">WORKSPACE</div>
     <div class="nav" id="nav">
-      <button data-page="home" class="active">Overview</button>
-      <button data-page="generators">Generators</button>
-      <button data-page="systems">System Plates</button>
-      <button data-page="parts">Spare Parts</button>
-      <button data-page="diagnostics">Diagnostics</button>
-      <button data-page="maintenance">Maintenance</button>
-      <button data-page="evidence">OEM Evidence</button>
+      <button data-page="home" class="active"><span>01</span> Engine Overview</button>
+      <button data-page="generators"><span>02</span> Generator Fleet</button>
+      <button data-page="systems"><span>03</span> System Plates</button>
+      <button data-page="parts"><span>04</span> Spare Parts</button>
+      <button data-page="diagnostics"><span>05</span> Diagnostics</button>
+      <button data-page="maintenance"><span>06</span> Maintenance</button>
+      <button data-page="evidence"><span>07</span> Evidence</button>
     </div>
-    <div class="sidefoot"><b>Evidence boundary</b><br>System plates teach mechanical relationships. Exact Volvo/Cummins geometry, fit, torque and clearances remain source-controlled.</div>
+    <div class="sidefoot"><b>ENGINEERING STATUS</b><br>Training schematics show relationships, not exact OEM geometry. Exact fit, torque, clearance and service values remain source-controlled.</div>
   </aside>
 
   <main class="main">
-    <header class="top"><h1 id="pageTitle">Powerhouse Overview</h1><input id="globalSearch" placeholder="Search engine, system, module or part number..."></header>
+    <header class="top">
+      <div><span class="top-kicker">GULHIFALHU POWERHOUSE</span><h1 id="pageTitle">Engine Overview</h1></div>
+      <input id="globalSearch" placeholder="Search engine, system, module or P/N…">
+    </header>
+
+    <div class="fleetbar">
+      <div class="fleet-caption"><span>ACTIVE MACHINE</span><b id="fleetIdentity">Loading…</b></div>
+      <div class="fleet-tabs" id="fleetTabs"></div>
+      <div id="activeEvidence" class="fleet-evidence"></div>
+    </div>
+
     <div class="content">
       <section class="page active" id="page-home">
-        <div class="hero">
-          <div class="hero-grid">
-            <div><div class="eyebrow">STELCO · GULHIFALHU</div><h2>Service-training logic built around the actual generator fleet.</h2><p class="lead">Study the engine in the same order a technician diagnoses it: generator model → system → module → component → failure path → spare part → evidence.</p></div>
-            <div class="rule"><b>Technical training, not decoration.</b><p>Visuals use numbered callouts, system paths and failure relationships. Generic classroom icons and stock quantities are excluded.</p></div>
-          </div>
-          <div class="stats"><div class="stat"><strong>4</strong><span>Installed generator sets</span></div><div class="stat"><strong>10</strong><span>Engine systems</span></div><div class="stat"><strong id="homeParts">—</strong><span>Spare-part records</span></div><div class="stat"><strong>5</strong><span>Evidence states</span></div></div>
+        <div class="console-head">
+          <div><div class="eyebrow">INTERACTIVE ENGINE TRAINER</div><h2 id="machineTitle">Installed engine overview</h2><p class="lead" id="machineSub">Select a generator above. Then enter the engine through one of its ten systems.</p></div>
+          <div class="console-status"><span>TRAINING MODE</span><b>System → Module → Component → Spare</b></div>
         </div>
-        <div class="section"><div class="sectionhead"><div><span class="section-kicker">FLEET</span><h3>Installed generators</h3></div><p>Open a generator to isolate its model and mapped spares.</p></div><div class="grid4" id="homeGenerators"></div></div>
+
+        <div class="machine-console">
+          <div class="machine-topline">
+            <div><span class="tech-label">ENGINE MODEL</span><b id="machineModel">—</b></div>
+            <div><span class="tech-label">RATED OUTPUT</span><b id="machineRating">—</b></div>
+            <div><span class="tech-label">IDENTITY</span><b id="machineIdentity">—</b></div>
+            <div><span class="tech-label">EVIDENCE</span><b id="machineEvidence">—</b></div>
+          </div>
+          <div class="machine-body">
+            <div class="system-index" id="machineSystemLeft"></div>
+            <div class="machine-figure">
+              <div class="figure-caption"><span>ENGINE SYSTEM ORIENTATION</span><small>Functional schematic · select a numbered system</small></div>
+              <div id="machineFigure"></div>
+              <div class="figure-axis"><span>FRONT / ACCESSORY END</span><span>FLYWHEEL / GENERATOR END</span></div>
+            </div>
+            <div class="system-index" id="machineSystemRight"></div>
+          </div>
+          <div class="machine-footer">
+            <p id="machineNote">—</p>
+            <div class="machine-actions"><button class="primary" id="openAllSystems">Open system plates</button><button class="secondary" id="openMachineParts">Mapped spare parts</button></div>
+          </div>
+        </div>
+
+        <div class="principle-strip">
+          <div><span>01</span><b>Locate</b><small>Where is the system/module?</small></div>
+          <div><span>02</span><b>Understand</b><small>What flows, moves or carries load?</small></div>
+          <div><span>03</span><b>Diagnose</b><small>What changes when it fails?</small></div>
+          <div><span>04</span><b>Identify</b><small>Which spare and evidence apply?</small></div>
+        </div>
       </section>
 
       <section class="page" id="page-generators">
-        <div class="eyebrow">INSTALLED SETS</div><h2>Generator hierarchy</h2><p class="lead">The four engines remain separated. Cross-model compatibility is never assumed.</p>
-        <div class="grid4" id="generatorGrid"></div>
-        <div class="section details"><div class="panel"><h3 id="selectedGenTitle">Select a generator</h3><p id="selectedGenText">Choose a generator card.</p><div id="genActions" class="path"></div><div id="genSystemPath" class="path" style="margin-top:12px"></div></div><div class="panel"><span class="section-kicker">CONFIDENCE</span><h3>Evidence status</h3><p class="source">VERIFIED = exact installed-engine/OEM evidence. FAMILY MATCH = same family/model evidence. CANDIDATE = plausible but incomplete. UNVERIFIED = insufficient evidence. NOT COMPATIBLE = evidence excludes the fit.</p></div></div>
+        <div class="page-heading"><div><div class="eyebrow">INSTALLED FLEET</div><h2>Generator Fleet</h2><p class="lead">Four installed generator sets. Engine identity stays separated so Volvo and Cummins knowledge is never merged by assumption.</p></div></div>
+        <div class="fleet-grid" id="generatorGrid"></div>
+        <div class="section details"><div class="panel"><span class="section-kicker">SELECTED MACHINE</span><h3 id="selectedGenTitle">Select a generator</h3><p id="selectedGenText">Choose a generator above.</p><div id="genActions" class="path"></div><div id="genSystemPath" class="path system-links"></div></div><div class="panel"><span class="section-kicker">EVIDENCE RULE</span><h3>Compatibility confidence</h3><div class="confidence-key"><p><b>VERIFIED</b> exact installed-engine/OEM evidence</p><p><b>FAMILY MATCH</b> same family/model evidence</p><p><b>CANDIDATE</b> plausible, incomplete evidence</p><p><b>UNVERIFIED</b> insufficient evidence</p></div></div></div>
       </section>
 
       <section class="page" id="page-systems">
-        <div class="eyebrow">ENGINEERING TRAINING</div><h2>System Technical Plates</h2><p class="lead">Each plate shows a recognizable engine relationship, numbered components, direction of flow, system purpose and common failure clues. It is intentionally denser and closer to service-training material than a presentation infographic.</p>
-        <div class="scopebar">
-          <div><span class="section-kicker">MODEL CONTEXT</span><b id="scopeTitle">Common diesel architecture</b><small id="scopeNote">Select an installed engine to keep the training context visible. The drawing remains schematic until model-specific OEM diagrams are loaded.</small></div>
-          <div class="scope-buttons" id="scopeButtons"></div>
-        </div>
-        <div class="notice">SCHEMATIC TRAINING PLATES — use them to understand function and diagnostic sequence. Do not use these drawings for exact installation position, fastener identification, torque, clearance, timing or part fit.</div>
+        <div class="page-heading"><div><div class="eyebrow">SERVICE-TRAINING VIEW</div><h2>System Technical Plates</h2><p class="lead">Full-width engineering plates combine system orientation, numbered callouts, purpose, failure clues and modules. They are designed to read more like service-training material than dashboard cards.</p></div></div>
+        <div class="scopebar"><div><span class="section-kicker">MODEL CONTEXT</span><b id="scopeTitle">Common diesel architecture</b><small id="scopeNote">Select an installed engine to keep the training context visible.</small></div><div class="scope-buttons" id="scopeButtons"></div></div>
+        <div class="warningline"><b>SCHEMATIC TRAINING PLATES</b><span>Do not use for exact installation position, fastener identification, torque, clearance, timing or part fit.</span></div>
         <div class="section plate-board" id="infographicBoard"></div>
       </section>
 
       <section class="page" id="page-parts">
-        <div class="eyebrow">PARTS LIBRARY</div><h2>Spare Parts</h2><p class="lead">Search engine-related store records without showing stock quantity. Part identity, engine application and engineering evidence remain separate.</p>
-        <div class="toolbar"><div class="filter"><label>Search</label><input id="partSearch" placeholder="Store item, description or part no."></div><div class="filter"><label>Generator</label><select id="genFilter"></select></div><div class="filter"><label>System</label><select id="systemFilter"></select></div><div class="filter"><label>Confidence</label><select id="confidenceFilter"><option value="all">All confidence</option><option>VERIFIED</option><option>FAMILY MATCH</option><option>CANDIDATE</option><option>UNVERIFIED</option><option>NOT COMPATIBLE</option></select></div></div>
-        <div class="parts-summary"><div class="parts-kpi"><b id="invTotal">—</b><span>Total part records</span></div><div class="parts-kpi"><b id="invFamily">—</b><span>Family match</span></div><div class="parts-kpi"><b id="invCandidate">—</b><span>Candidate</span></div><div class="parts-kpi"><b id="invUnverified">—</b><span>Unverified</span></div></div>
+        <div class="page-heading"><div><div class="eyebrow">PART IDENTIFICATION</div><h2>Spare Parts</h2><p class="lead">Search engine-related store records without stock quantity. The interface keeps part identity, engine application and engineering evidence visually separate.</p></div></div>
+        <div class="toolbar"><div class="filter"><label>SEARCH</label><input id="partSearch" placeholder="Store item, description or part no."></div><div class="filter"><label>GENERATOR</label><select id="genFilter"></select></div><div class="filter"><label>SYSTEM</label><select id="systemFilter"></select></div><div class="filter"><label>CONFIDENCE</label><select id="confidenceFilter"><option value="all">All confidence</option><option>VERIFIED</option><option>FAMILY MATCH</option><option>CANDIDATE</option><option>UNVERIFIED</option><option>NOT COMPATIBLE</option></select></div></div>
+        <div class="parts-meta"><span><b id="invTotal">—</b> records</span><span><b id="invFamily">—</b> family match</span><span><b id="invCandidate">—</b> candidate</span><span><b id="invUnverified">—</b> unverified</span></div>
         <div class="resultbar"><span id="resultText"></span><button class="ghost" id="resetFilters">Reset filters</button></div>
         <div class="parts-table"><div class="part-head"><div>Store item</div><div>Description / Part No.</div><div>System / Module</div><div>Confidence</div><div>Generator</div></div><div id="partRows"></div></div>
       </section>
 
-      <section class="page" id="page-diagnostics">
-        <div class="eyebrow">FAULT PATH</div><h2>Diagnostics</h2><p class="lead">Start from an operating parameter and follow the mechanical chain before choosing a component or spare part.</p><div class="diag-grid" id="diagGrid"></div>
-      </section>
+      <section class="page" id="page-diagnostics"><div class="page-heading"><div><div class="eyebrow">FAULT ISOLATION</div><h2>Diagnostics</h2><p class="lead">Start from an operating parameter and follow the sensor → mechanical source → affected modules → component path before selecting a spare.</p></div></div><div class="diag-grid" id="diagGrid"></div></section>
 
-      <section class="page" id="page-maintenance">
-        <div class="eyebrow">SERVICE LOGIC</div><h2>Maintenance Relationships</h2><p class="lead">Maintenance is grouped by the system being protected, not as a disconnected checklist.</p><div class="maint-grid" id="maintGrid"></div>
-      </section>
+      <section class="page" id="page-maintenance"><div class="page-heading"><div><div class="eyebrow">SERVICE LOGIC</div><h2>Maintenance Relationships</h2><p class="lead">Maintenance is grouped by the system being protected, not presented as a disconnected checklist.</p></div></div><div class="maint-grid" id="maintGrid"></div></section>
 
-      <section class="page" id="page-evidence">
-        <div class="eyebrow">SOURCE CONTROL</div><h2>OEM Evidence</h2><p class="lead">Technical limits and compatibility claims must remain traceable to their source, applicability and operating condition.</p><div id="evidenceList" class="section"></div>
-      </section>
+      <section class="page" id="page-evidence"><div class="page-heading"><div><div class="eyebrow">SOURCE CONTROL</div><h2>OEM Evidence</h2><p class="lead">Technical limits and compatibility claims remain traceable to their source, applicability and operating condition.</p></div></div><div id="evidenceList" class="section evidence-list"></div></section>
 
-      <div class="footer">Gulhifalhu Diesel Engine Learning Hub · Evidence-first service-training workspace.</div>
+      <div class="footer">Gulhifalhu Engine Technical Console · Evidence-first diesel service training.</div>
     </div>
   </main>
 </div>
 <div class="drawerback" id="drawerback"></div><aside class="drawer" id="drawer"><div class="drawerinner"><button class="close" id="closeDrawer">✕</button><div id="drawerBody"></div></div></aside>
-<script src="assets/data-model.js?v=4"></script>
-<script src="assets/diagram.js?v=4"></script>
-<script src="assets/app-core.js?v=4"></script>
+<script src="assets/data-model.js?v=5"></script>
+<script src="assets/diagram.js?v=5"></script>
+<script src="assets/app-core.js?v=5"></script>
 </body>
 </html>
