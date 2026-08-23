@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Interactive 3D diesel engine training module for Gulhifalhu Powerhouse">
 <title>3D Engine Module · Gulhifalhu Engine Technical Console</title>
-<link rel="stylesheet" href="assets/engine-3d.css?v=2">
+<link rel="stylesheet" href="assets/engine-3d.css?v=3">
 </head>
 <body>
 <div class="viewer-shell">
@@ -21,17 +21,17 @@
       <div class="side-section"><span class="label">VIEW MODE</span><div class="mode-tabs"><button class="active" data-mode="realistic">REALISTIC</button><button data-mode="technical">TECHNICAL</button><button data-mode="isolate">ISOLATE</button></div></div>
       <div class="side-section"><span class="label">SYSTEMS</span><div id="systemButtons" class="system-buttons"></div></div>
       <div class="side-section selected-panel"><span class="label">SELECTED</span><b id="selectedName">ENGINE ASSEMBLY</b><p id="selectedDesc">Rotate, zoom and select an engine system.</p><div class="selected-tags"><span id="selectedSystem">ALL SYSTEMS</span><span id="selectedType">ASSEMBLY</span><span id="selectedEvidence">TRAINING MODEL</span></div><a id="openSystem" href="index.html#systems">OPEN TECHNICAL PLATE →</a></div>
-      <div class="truth-note"><b>VISUAL AUTHORITY</b><span>TRAINING 3D MODEL · NOT OEM GEOMETRY</span><p>Materials, lighting and mechanical detail are realistic. Exact dimensions, placement and service geometry remain OEM-source controlled.</p><a id="evidenceLink" href="evidence-flow.html">EVIDENCE FLOW →</a></div>
+      <div class="truth-note"><b>VISUAL AUTHORITY</b><span>TRAINING 3D MODEL · NOT OEM GEOMETRY</span><p>Gen 1 silhouette and open-genset arrangement are now matched to supplied TAD1345GE reference photos. Exact dimensions and component positions remain OEM-source controlled.</p><a id="evidenceLink" href="evidence-flow.html">EVIDENCE FLOW →</a></div>
     </aside>
 
     <section class="viewer-stage-wrap">
       <div class="stage-toolbar"><div><span>INTERACTIVE 3D MODULE</span><b id="stageTitle">DIESEL ENGINE TRAINING MODEL</b></div><div class="stage-actions"><button id="explodeView">EXPLODE: OFF</button><button id="resetView">RESET VIEW</button><button id="toggleRotate">AUTO ROTATE: OFF</button></div></div>
-      <div id="threeStage" class="three-stage"><div class="loader">BUILDING REAL-TIME 3D ENGINE…</div><div id="labelsLayer" class="labels-layer"></div></div>
-      <div class="viewer-hint"><span>DRAG = ROTATE</span><span>WHEEL = ZOOM</span><span>CLICK = SELECT</span><span>REALISTIC / TECHNICAL / ISOLATE</span><b>PHYSICALLY BASED MATERIALS · REAL-TIME LIGHTING</b></div>
+      <div id="threeStage" class="three-stage"><div class="loader">BUILDING REFERENCE-MATCHED 3D ASSEMBLY…</div></div>
+      <div class="viewer-hint"><span>DRAG = ROTATE</span><span>WHEEL = ZOOM</span><span>CLICK = SELECT COMPONENT</span><span>REALISTIC / TECHNICAL / ISOLATE</span><b>WORKSHOP LIGHTING · PBR MATERIALS · SYSTEM MESHES</b></div>
     </section>
   </main>
 </div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}</script>
-<script type="module" src="assets/engine-3d-v2.js?v=1"></script>
+<script type="module" src="assets/engine-3d-v4.js?v=1"></script>
 </body>
 </html>
