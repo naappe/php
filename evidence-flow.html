@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Evidence verification workflow for Gulhifalhu engine spare-part compatibility">
+<title>Evidence Verification Flow · Gulhifalhu Engine Technical Console</title>
+<link rel="stylesheet" href="assets/evidence-flow.css?v=1">
+</head>
+<body>
+<div class="flow-shell">
+  <header class="flow-header">
+    <div class="flow-brand"><a href="index.html#evidence" class="brand-mark">GF</a><div><span>GULHIFALHU POWERHOUSE</span><b>EVIDENCE VERIFICATION FLOW</b></div></div>
+    <div class="flow-mode"><span>MODE: ENGINEERING REVIEW</span><i></i><span>SCADA: NOT CONNECTED</span></div>
+  </header>
+
+  <main class="flow-main">
+    <div class="flow-nav"><a href="index.html#evidence">← BACK TO OEM EVIDENCE</a><span>/</span><b>SPARE PARTS VERIFICATION</b></div>
+
+    <section class="flow-intro">
+      <div><span class="eyebrow">FROM PHYSICAL IDENTITY TO SERVICE DECISION</span><h1>Spare Parts Verification — Evidence Flow</h1><p>Compatibility, visual authority and installed-engine identity are reviewed independently. A drawing, part number or model-family match never becomes exact installed-engine evidence by appearance alone.</p></div>
+      <div class="status-key">
+        <span><i class="dot unverified"></i>UNVERIFIED</span>
+        <span><i class="dot family"></i>FAMILY MATCH</span>
+        <span><i class="dot candidate"></i>CANDIDATE</span>
+        <span><i class="dot verified"></i>VERIFIED</span>
+        <span><i class="dot incompatible"></i>NOT COMPATIBLE</span>
+      </div>
+    </section>
+
+    <section class="machine-selector">
+      <div><span class="section-label">INSTALLED ENGINE CONTEXT</span><b id="selectedMachine">Loading…</b><small id="selectedIdentity">—</small></div>
+      <div id="machineTabs" class="machine-tabs"></div>
+    </section>
+
+    <section class="truth-strip">
+      <article><span>TRUTH DOMAIN 01</span><h2>Installed-Engine Identity</h2><b id="identityTruth">MODEL CONTEXT RECORDED</b><p id="identityRequirement">Physical dataplate evidence pending.</p></article>
+      <article><span>TRUTH DOMAIN 02</span><h2>Visual Authority</h2><b id="visualTruth">FUNCTIONAL SCHEMATIC</b><p id="visualRequirement">Exact OEM illustration gated by identity evidence.</p></article>
+      <article><span>TRUTH DOMAIN 03</span><h2>Part Compatibility</h2><b id="compatTruth">EVIDENCE CONTROLLED</b><p>Part status is evaluated independently from identity and illustration authority.</p></article>
+    </section>
+
+    <section class="flow-track" aria-label="Six-stage evidence verification workflow">
+      <article class="stage" data-stage="1">
+        <div class="stage-head"><span class="stage-no">01</span><div><span>PHYSICAL EVIDENCE</span><h2>Engine Identity</h2></div></div>
+        <div class="stage-body"><div class="stage-icon camera">◎</div><h3>Capture Dataplate</h3><p>Photograph the installed engine identification plate clearly enough to read the required build identifiers.</p><div class="stage-data" id="identityFields"></div></div>
+        <footer><span>OUTPUT</span><b>Dataplate evidence + identity state</b></footer>
+      </article>
+
+      <div class="stage-arrow">→</div>
+
+      <article class="stage" data-stage="2">
+        <div class="stage-head"><span class="stage-no">02</span><div><span>AUTHORITATIVE LOOKUP</span><h2>Catalogue Lookup</h2></div></div>
+        <div class="stage-body"><div class="stage-icon">⌕</div><h3>Find Exact Build Record</h3><p>Use the official OEM support/parts system with the installed-engine identifiers.</p><div id="officialSources" class="source-list"></div></div>
+        <footer><span>OUTPUT</span><b>Engine-specific catalogue context</b></footer>
+      </article>
+
+      <div class="stage-arrow">→</div>
+
+      <article class="stage" data-stage="3">
+        <div class="stage-head"><span class="stage-no">03</span><div><span>DRAWING AUTHORITY</span><h2>Visual Source</h2></div></div>
+        <div class="stage-body"><div class="stage-icon">▤</div><h3>Assign Illustration Authority</h3><div class="authority-stack"><div><span>01</span><b>Functional schematic</b><small>Training relationship only.</small></div><div><span>02</span><b>OEM source identified</b><small>Official source located; applicability pending.</small></div><div><span>03</span><b>Exact OEM illustration</b><small>Serial/CPL/suffix-specific applicability confirmed.</small></div></div></div>
+        <footer><span>OUTPUT</span><b>Visual authority recorded</b></footer>
+      </article>
+
+      <div class="stage-arrow">→</div>
+
+      <article class="stage" data-stage="4">
+        <div class="stage-head"><span class="stage-no">04</span><div><span>FIT EVALUATION</span><h2>Part Compatibility</h2></div></div>
+        <div class="stage-body"><div class="stage-icon">⚙</div><h3>Match & Evaluate</h3><div class="compat-list"><div><i class="dot unverified"></i><span><b>UNVERIFIED</b><small>Insufficient exact evidence.</small></span></div><div><i class="dot family"></i><span><b>FAMILY MATCH</b><small>Family/model evidence only.</small></span></div><div><i class="dot candidate"></i><span><b>CANDIDATE</b><small>Plausible relationship; needs stronger evidence.</small></span></div><div><i class="dot verified"></i><span><b>VERIFIED</b><small>Exact installed-engine/OEM evidence.</small></span></div></div></div>
+        <footer><span>OUTPUT</span><b>Compatibility status + evidence</b></footer>
+      </article>
+
+      <div class="stage-arrow">→</div>
+
+      <article class="stage" data-stage="5">
+        <div class="stage-head"><span class="stage-no">05</span><div><span>ENGINEERING CONTROL</span><h2>Technical Review</h2></div></div>
+        <div class="stage-body"><div class="stage-icon">✓</div><h3>Review Checklist</h3><ul class="checklist"><li>Dataplate evidence legible</li><li>Installed identity fields resolved</li><li>Catalogue build context matched</li><li>Illustration authority recorded</li><li>Part-number relationship checked</li><li>Supersessions / applicability reviewed</li><li>Open uncertainties remain visible</li></ul></div>
+        <footer><span>OUTPUT</span><b>Engineer-ready evidence pack</b></footer>
+      </article>
+
+      <div class="stage-arrow">→</div>
+
+      <article class="stage" data-stage="6">
+        <div class="stage-head"><span class="stage-no">06</span><div><span>CONTROLLED DECISION</span><h2>Verification & Issue</h2></div></div>
+        <div class="stage-body"><div class="stage-icon">◇</div><h3>Release Evidence State</h3><div class="release-list"><div><i class="dot unverified"></i><b>UNVERIFIED</b><span>Do not present as confirmed fit.</span></div><div><i class="dot family"></i><b>FAMILY MATCH</b><span>Use with explicit family-level limitation.</span></div><div><i class="dot candidate"></i><b>CANDIDATE</b><span>Engineering confirmation still required.</span></div><div><i class="dot verified"></i><b>VERIFIED</b><span>Exact evidence supports installed-engine fit.</span></div></div></div>
+        <footer><span>OUTPUT</span><b>Traceable final status</b></footer>
+      </article>
+    </section>
+
+    <section class="evidence-dashboard">
+      <div class="evidence-requirement"><span class="section-label">CURRENT BLOCKER</span><h2 id="blockerTitle">Physical engine identity</h2><p id="blockerText">Loading required evidence…</p><div id="sourceState" class="source-state"></div></div>
+      <div class="inventory-state"><span class="section-label">CURRENT PART-MAPPING STATE</span><h2>Evidence-controlled engine records</h2><div class="metric-grid"><div><b id="metricTotal">—</b><span>ENGINE RECORDS</span></div><div><b id="metricVerified">—</b><span>VERIFIED</span></div><div><b id="metricFamily">—</b><span>FAMILY MATCH</span></div><div><b id="metricCandidate">—</b><span>CANDIDATE</span></div><div><b id="metricUnverified">—</b><span>UNVERIFIED</span></div></div><p class="mapping-rule" id="mappingRule">—</p></div>
+    </section>
+
+    <section class="traceability-bar">
+      <div><span>EVIDENCE REQUIREMENT</span><b>No dataplate = no exact installed-engine verification.</b></div>
+      <div><span>VISUAL RULE</span><b>OEM-looking geometry is not automatically OEM-authoritative.</b></div>
+      <div><span>TRACEABILITY</span><b>Every promoted status must point to its supporting evidence.</b></div>
+      <div class="trace-actions"><a href="index.html#parts">SPARE PARTS</a><a href="index.html#evidence">OEM EVIDENCE</a><a id="openEngine" href="index.html#home">ENGINE OVERVIEW</a></div>
+    </section>
+  </main>
+</div>
+<script src="assets/evidence-flow.js?v=1"></script>
+</body>
+</html>
