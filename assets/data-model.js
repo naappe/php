@@ -31,3 +31,7 @@ const maintenance=[
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const cclass=v=>v==='VERIFIED'?'verified':v==='FAMILY MATCH'?'family':v==='CANDIDATE'?'candidate':v==='NOT COMPATIBLE'?'incompatible':'unverified';
 const genName=id=>state.generators.find(g=>g.id===id)?.name||id;
+window.addEventListener('load',()=>{
+  if(!document.querySelector('#partRows'))return;
+  const s=document.createElement('script');s.src='assets/component-router.js?v=1';document.body.appendChild(s);
+});
