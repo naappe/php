@@ -28,9 +28,27 @@ Current compatibility state:
 - CANDIDATE: 6
 - UNVERIFIED: 166
 
-Generator-linked candidate/family mappings currently include Gen 1: 11, Gen 2: 16, Gen 3: 3 and Gen 4: 41. These counts are mappings, not confirmed installed-part quantities.
+Generator-linked candidate/family mappings currently include Gen 1: 11, Gen 2: 16, Gen 3: 3 and Gen 4: 41. These are mapping counts, not confirmed installed-part quantities.
 
-Inventory data is split by system under `data/inventory/`. `data/evidence-sources.json` records the evidence registry separately from store data.
+Inventory data is split by system under `data/inventory/`. `data/inventory-manifest.json` lets the browser load those files as one searchable library. `data/evidence.json` keeps engineering evidence separate from store data.
+
+## Inventory UI
+
+The Phase 3 browser workspace is implemented in `index.html` and includes:
+
+- Search by store item, description or part number
+- Generator filter
+- Engine-system filter
+- Confidence filter
+- Stock / zero-stock filter
+- Current result count and evidence-state summary
+- Clickable part detail panel
+- Stock quantity and unit
+- Detected part number
+- System and module classification
+- Generator mapping chips
+- Compatibility-confidence explanation
+- Direct navigation from generator and system pages into filtered inventory
 
 ## Current OEM / technical evidence
 
@@ -43,9 +61,9 @@ Inventory data is split by system under `data/inventory/`. `data/evidence-source
 
 - Phase 1 generator hierarchy: implemented
 - Phase 2 standardized systems/modules: implemented
-- Phase 3 inventory-to-system/engine mapping: implemented as evidence-controlled data layer
+- Phase 3 inventory-to-system/engine mapping: implemented
+- Phase 3 inventory UI / filtering / part detail: implemented
 - OEM evidence registry: implemented and expanding
-- Inventory UI / filtering: next
 - Diagnostic graph: next
 - Maintenance graph: next
 - Live telemetry: not connected; architecture only
