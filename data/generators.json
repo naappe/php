@@ -5,7 +5,7 @@
     "manufacturer":"Volvo Penta",
     "model":"TAD1345GE",
     "ratingKw":360,
-    "identityStatus":"SCADA confirmed",
+    "identityStatus":"Model context recorded · dataplate suffix/serial verification pending",
     "oemEvidenceStatus":"FAMILY MATCH",
     "note":"Uploaded Volvo manual 47713970 covers TAD1345GE-B. Exact suffix and serial remain pending engine nameplate verification."
   },
@@ -15,7 +15,7 @@
     "manufacturer":"Cummins",
     "model":"LTA10-G3",
     "ratingKw":200,
-    "identityStatus":"SCADA confirmed",
+    "identityStatus":"Model context recorded · ESN/CPL dataplate verification pending",
     "oemEvidenceStatus":"UNVERIFIED",
     "note":"Awaiting exact OEM parts/service literature and engine nameplate details."
   },
@@ -25,7 +25,7 @@
     "manufacturer":"Volvo Penta",
     "model":"TWD1416GE",
     "ratingKw":500,
-    "identityStatus":"SCADA confirmed",
+    "identityStatus":"Model context recorded · serial/product dataplate verification pending",
     "oemEvidenceStatus":"UNVERIFIED",
     "note":"Telemetry-ready architecture only; no live SCADA/API connection is implemented yet."
   },
@@ -35,7 +35,7 @@
     "manufacturer":"Cummins",
     "model":"KTA50-G3",
     "ratingKw":1000,
-    "identityStatus":"SCADA confirmed",
+    "identityStatus":"Model context recorded · ESN/CPL dataplate verification pending",
     "oemEvidenceStatus":"FAMILY MATCH",
     "note":"Workbook part numbers and KTA50-G3/CPL context support a family/model relationship, but exact installed CPL/serial compatibility remains evidence-controlled."
   }
