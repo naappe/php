@@ -35,6 +35,12 @@ window.addEventListener('load',()=>{
   if(document.querySelector('#partRows')){
     ['assets/component-router.js?v=1','assets/system-router.js?v=1'].forEach(src=>{const s=document.createElement('script');s.src=src;document.body.appendChild(s)});
   }
+  const nav=document.querySelector('#nav');
+  if(nav&&!document.querySelector('#nav3d')){
+    const style=document.createElement('style');style.textContent='.nav .nav-3d{border:0;background:transparent;color:#b8bec2;text-align:left;padding:11px 10px;display:flex;align-items:center;gap:9px;font:700 12px var(--condensed);letter-spacing:.015em;text-decoration:none}.nav .nav-3d span{font:700 8px var(--mono);color:#6f777c;width:22px}.nav .nav-3d:hover{background:#2c2c2c;color:#fff;box-shadow:inset 3px 0 0 var(--teal)}.overview-actions .engine3d-btn{border:1px solid #252525;background:#252525;color:#fff;padding:8px 10px;font:800 8.5px var(--mono);letter-spacing:.03em;text-decoration:none;display:inline-flex;align-items:center}';document.head.appendChild(style);
+    const a=document.createElement('a');a.id='nav3d';a.className='nav-3d';a.href='engine-3d.html';a.innerHTML='<span>08</span> 3D Engine';a.addEventListener('click',()=>{a.href=`engine-3d.html?gen=${encodeURIComponent(state.activeGen||'gen1')}`});nav.appendChild(a);
+  }
+  const actions=document.querySelector('.overview-actions');if(actions&&!document.querySelector('#open3DEngine')){const a=document.createElement('a');a.id='open3DEngine';a.className='engine3d-btn';a.href='engine-3d.html';a.textContent='3D ENGINE';a.addEventListener('click',()=>{a.href=`engine-3d.html?gen=${encodeURIComponent(state.activeGen||'gen1')}`});actions.prepend(a)}
   const evidencePage=document.querySelector('#page-evidence');
   if(evidencePage){
     if(!document.querySelector('link[href*="evidence-entry.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/evidence-entry.css?v=1';document.head.appendChild(l)}
