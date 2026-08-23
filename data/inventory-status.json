@@ -1,0 +1,7 @@
+{
+  "sourceWorkbook":"GULHIFALHU..xlsx",
+  "totalInventoryLines":657,
+  "engineRelatedCandidateLines":286,
+  "status":"Source workbook identified; full part-to-engine compatibility mapping is not yet verified.",
+  "rule":"Inventory quantity and description are source data. Engine compatibility, component location, service limits and failure logic require separate engineering evidence."
+}
