@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Gulhifalhu diesel engine component technical workspace">
+<title>Component Workspace · Gulhifalhu Engine Technical Console</title>
+<link rel="stylesheet" href="assets/component.css?v=1">
+</head>
+<body>
+<div class="component-shell">
+  <header class="component-header">
+    <div class="machine-context">
+      <a id="backEngineTop" href="index.html#parts" class="brand-mark">GF</a>
+      <div><span>ACTIVE MACHINE</span><b id="headerMachine">Loading…</b></div>
+    </div>
+    <div class="component-context"><span id="headerSystem">SYSTEM: —</span><i></i><span id="headerPn">P/N —</span></div>
+  </header>
+
+  <main class="component-main">
+    <div class="breadcrumb"><a id="backSystem" href="index.html#systems">← BACK TO SYSTEM</a><span>/</span><b>COMPONENT WORKSPACE</b></div>
+
+    <section class="component-grid">
+      <div class="technical-illustration">
+        <div class="illustration-head"><div><span>TECHNICAL PLATE</span><b id="plateSystem">—</b></div><div><span>SELECTED MODULE</span><b id="plateModule">—</b></div></div>
+        <div class="illustration-stage" id="componentIllustration"></div>
+        <div class="illustration-legend"><span><i class="line-swatch"></i>SYSTEM PATH</span><span><i class="selected-swatch"></i>SELECTED MODULE / RELATIONSHIP</span><span>SCHEMATIC · NOT OEM GEOMETRY</span></div>
+      </div>
+
+      <aside class="component-info">
+        <div class="part-heading">
+          <div><span id="partNumber" class="part-number">P/N —</span><h1 id="partName">Component</h1></div>
+          <span id="partStatus" class="status-badge">UNVERIFIED</span>
+        </div>
+
+        <div class="meta-grid">
+          <div><span>ENGINE APPLICATION</span><b id="partFamily">—</b></div>
+          <div><span>MODULE</span><b id="partModule">—</b></div>
+          <div><span>STORE ITEM</span><b id="storeItem">—</b></div>
+          <div><span>EVIDENCE STATE</span><b id="evidenceState">—</b></div>
+        </div>
+
+        <div class="evidence-panel">
+          <div class="section-label">EVIDENCE STATUS</div>
+          <div id="evidenceMessage" class="evidence-message">Loading evidence state…</div>
+          <div class="evidence-actions"><a id="viewEvidence" href="index.html#evidence">VIEW EVIDENCE</a><a id="viewSpares" href="index.html#parts">SYSTEM SPARES</a></div>
+        </div>
+
+        <div class="quick-actions">
+          <a id="goDiagnostics" href="index.html#diagnostics">DIAGNOSTICS</a>
+          <a id="goMaintenance" href="index.html#maintenance">MAINTENANCE</a>
+          <a id="goSpares" href="index.html#parts">SPARES</a>
+          <a id="goEngine" href="index.html#home">ENGINE</a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="relationship-panel">
+      <div class="relationship-flow"><span class="section-label">SYSTEM RELATIONSHIP</span><div id="systemFlow" class="system-flow"></div></div>
+      <div class="functional-table"><span class="section-label">FUNCTIONAL RELATIONSHIP</span><div id="functionRows"></div></div>
+    </section>
+
+    <section class="failure-panel">
+      <div><span class="section-label">FAILURE MODES / CLUES</span><div id="failureRows" class="failure-rows"></div></div>
+      <div><span class="section-label">COMPATIBILITY INTERPRETATION</span><p id="compatibilityMeaning"></p></div>
+    </section>
+
+    <section class="related-section">
+      <div class="related-head"><div><span class="section-label">RELATED PARTS</span><p>Real records from the same engine system/module. No placeholder part numbers are generated.</p></div><a id="allRelated" href="index.html#parts">VIEW SYSTEM LIBRARY →</a></div>
+      <div id="relatedParts" class="related-grid"></div>
+    </section>
+  </main>
+</div>
+<script src="assets/data-model.js?v=6"></script>
+<script src="assets/diagram.js?v=6"></script>
+<script src="assets/component.js?v=1"></script>
+</body>
+</html>
