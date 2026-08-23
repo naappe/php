@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Gulhifalhu diesel engine system technical workspace">
+<title>System Workspace · Gulhifalhu Engine Technical Console</title>
+<link rel="stylesheet" href="assets/system.css?v=1">
+</head>
+<body>
+<div class="sys-shell">
+  <header class="sys-header">
+    <div class="machine-id">
+      <a id="backEngine" class="brand" href="index.html#home">GF</a>
+      <div><span>ACTIVE MACHINE</span><b id="machineLabel">Loading…</b></div>
+    </div>
+    <div class="header-context">
+      <span id="headerSystem">SYSTEM: —</span><i></i>
+      <span>MODE: TRAINING</span><i></i>
+      <span class="scada-off">SCADA: NOT CONNECTED</span>
+    </div>
+  </header>
+
+  <main class="sys-main">
+    <div class="sys-breadcrumb">
+      <a id="backOverview" href="index.html#home">← BACK TO ENGINE OVERVIEW</a>
+      <span>/</span><b id="crumbSystem">SYSTEM WORKSPACE</b>
+    </div>
+
+    <section class="system-context-bar">
+      <div><span>ENGINE</span><b id="contextEngine">—</b></div>
+      <div><span>RATING</span><b id="contextRating">—</b></div>
+      <div><span>IDENTITY</span><b id="contextIdentity">—</b></div>
+      <div><span>VISUAL AUTHORITY</span><b>FUNCTIONAL SCHEMATIC</b></div>
+      <div><span>PART EVIDENCE</span><b id="contextEvidence">—</b></div>
+    </section>
+
+    <section class="hero-grid">
+      <article class="system-plate">
+        <div class="plate-head">
+          <div><span>TECHNICAL PLATE · SYSTEM 10</span><h1 id="systemTitle">Service &amp; Sealing</h1></div>
+          <div class="plate-head-note"><span id="selectedNumber">01</span><b id="selectedName">Head / cover joint</b></div>
+        </div>
+        <div class="plate-stage" id="systemPlate"></div>
+        <div class="plate-legend">
+          <span><i class="seal-static"></i>STATIC SEAL</span>
+          <span><i class="seal-dynamic"></i>DYNAMIC SEAL</span>
+          <span><i class="seal-clamp"></i>CLAMP / FLEXIBLE JOINT</span>
+          <span><i class="seal-service"></i>SERVICE POINT</span>
+          <span>FUNCTIONAL SCHEMATIC · NOT OEM GEOMETRY</span>
+        </div>
+      </article>
+
+      <aside class="system-side">
+        <div class="system-state">
+          <div class="state-head"><span>SYSTEM WORKSPACE</span><b>TRAINING ACTIVE</b></div>
+          <h2 id="sideSystemTitle">Service &amp; Sealing</h2>
+          <p id="systemPurpose">Keeps fluid joints, rotating interfaces and service connections sealed.</p>
+          <div class="authority-row"><span>OEM SOURCE</span><b id="oemState">Checking…</b></div>
+        </div>
+
+        <div class="component-list-wrap">
+          <div class="section-label">COMPONENT / SEAL PATH</div>
+          <div id="componentList" class="component-list"></div>
+        </div>
+
+        <div class="selected-detail">
+          <div class="selected-kicker"><span id="detailNo">01</span> · SELECTED</div>
+          <h3 id="detailName">Head / cover joint</h3>
+          <p id="detailFunction">—</p>
+          <div class="detail-meta"><span>TYPE</span><b id="detailType">STATIC</b></div>
+          <div class="detail-meta"><span>FAILURE MODES</span><b id="detailFailures">—</b></div>
+          <div class="detail-meta"><span>RELATED RECORDS</span><b id="detailCount">—</b></div>
+          <button id="viewSelectedParts" class="text-button">VIEW RELATED PARTS ↓</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="relationship-workspace">
+      <div class="relationship-block">
+        <span class="section-label">SYSTEM RELATIONSHIP</span>
+        <div id="relationshipFlow" class="relationship-flow"></div>
+        <div class="relationship-key">
+          <span>● Static seal</span><span>◆ Dynamic seal</span><span>▲ Clamp</span><span>■ Service point</span>
+        </div>
+      </div>
+      <div class="function-block">
+        <span class="section-label">FUNCTIONAL RELATIONSHIP</span>
+        <div id="functionTable" class="function-table"></div>
+      </div>
+    </section>
+
+    <section class="failure-workspace">
+      <div class="fault-panel">
+        <div class="fault-heading"><div><span class="section-label">FAILURE MODES &amp; CLUES</span><h2>LEAK / PRESSURE LOSS DETECTED</h2></div><small>Click a branch to select the related sealing path.</small></div>
+        <div id="faultTree" class="fault-tree"></div>
+      </div>
+      <aside class="evidence-side">
+        <span class="section-label">EVIDENCE BOUNDARY</span>
+        <p>Failure paths are training relationships. Exact installation position, torque, seal orientation, surface preparation and replacement procedure remain engine-specific OEM controlled data.</p>
+        <div class="truth-grid">
+          <div><span>IDENTITY</span><b id="truthIdentity">—</b></div>
+          <div><span>VISUAL</span><b>FUNCTIONAL SCHEMATIC</b></div>
+          <div><span>COMPATIBILITY</span><b id="truthCompatibility">—</b></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="parts-workspace" id="relatedSection">
+      <div class="parts-head">
+        <div><span class="section-label">RELATED SPARE-PART RECORDS</span><h2 id="partsTitle">Selected sealing path</h2><p>Real classified records only. Stock quantity is not displayed.</p></div>
+        <a id="openPartsLibrary" href="index.html#parts">VIEW SYSTEM LIBRARY →</a>
+      </div>
+      <div id="relatedParts" class="parts-grid"></div>
+    </section>
+
+    <nav class="bottom-actions">
+      <a id="goDiagnostics" href="index.html#diagnostics">DIAGNOSTICS</a>
+      <a id="goMaintenance" href="index.html#maintenance">MAINTENANCE</a>
+      <a id="goSpares" href="index.html#parts">SPARES</a>
+      <a id="goEvidence" href="index.html#evidence">EVIDENCE</a>
+      <a id="goEngine" href="index.html#home">ENGINE OVERVIEW</a>
+    </nav>
+  </main>
+</div>
+<script src="assets/data-model.js?v=6"></script>
+<script src="assets/diagram.js?v=6"></script>
+<script src="assets/system.js?v=1"></script>
+</body>
+</html>
