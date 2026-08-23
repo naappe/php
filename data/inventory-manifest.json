@@ -1,0 +1,28 @@
+{
+  "files": [
+    "data/inventory/air-exhaust.json",
+    "data/inventory/control-protection.json",
+    "data/inventory/cooling.json",
+    "data/inventory/crank.json",
+    "data/inventory/cylinder-combustion.json",
+    "data/inventory/fuel.json",
+    "data/inventory/lubrication.json",
+    "data/inventory/review.json",
+    "data/inventory/service-sealing-1.json",
+    "data/inventory/service-sealing-2.json",
+    "data/inventory/starting-charging.json",
+    "data/inventory/valve-train-1.json",
+    "data/inventory/valve-train-2.json"
+  ],
+  "partFields": {
+    "id": "Store item number",
+    "d": "Description",
+    "q": "System quantity",
+    "u": "Unit",
+    "s": "Engine system",
+    "m": "Module / assembly",
+    "p": "Detected part numbers",
+    "c": "Compatibility confidence",
+    "g": "Mapped generator IDs"
+  }
+}
