@@ -28,7 +28,7 @@ const maintenance=[
 {title:'Valve-train inspection',system:'valve',items:['Rocker / pushrod condition','Valve mechanism noise','Leakage / cover sealing','Service-clearance data only from correct manual']},
 {title:'Starting & protection',system:'start',items:['Battery / cable condition','Starter engagement','Charging voltage','Protection inputs / shutdown circuit']}
 ];
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[m]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const cclass=v=>v==='VERIFIED'?'verified':v==='FAMILY MATCH'?'family':v==='CANDIDATE'?'candidate':v==='NOT COMPATIBLE'?'incompatible':'unverified';
 const genName=id=>state.generators.find(g=>g.id===id)?.name||id;
 window.addEventListener('load',()=>{
