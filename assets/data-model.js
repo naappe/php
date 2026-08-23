@@ -28,10 +28,24 @@ const maintenance=[
 {title:'Valve-train inspection',system:'valve',items:['Rocker / pushrod condition','Valve mechanism noise','Leakage / cover sealing','Service-clearance data only from correct manual']},
 {title:'Starting & protection',system:'start',items:['Battery / cable condition','Starter engagement','Charging voltage','Protection inputs / shutdown circuit']}
 ];
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[m]));
 const cclass=v=>v==='VERIFIED'?'verified':v==='FAMILY MATCH'?'family':v==='CANDIDATE'?'candidate':v==='NOT COMPATIBLE'?'incompatible':'unverified';
 const genName=id=>state.generators.find(g=>g.id===id)?.name||id;
 window.addEventListener('load',()=>{
-  if(!document.querySelector('#partRows'))return;
-  ['assets/component-router.js?v=1','assets/system-router.js?v=1'].forEach(src=>{const s=document.createElement('script');s.src=src;document.body.appendChild(s)});
+  if(document.querySelector('#partRows')){
+    ['assets/component-router.js?v=1','assets/system-router.js?v=1'].forEach(src=>{const s=document.createElement('script');s.src=src;document.body.appendChild(s)});
+  }
+  const evidencePage=document.querySelector('#page-evidence');
+  if(evidencePage){
+    if(!document.querySelector('link[href*="evidence-entry.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/evidence-entry.css?v=1';document.head.appendChild(l)}
+    const navBtn=document.querySelector('[data-page="evidence"]');if(navBtn)navBtn.innerHTML='<span>07</span> Evidence & Verification';
+    const h2=evidencePage.querySelector('.page-heading h2');if(h2)h2.textContent='OEM Evidence & Verification';
+    const lead=evidencePage.querySelector('.page-heading .lead');if(lead)lead.textContent='Technical claims remain traceable to source, while physical identity, visual authority and part compatibility are controlled as separate evidence domains.';
+    const list=evidencePage.querySelector('#evidenceList');
+    if(list&&!document.querySelector('#verificationFlowLaunch')){
+      const a=document.createElement('a');a.id='verificationFlowLaunch';a.className='evidence-flow-launch';a.href='evidence-flow.html';a.innerHTML='<div><span>EVIDENCE-GATED WORKFLOW</span><b>Dataplate → Catalogue → Visual Source → Compatibility → Technical Review → Verification</b><small>Open the six-stage engineering flow and see exactly what evidence is required before a part, drawing or installed-engine relationship can be promoted.</small></div><em>OPEN VERIFICATION FLOW →</em>';
+      a.addEventListener('click',()=>{a.href=`evidence-flow.html?gen=${encodeURIComponent(state.activeGen||'gen1')}`});
+      list.parentNode.insertBefore(a,list);
+    }
+  }
 });
