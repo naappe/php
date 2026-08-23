@@ -21,21 +21,22 @@
       <div class="side-section"><span class="label">VIEW MODE</span><div class="mode-tabs"><button class="active" data-mode="realistic">REALISTIC</button><button data-mode="technical">TECHNICAL</button><button data-mode="isolate">ISOLATE</button></div></div>
       <div class="side-section"><span class="label">SYSTEMS</span><div id="systemButtons" class="system-buttons"></div></div>
       <div class="side-section selected-panel"><span class="label">SELECTED</span><b id="selectedName">ENGINE ASSEMBLY</b><p id="selectedDesc">Rotate, zoom and select an engine system.</p><div class="selected-tags"><span id="selectedSystem">ALL SYSTEMS</span><span id="selectedType">ASSEMBLY</span><span id="selectedEvidence">TRAINING MODEL</span></div><a id="openSystem" href="index.html#systems">OPEN TECHNICAL PLATE →</a></div>
-      <div class="truth-note"><b>VISUAL AUTHORITY</b><span>HIGH-DETAIL TRAINING 3D MODEL · NOT OEM GEOMETRY</span><p>Gen 1 uses the supplied TAD1345GE reference photos plus DGV 500 ST family dimensions and equipment arrangement. V7 adds denser mechanical construction: accessory drive, cylinder castings, injector plumbing, turbo flanges, radiator structure, alternator ventilation, control-panel hardware, two-battery starting bank, mounts, brackets and service fasteners. Exact installed geometry remains OEM-source controlled.</p><a id="evidenceLink" href="evidence-flow.html">EVIDENCE FLOW →</a></div>
+      <div class="truth-note"><b>VISUAL AUTHORITY</b><span>HIGH-DETAIL TRAINING 3D MODEL · NOT OEM GEOMETRY</span><p>Gen 1 uses the supplied TAD1345GE reference photos and DGV 500 ST dimensions as the primary basis. The additional TAD1345VE brochure is used only as a Volvo 13L family-level visual reference for visible geometry cues such as radiator/expansion-tank arrangement, upper air hardware, filter cluster, accessory side and mounting layout. It does not verify exact GE-B geometry.</p><a id="evidenceLink" href="evidence-flow.html">EVIDENCE FLOW →</a></div>
     </aside>
 
     <section class="viewer-stage-wrap">
-      <div class="stage-toolbar"><div><span>INTERACTIVE 3D MODULE · V7 HIGH DETAIL</span><b id="stageTitle">DIESEL ENGINE TRAINING MODEL</b></div><div class="stage-actions"><button id="explodeView">EXPLODE: OFF</button><button id="resetView">RESET VIEW</button><button id="toggleRotate">AUTO ROTATE: OFF</button></div></div>
-      <div id="threeStage" class="three-stage"><div class="loader">BUILDING HIGH-DETAIL REFERENCE-PROPORTIONED 3D GENSET…</div></div>
-      <div class="viewer-hint"><span>DRAG = ROTATE</span><span>WHEEL = ZOOM</span><span>CLICK = SELECT COMPONENT</span><span>DOUBLE CLICK = FOCUS</span><b>WORKSHOP LIGHTING · PBR MATERIALS · MECHANICAL HARDWARE · SYSTEM MESHES</b></div>
+      <div class="stage-toolbar"><div><span>INTERACTIVE 3D MODULE · V8 REFERENCE MATCH</span><b id="stageTitle">DIESEL ENGINE TRAINING MODEL</b></div><div class="stage-actions"><button id="explodeView">EXPLODE: OFF</button><button id="resetView">RESET VIEW</button><button id="toggleRotate">AUTO ROTATE: OFF</button></div></div>
+      <div id="threeStage" class="three-stage"><div class="loader">BUILDING VOLVO-REFERENCE-MATCHED 3D GENSET…</div></div>
+      <div class="viewer-hint"><span>DRAG = ROTATE</span><span>WHEEL = ZOOM</span><span>CLICK = SELECT COMPONENT</span><span>DOUBLE CLICK = FOCUS</span><b>WORKSHOP LIGHTING · PBR MATERIALS · VOLVO 13L FAMILY VISUAL CUES · SYSTEM MESHES</b></div>
     </section>
   </main>
 </div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}</script>
 <script type="module">
   await import('./assets/engine-3d-enhance-v6.js?v=2');
-  await import('./assets/engine-3d-enhance-v7.js?v=1');
-  await import('./assets/engine-3d-v5.js?v=3');
+  await import('./assets/engine-3d-enhance-v7.js?v=2');
+  await import('./assets/engine-3d-enhance-v8-volvo.js?v=1');
+  await import('./assets/engine-3d-v5.js?v=4');
 </script>
 </body>
 </html>
