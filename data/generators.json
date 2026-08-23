@@ -36,7 +36,7 @@
     "model":"KTA50-G3",
     "ratingKw":1000,
     "identityStatus":"SCADA confirmed",
-    "oemEvidenceStatus":"PARTIAL",
-    "note":"Some workbook part numbers and CPL context suggest KTA50-G3 relationships, but exact compatibility remains evidence-controlled."
+    "oemEvidenceStatus":"FAMILY MATCH",
+    "note":"Workbook part numbers and KTA50-G3/CPL context support a family/model relationship, but exact installed CPL/serial compatibility remains evidence-controlled."
   }
 ]
