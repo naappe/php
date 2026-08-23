@@ -11,15 +11,15 @@ A dedicated evidence-first diesel-engine learning system for STELCO Gulhifalhu P
 
 ## Learning hierarchy
 
-Powerhouse → Generator → Engine Model → System → Module → Component → Spare Part → Stock → Maintenance / Failure / Telemetry relationship.
+Powerhouse → Generator → Engine Model → System → Module → Component → Spare Part → Maintenance / Failure / Telemetry relationship.
 
 ## Evidence rule
 
 No technical fact, operating threshold or compatibility relationship is shown as VERIFIED unless exact evidence supports it. Compatibility states are VERIFIED, FAMILY MATCH, CANDIDATE, UNVERIFIED and NOT COMPATIBLE.
 
-## Phase 3 inventory layer
+## Spare-parts learning layer
 
-The source workbook contains 657 inventory lines. A strict diesel-engine filter currently includes 231 lines in the learning inventory. These are classified by engine system/module and remain evidence-controlled rather than being forced onto a generator.
+The source workbook contains 657 inventory lines. A strict diesel-engine filter currently includes 231 spare-part records for the learning system. Store quantities remain in the source data but are intentionally not displayed in the learning interface.
 
 Current compatibility state:
 
@@ -28,27 +28,26 @@ Current compatibility state:
 - CANDIDATE: 6
 - UNVERIFIED: 166
 
-Generator-linked candidate/family mappings currently include Gen 1: 11, Gen 2: 16, Gen 3: 3 and Gen 4: 41. These are mapping counts, not confirmed installed-part quantities.
+Generator-linked candidate/family mappings currently include Gen 1, Gen 2, Gen 3 and Gen 4 relationships. These are evidence-controlled mappings, not proof of installed compatibility.
 
-Inventory data is split by system under `data/inventory/`. `data/inventory-manifest.json` lets the browser load those files as one searchable library. `data/evidence.json` keeps engineering evidence separate from store data.
+## Visual learning UI
 
-## Inventory UI
+The current `index.html` includes:
 
-The Phase 3 browser workspace is implemented in `index.html` and includes:
+- Four installed generator profiles
+- Ten engine-system infographic cards
+- Distinct functional schematics for air/exhaust, fuel, lubrication, cooling, combustion, crank mechanism, valve train, starting/charging, control/protection and service/sealing
+- Clickable module list under every system
+- Full technical infographic in the module detail drawer
+- Spare-parts library with no stock quantities
+- Search by item, description or part number
+- Generator, system and confidence filters
+- Part-detail learning view with system/module infographic
+- Evidence-controlled compatibility badges
+- Diagnostic relationship views for SPN 100, 110, 102 and 190
+- Maintenance learning views linked to engine systems
 
-- Search by store item, description or part number
-- Generator filter
-- Engine-system filter
-- Confidence filter
-- Stock / zero-stock filter
-- Current result count and evidence-state summary
-- Clickable part detail panel
-- Stock quantity and unit
-- Detected part number
-- System and module classification
-- Generator mapping chips
-- Compatibility-confidence explanation
-- Direct navigation from generator and system pages into filtered inventory
+All generated system/module visuals are explicitly labelled as learning schematics, not OEM geometry.
 
 ## Current OEM / technical evidence
 
@@ -59,12 +58,13 @@ The Phase 3 browser workspace is implemented in `index.html` and includes:
 
 ## Development status
 
-- Phase 1 generator hierarchy: implemented
-- Phase 2 standardized systems/modules: implemented
-- Phase 3 inventory-to-system/engine mapping: implemented
-- Phase 3 inventory UI / filtering / part detail: implemented
+- Generator hierarchy: implemented
+- Standardized systems/modules: implemented
+- Spare-part system/engine mapping: implemented
+- Visible system infographics: implemented
+- Spare-parts learning UI without stock quantities: implemented
+- Diagnostic graph: first OEM-backed layer implemented
+- Maintenance graph: first OEM-backed layer implemented
 - OEM evidence registry: implemented and expanding
-- Diagnostic graph: next
-- Maintenance graph: next
 - Live telemetry: not connected; architecture only
 - OEM exploded diagrams / 3D: only when source material supports accurate geometry
